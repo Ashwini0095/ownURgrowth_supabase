@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Own Your Growth",
+  title: "ownURgrowth",
   description: "Practical courses for work and life.",
 };
 

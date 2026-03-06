@@ -48,8 +48,8 @@ export default function LinkedInGrowthPage() {
       <section className="border-b border-white/5 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
         <div className="mx-auto max-w-5xl px-4 pb-16 pt-20 lg:px-6 lg:pt-24">
           <div className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">
-              asroForever • Course
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
+              ownURgrowth • Course
             </p>
             <h1 className="mt-2 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
               Grow on LinkedIn
@@ -61,8 +61,8 @@ export default function LinkedInGrowthPage() {
             </p>
           </div>
 
-          <div className="mb-8 rounded-2xl border border-violet-500/40 bg-slate-900/70 p-4 text-xs text-slate-200 sm:text-sm">
-            <p className="font-medium text-violet-200">
+          <div className="mb-8 rounded-2xl border border-blue-500/40 bg-slate-900/70 p-4 text-xs text-slate-200 sm:text-sm">
+            <p className="font-medium text-blue-200">
               Choose the plan that fits you best.
             </p>
             <p className="mt-1 text-slate-400">
@@ -81,8 +81,8 @@ export default function LinkedInGrowthPage() {
                   onClick={() => setSelectedPlan(plan.id)}
                   className={`flex flex-col items-stretch rounded-2xl border px-4 py-4 text-left transition ${
                     isSelected
-                      ? "border-fuchsia-400 bg-slate-900"
-                      : "border-white/5 bg-slate-900/60 hover:border-fuchsia-300/60 hover:bg-slate-900"
+                      ? "border-blue-400 bg-slate-900"
+                      : "border-white/5 bg-slate-900/60 hover:border-blue-300/60 hover:bg-slate-900"
                   }`}
                 >
                   <div className="mb-2 flex items-center justify-between gap-2">
@@ -90,20 +90,20 @@ export default function LinkedInGrowthPage() {
                       {plan.name}
                     </h2>
                     {isSelected && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-500/20 px-2 py-0.5 text-[11px] font-medium text-fuchsia-200">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-2 py-0.5 text-[11px] font-medium text-blue-200">
                         <Check className="h-3 w-3" />
                         Selected
                       </span>
                     )}
                   </div>
-                  <p className="text-base font-semibold text-fuchsia-300">
+                  <p className="text-base font-semibold text-blue-300">
                     {plan.price}
                   </p>
                   <p className="mt-1 text-xs text-slate-400">{plan.description}</p>
                   <ul className="mt-3 space-y-1 text-xs text-slate-300">
                     {plan.includes.map((item) => (
                       <li key={item} className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -118,7 +118,7 @@ export default function LinkedInGrowthPage() {
               type="button"
               onClick={handleContinue}
               disabled={!selectedPlan}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-fuchsia-400 px-6 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-fuchsia-500/30 transition hover:bg-fuchsia-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300 disabled:shadow-none"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300 disabled:shadow-none"
             >
               Continue to payment
               <ChevronRight className="h-4 w-4" />

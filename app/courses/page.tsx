@@ -69,7 +69,7 @@ export default function CoursesPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount,
         currency,
-        name: 'Own Your Growth',
+        name: 'ownURgrowth',
         description: courseName,
         order_id: orderId,
         handler: function (response: any) {
@@ -105,9 +105,25 @@ export default function CoursesPage() {
       <nav className="border-b border-white/5 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto max-w-6xl px-4 py-4 lg:px-6">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              Own Your Growth
+            <Link href="/" className="text-xl font-bold">
+              <span className="text-white">own</span>
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
+              <span className="text-white">growth</span>
             </Link>
+            
+            {/* Navigation Menu */}
+            <div className="hidden md:flex items-center gap-8">
+              <Link href="/courses" className="text-sm text-blue-400 font-medium">
+                Courses
+              </Link>
+              <Link href="/about" className="text-sm text-slate-300 hover:text-white transition">
+                About
+              </Link>
+              <Link href="/reviews" className="text-sm text-slate-300 hover:text-white transition">
+                Reviews
+              </Link>
+            </div>
+
             <div className="flex items-center gap-4">
               {user ? (
                 <>
@@ -220,16 +236,29 @@ export default function CoursesPage() {
       {/* CTA Section */}
       <section className="border-t border-white/5 bg-slate-950">
         <div className="mx-auto max-w-4xl px-4 py-16 text-center lg:px-6">
-          <h2 className="text-3xl font-bold text-slate-50 mb-4">
-            Ready to Start Learning?
-          </h2>
-          <p className="text-lg text-slate-300 mb-8">
-            Join thousands of professionals who are already transforming their careers
-          </p>
-          <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
-            Get Started Today
-            <ChevronRight className="h-5 w-5" />
-          </Link>
+          {user ? (
+            <>
+              <h2 className="text-3xl font-bold text-slate-50 mb-4">
+                Continue Your Learning Journey
+              </h2>
+              <p className="text-lg text-slate-300 mb-8">
+                You're logged in and ready to access your courses
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-3xl font-bold text-slate-50 mb-4">
+                Ready to Start Learning?
+              </h2>
+              <p className="text-lg text-slate-300 mb-8">
+                Join thousands of professionals who are already transforming their careers
+              </p>
+              <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
+                Get Started Today
+                <ChevronRight className="h-5 w-5" />
+              </Link>
+            </>
+          )}
         </div>
       </section>
     </main>

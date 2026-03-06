@@ -26,8 +26,8 @@ export default async function LinkedInGrowthAccessPage({
         <div className="mx-auto max-w-5xl px-4 pb-16 pt-20 lg:px-6 lg:pt-24">
           <div className="mb-6 flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">
-                asroForever • Course Access
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
+                ownURgrowth • Course Access
               </p>
               <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">
                 Grow on LinkedIn
@@ -56,6 +56,7 @@ export default async function LinkedInGrowthAccessPage({
                     className="aspect-video w-full rounded-lg bg-black"
                     src="/linkedin-growth.mp4"
                     controls
+                    controlsList="nodownload"
                   >
                     Your browser does not support the video tag.
                   </video>
@@ -76,8 +77,8 @@ export default async function LinkedInGrowthAccessPage({
               )}
 
               {showLiveQA && (
-                <div className="rounded-2xl border border-fuchsia-500/40 bg-slate-900/90 p-4 text-xs text-slate-200 sm:text-sm">
-                  <p className="font-semibold text-fuchsia-200">
+                <div className="rounded-2xl border border-blue-500/40 bg-slate-900/90 p-4 text-xs text-slate-200 sm:text-sm">
+                  <p className="font-semibold text-blue-200">
                     Live Q&A details
                   </p>
                   <p className="mt-1 text-slate-400">
