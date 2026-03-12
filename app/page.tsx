@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { ChevronRight, PlayCircle, Star, Users, Award, Clock, Shield } from "lucide-react";
+import { ChevronRight, PlayCircle, Star, Users, Award, Clock, Shield, BookOpen } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { useEffect } from "react";
 import { trackPageView, trackButtonClick } from "../lib/analytics";
@@ -19,7 +19,7 @@ export default function Home() {
       <nav className="border-b border-white/5 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto max-w-6xl px-4 py-4 lg:px-6">
           <div className="flex items-center justify-between">
-            <div className="text-xl font-bold">
+            <div className="text-2xl font-bold">
               <span className="text-white">own</span>
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
               <span className="text-white">growth</span>
@@ -116,9 +116,9 @@ export default function Home() {
           
           <div className="grid gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-              <h3 className="text-2xl font-bold text-slate-50 mb-3">Grow on LinkedIn</h3>
+              <h3 className="text-2xl font-bold text-slate-50 mb-3">LinkedIn Decoded</h3>
               <p className="text-slate-300 text-base mb-4">
-                Master LinkedIn to build your personal brand, grow your network, and unlock career opportunities
+                No theory. No fillers. Just raw secrets and tactics that actually get results.
               </p>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
@@ -134,13 +134,10 @@ export default function Home() {
             <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
               <h3 className="text-2xl font-bold text-slate-50 mb-3">System Design Notes</h3>
               <p className="text-slate-300 text-base mb-4">
-                Comprehensive system design notes covering scalability, architecture patterns, and interview preparation
+                Clear, practical notes to master scalable system design for real-world systems and interviews.
               </p>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-blue-400 text-blue-400" />
-                  <span className="text-sm font-semibold text-slate-100">4.8</span>
-                </div>
+                <div></div>
                 <button className="inline-flex items-center gap-2 rounded-full border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-400 cursor-not-allowed">
                   Coming Soon
                 </button>
@@ -162,7 +159,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
             <div className="text-center space-y-4">
               <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
                 <Clock className="h-8 w-8 text-blue-400" />
@@ -177,9 +174,9 @@ export default function Home() {
               <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
                 <Shield className="h-8 w-8 text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">14-Day Guarantee</h3>
+              <h3 className="text-xl font-semibold text-slate-50">Affordable Pricing</h3>
               <p className="text-slate-300">
-                Not satisfied? Get a full refund within 14 days, no questions asked.
+                High-quality learning resources priced far below typical market rates.
               </p>
             </div>
 
@@ -187,9 +184,9 @@ export default function Home() {
               <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
                 <Users className="h-8 w-8 text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">Expert Community</h3>
+              <h3 className="text-xl font-semibold text-slate-50">Live QNA Session</h3>
               <p className="text-slate-300">
-                Connect with like-minded professionals and get support from industry experts.
+                Get your doubts cleared in live Q&A sessions with the instructor.
               </p>
             </div>
 
@@ -197,9 +194,92 @@ export default function Home() {
               <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
                 <Award className="h-8 w-8 text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">Practical Focus</h3>
+              <h3 className="text-xl font-semibold text-slate-50">Free Course Updates</h3>
               <p className="text-slate-300">
-                Real-world projects and actionable strategies you can implement immediately.
+                All future improvements and additional content are included at no extra cost.
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                <BookOpen className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-50">Concise & High-Signal Notes</h3>
+              <p className="text-slate-300">
+                No fluff — only the ideas, patterns, and trade-offs that actually matter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Who Is ownURgrowth For Section */}
+      <section className="border-b border-white/5 bg-gradient-to-b from-slate-800 to-slate-900">
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-4">
+              Who Is <span className="text-white">own</span><span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span><span className="text-white">growth</span> For?
+            </h2>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                <Users className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3">Students</h3>
+              <p className="text-slate-300 text-sm">
+                Learn concepts that are not covered in traditional schooling and get ahead in your career.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                <Award className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3">Working Professionals</h3>
+              <p className="text-slate-300 text-sm">
+                Develop essential skills to enhance your career and boost productivity in your current role.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                <Shield className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3">Freelancers</h3>
+              <p className="text-slate-300 text-sm">
+                Discover ways to grow, manage, and streamline your freelance business effectively.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                <Clock className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3">Career Shifters</h3>
+              <p className="text-slate-300 text-sm">
+                Get the guidance needed to pivot confidently into a new field or industry.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                <Users className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3">Parents</h3>
+              <p className="text-slate-300 text-sm">
+                Manage time and personal growth while balancing family responsibilities.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                <Award className="h-8 w-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3">Dreamers</h3>
+              <p className="text-slate-300 text-sm">
+                Gain insights and strategies to create your own journey and achieve your goals.
               </p>
             </div>
           </div>
@@ -207,7 +287,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="border-b border-white/5 bg-slate-900">
+      <section className="border-b border-white/5 bg-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-4">
@@ -276,51 +356,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="border-b border-white/5 bg-gradient-to-b from-slate-950 to-slate-900">
-        <div className="mx-auto max-w-4xl px-4 py-16 text-center lg:px-6 lg:py-24">
-          {user ? (
-            <>
-              <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-6">
-                Welcome back, {user.displayName || user.email?.split('@')[0]}!
-              </h2>
-              <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
-                Continue your learning journey and explore our courses
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <Link href="/courses" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
-                  Browse Courses
-                  <ChevronRight className="h-5 w-5" />
-                </Link>
-              </div>
-            </>
-          ) : (
-            <>
-              <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-6">
-                Ready to Transform Your Future?
-              </h2>
-              <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
-                Join over 430,000 professionals who have already started their journey to success
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
-                  Get Started Now
-                  <ChevronRight className="h-5 w-5" />
-                </Link>
-                <Link href="/courses" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-8 py-4 text-lg font-medium text-slate-100 transition hover:border-white/30 hover:bg-white/10">
-                  Browse Courses
-                </Link>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="bg-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-8 lg:px-6">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xl font-bold">
+            <div className="text-2xl font-bold">
               <span className="text-white">own</span>
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
               <span className="text-white">growth</span>

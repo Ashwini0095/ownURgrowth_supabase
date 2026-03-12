@@ -1,8 +1,10 @@
 'use client';
 
 import Link from "next/link";
-import { ChevronRight, Star, Users, Clock } from "lucide-react";
+import { ChevronRight, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
+import { getUserPurchases, recordPurchase } from "../../lib/purchases";
+import { useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -26,7 +28,7 @@ const courses = [
   {
     title: "System Design Notes",
     category: "System Design",
-    description: "Comprehensive system design notes covering scalability, architecture patterns, and interview preparation",
+    description: "Clear, practical notes to master scalable system design for real-world systems and interviews.",
     students: "₹1000 one-time • lifetime access to notes",
     price: "₹1000",
     badge: "Notes only",
@@ -39,6 +41,20 @@ const courses = [
 
 export default function CoursesPage() {
   const { user, signOut } = useAuth();
+  const [purchasedCourses, setPurchasedCourses] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      console.log('Fetching purchases for user:', user.uid);
+      getUserPurchases(user.uid)
+        .then((courses) => {
+          console.log('Purchased courses:', courses);
+          setPurchasedCourses(courses);
+        })
+        .catch((err) => console.error('Error fetching purchases:', err));
+    }
+  }, [user]);
+
   const handlePurchase = async (courseId: string, courseName: string, price: number) => {
     try {
       // Check if Razorpay is loaded
@@ -72,9 +88,11 @@ export default function CoursesPage() {
         name: 'ownURgrowth',
         description: courseName,
         order_id: orderId,
-        handler: function (response: any) {
-          // Payment successful
-          alert('Payment successful!');
+        handler: async function (response: any) {
+          // Record purchase in Firestore
+          if (user) {
+            await recordPurchase(user.uid, courseId, response.razorpay_payment_id);
+          }
           window.location.href = `/success?payment_id=${response.razorpay_payment_id}`;
         },
         prefill: {
@@ -170,8 +188,16 @@ export default function CoursesPage() {
       <section className="py-16">
         <div className="mx-auto max-w-6xl px-4 lg:px-6">
           <div className="grid gap-8 md:grid-cols-2">
-            {courses.map((course) => (
-              <div key={course.slug} className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 shadow-xl">
+            {courses.map((course) => {
+              const isPurchased = purchasedCourses.includes(course.slug);
+              return (
+              <div key={course.slug} className={`rounded-3xl border ${isPurchased ? 'border-green-500/30' : 'border-white/10'} bg-slate-900/70 p-6 shadow-xl`}>
+                {isPurchased && (
+                  <div className="flex items-center gap-2 mb-4 rounded-full bg-green-500/10 px-4 py-2 w-fit">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span className="text-sm font-semibold text-green-400">Purchased</span>
+                  </div>
+                )}
                 <div className="mb-4">
                   <span className="inline-block rounded-full bg-blue-400/10 px-3 py-1 text-xs font-semibold text-blue-300 mb-3">
                     {course.category}
@@ -207,10 +233,20 @@ export default function CoursesPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-2xl font-bold text-blue-400">
-                      Starts at {course.price}
+                      {isPurchased ? 'Owned' : `Starts at ${course.price}`}
                     </span>
-                    <p className="text-xs text-slate-400">{course.badge}</p>
+                    <p className="text-xs text-slate-400">{isPurchased ? 'You have access' : course.badge}</p>
                   </div>
+                  {isPurchased ? (
+                    <Link
+                      href={`/courses/${course.slug}`}
+                      className="inline-flex items-center gap-2 rounded-full bg-green-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-400"
+                    >
+                      Access Course
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  ) : (
+                  <>
                   <Link
                     href={course.slug === "linkedin-growth" ? `/courses/${course.slug}` : "#"}
                     className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-400"
@@ -226,9 +262,12 @@ export default function CoursesPage() {
                       Buy Now ₹500
                     </button>
                   )}
+                  </>
+                  )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
