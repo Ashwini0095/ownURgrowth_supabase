@@ -97,6 +97,10 @@ export default function Home() {
                 Start Learning Today
                 <ChevronRight className="h-5 w-5" />
               </Link>
+              <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
+                Connect 1:1
+                <ChevronRight className="h-5 w-5" />
+              </a>
             </div>
           </div>
         </div>

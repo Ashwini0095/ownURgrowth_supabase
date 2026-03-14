@@ -1,11 +1,11 @@
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import NotesViewerWrapper from "./NotesViewerWrapper";
 
 const planLabels: Record<string, string> = {
-  basic: "Core Course (₹500)",
-  plus: "Course + Notes (₹700)",
-  pro: "Course + Notes + Live Q&A (₹1000)",
+  basic: "Core Course (₹499)",
+  plus: "Course + Notes (₹799)",
+  pro: "Course + Notes + Live Q&A (₹999)",
 };
 
 export default async function LinkedInGrowthAccessPage({
@@ -15,7 +15,7 @@ export default async function LinkedInGrowthAccessPage({
 }) {
   const params = await searchParams;
   const plan = params?.plan ?? "basic";
-  const planLabel = planLabels[plan] ?? "Core Course (₹500)";
+  const planLabel = planLabels[plan] ?? "Core Course (₹499)";
 
   const showNotes = plan === "plus" || plan === "pro";
   const showLiveQA = plan === "pro";
@@ -36,13 +36,24 @@ export default async function LinkedInGrowthAccessPage({
                 You&apos;re viewing content for: {planLabel}
               </p>
             </div>
-            <Link
-              href="/courses/linkedin-growth"
-              className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-slate-100"
-            >
-              <ChevronLeft className="h-3 w-3" />
-              Change plan
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/courses/linkedin-growth"
+                className="inline-flex items-center gap-1 text-xs text-slate-300 hover:text-slate-100"
+              >
+                <ChevronLeft className="h-3 w-3" />
+                Change plan
+              </Link>
+              {(plan === "basic" || plan === "plus") && (
+                <Link
+                  href={`/upgrade?from=${plan}`}
+                  className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300 hover:bg-blue-500/30"
+                >
+                  Upgrade Plan
+                  <ChevronRight className="h-3 w-3" />
+                </Link>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-6 md:grid-cols-[minmax(0,1.6fr),minmax(0,1fr)] md:items-start">

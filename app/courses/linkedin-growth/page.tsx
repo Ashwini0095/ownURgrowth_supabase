@@ -8,21 +8,21 @@ const plans = [
   {
     id: "basic",
     name: "Core Course",
-    price: "₹500",
+    price: "₹499",
     description: "Full video course on how to grow on LinkedIn.",
     includes: ["Full video curriculum", "Lifetime access"],
   },
   {
     id: "plus",
     name: "Course + Notes",
-    price: "₹700",
+    price: "₹799",
     description: "Course plus downloadable notes and templates.",
     includes: ["Everything in Core", "Downloadable notes", "Content prompts & hooks"],
   },
   {
     id: "pro",
     name: "Course + Notes + Live Q&A",
-    price: "₹1000",
+    price: "₹999",
     description: "Best value for serious LinkedIn growth.",
     includes: [
       "Everything in Course + Notes",
@@ -35,12 +35,60 @@ const plans = [
 export default function LinkedInGrowthPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const router = useRouter();
+  
+  // Mock purchased plan - in real app, get this from user's purchase history
+  const purchasedPlan = "basic"; // Change to null if not purchased, or "basic"/"plus"/"pro"
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selectedPlan) return;
-    // In a real app, you would redirect to a payment gateway (Razorpay/Stripe).
-    // For now we simulate success and go straight to access.
-    router.push(`/courses/linkedin-growth/access?plan=${selectedPlan}`);
+    
+    const selectedPlanData = plans.find(plan => plan.id === selectedPlan);
+    if (!selectedPlanData) return;
+
+    try {
+      // Create Razorpay order
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseId: 'linkedin-growth',
+          courseName: selectedPlanData.name,
+          price: parseInt(selectedPlanData.price.replace('₹', '')),
+        }),
+      });
+
+      const { orderId, amount, currency } = await response.json();
+
+      // Initialize Razorpay
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        amount,
+        currency,
+        name: 'ownURgrowth',
+        description: selectedPlanData.name,
+        order_id: orderId,
+        handler: function (response: any) {
+          // Payment successful
+          router.push(`/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`);
+        },
+        prefill: {
+          name: '',
+          email: '',
+          contact: '',
+        },
+        theme: {
+          color: '#3B82F6',
+        },
+      };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment failed. Please try again.');
+    }
   };
 
   return (
@@ -74,13 +122,19 @@ export default function LinkedInGrowthPage() {
           <div className="grid gap-4 md:grid-cols-3">
             {plans.map((plan) => {
               const isSelected = selectedPlan === plan.id;
+              const isPurchased = purchasedPlan === plan.id;
+              const canUpgrade = purchasedPlan && plans.findIndex(p => p.id === purchasedPlan) < plans.findIndex(p => p.id === plan.id);
+              
               return (
                 <button
                   key={plan.id}
                   type="button"
-                  onClick={() => setSelectedPlan(plan.id)}
+                  onClick={() => !isPurchased && setSelectedPlan(plan.id)}
+                  disabled={isPurchased}
                   className={`flex flex-col items-stretch rounded-2xl border px-4 py-4 text-left transition ${
-                    isSelected
+                    isPurchased
+                      ? "border-green-500/30 bg-green-500/10 cursor-default"
+                      : isSelected
                       ? "border-blue-400 bg-slate-900"
                       : "border-white/5 bg-slate-900/60 hover:border-blue-300/60 hover:bg-slate-900"
                   }`}
@@ -89,21 +143,30 @@ export default function LinkedInGrowthPage() {
                     <h2 className="text-sm font-semibold text-slate-50">
                       {plan.name}
                     </h2>
-                    {isSelected && (
+                    {isPurchased ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-[11px] font-medium text-green-200">
+                        <Check className="h-3 w-3" />
+                        Purchased
+                      </span>
+                    ) : isSelected ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-2 py-0.5 text-[11px] font-medium text-blue-200">
                         <Check className="h-3 w-3" />
                         Selected
                       </span>
-                    )}
+                    ) : canUpgrade ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/20 px-2 py-0.5 text-[11px] font-medium text-orange-200">
+                        Upgrade
+                      </span>
+                    ) : null}
                   </div>
-                  <p className="text-base font-semibold text-blue-300">
+                  <p className={`text-base font-semibold ${isPurchased ? 'text-green-300' : 'text-blue-300'}`}>
                     {plan.price}
                   </p>
                   <p className="mt-1 text-xs text-slate-400">{plan.description}</p>
                   <ul className="mt-3 space-y-1 text-xs text-slate-300">
                     {plan.includes.map((item) => (
                       <li key={item} className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                        <span className={`h-1.5 w-1.5 rounded-full ${isPurchased ? 'bg-green-400' : 'bg-blue-400'}`} />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -114,19 +177,41 @@ export default function LinkedInGrowthPage() {
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              type="button"
-              onClick={handleContinue}
-              disabled={!selectedPlan}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300 disabled:shadow-none"
-            >
-              Continue to payment
-              <ChevronRight className="h-4 w-4" />
-            </button>
+            {purchasedPlan ? (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => router.push(`/courses/linkedin-growth/access?plan=${purchasedPlan}`)}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-green-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-green-500/30 transition hover:bg-green-400"
+                >
+                  Access Course
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+                {(purchasedPlan === "basic" || purchasedPlan === "plus") && (
+                  <button
+                    onClick={() => router.push(`/upgrade?from=${purchasedPlan}`)}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/10"
+                  >
+                    Upgrade Plan
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleContinue}
+                disabled={!selectedPlan}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300 disabled:shadow-none"
+              >
+                Continue to payment
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
             <p className="text-xs text-slate-400">
-              After successful payment, you&apos;ll be redirected to your course
-              area to watch the video lectures and download notes (if included in
-              your plan).
+              {purchasedPlan 
+                ? "You have lifetime access to this course. You can upgrade anytime by paying the difference."
+                : "After successful payment, you'll be redirected to your course area to watch the video lectures and download notes (if included in your plan)."
+              }
             </p>
           </div>
         </div>
