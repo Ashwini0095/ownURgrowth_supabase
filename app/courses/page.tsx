@@ -5,6 +5,8 @@ import { ChevronRight, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
 import { getUserPurchases, recordPurchase } from "../../lib/purchases";
 import { useEffect, useState } from "react";
+import Navigation from "../../components/Navigation";
+import Navigation from "../../components/Navigation";
 
 declare global {
   interface Window {
@@ -119,59 +121,7 @@ export default function CoursesPage() {
   };
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      {/* Navigation */}
-      <nav className="border-b border-white/5 bg-slate-950/80 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-4 py-4 lg:px-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-xl font-bold">
-              <span className="text-white">own</span>
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
-              <span className="text-white">growth</span>
-            </Link>
-            
-            {/* Navigation Menu */}
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/courses" className="text-sm text-blue-400 font-medium">
-                Courses
-              </Link>
-              <Link href="/about" className="text-sm text-slate-300 hover:text-white transition">
-                About
-              </Link>
-              <Link href="/reviews" className="text-sm text-slate-300 hover:text-white transition">
-                Reviews
-              </Link>
-            </div>
-
-            <div className="flex items-center gap-4">
-              {user ? (
-                <>
-                  <span className="text-sm text-slate-300">
-                    Welcome, {user.displayName || user.email?.split('@')[0]}
-                  </span>
-                  <Link href="/profile" className="text-sm text-slate-300 hover:text-white transition">
-                    Profile
-                  </Link>
-                  <button 
-                    onClick={signOut}
-                    className="text-sm text-slate-300 hover:text-white"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" className="text-sm text-slate-300 hover:text-white">
-                    Login
-                  </Link>
-                  <Link href="/signup" className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-400">
-                    Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Header */}
       <section className="border-b border-white/5 bg-gradient-to-b from-slate-950 to-slate-900">

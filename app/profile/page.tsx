@@ -6,6 +6,7 @@ import { updateProfile, updatePassword } from 'firebase/auth';
 import { User, CreditCard, History, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getUserPaymentHistory, PaymentRecord } from '../../lib/payments';
+import Navigation from '../../components/Navigation';
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -81,6 +82,7 @@ export default function ProfilePage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      <Navigation />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-8">Profile Management</h1>
