@@ -11,8 +11,10 @@ export default function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold text-blue-400">
-              ownURgrowth
+            <Link href="/" className="text-xl font-bold">
+              <span className="text-white">own</span>
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
+              <span className="text-white">growth</span>
             </Link>
             <div className="hidden md:flex items-center gap-6">
               <Link href="/courses" className="text-sm text-slate-300 hover:text-white transition">
