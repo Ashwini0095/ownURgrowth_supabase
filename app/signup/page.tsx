@@ -41,30 +41,14 @@ function SignupContent() {
         displayName: name
       });
 
-      // Send Firebase verification (for actual verification)
+      // Send Firebase verification email
       const { sendEmailVerification } = await import("firebase/auth");
       await sendEmailVerification(userCredential.user);
-
-      // Also send a custom styled email with better UX
-      const emailResponse = await fetch('/api/send-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          name: name,
-        }),
-      });
-      
-      if (!emailResponse.ok) {
-        console.error('Failed to send custom styled email');
-      }
 
       // Track signup event
       trackSignUp();
 
-      setMessage("Account created successfully! Please check your email to verify your account. Redirecting...");
+      setMessage("Account created successfully! Please check your email (including spam folder) for a verification link from noreply@asrocourse.firebaseapp.com. Click the link to verify your account.");
       setTimeout(() => router.push(redirectUrl), 3000);
 
     } catch (err: any) {

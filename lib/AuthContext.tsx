@@ -54,8 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             <p className="text-slate-300 mb-4">
               We've sent a verification email to <strong>{user.email}</strong>
             </p>
+            <p className="text-sm text-slate-400 mb-2">
+              📧 Check your <strong>spam folder</strong> if you don't see it in your inbox
+            </p>
+            <p className="text-sm text-slate-400 mb-2">
+              📨 Look for an email from: <strong>noreply@asrocourse.firebaseapp.com</strong>
+            </p>
             <p className="text-sm text-slate-400 mb-6">
-              Please check your inbox and click the verification link to continue.
+              🔗 Click the verification link in the email to continue
             </p>
           </div>
           
