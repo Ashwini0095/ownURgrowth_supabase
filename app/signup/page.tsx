@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../lib/firebase";
 import { trackSignUp } from "../../lib/analytics";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  
+  const redirectUrl = searchParams.get('redirect') || '/courses';
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,11 +41,27 @@ export default function SignupPage() {
         displayName: name
       });
 
+      // Send custom verification email
+      const emailResponse = await fetch('/api/send-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          name: name,
+        }),
+      });
+
+      if (!emailResponse.ok) {
+        console.error('Failed to send verification email');
+      }
+
       // Track signup event
       trackSignUp();
 
-      setMessage("Account created successfully! Redirecting...");
-      setTimeout(() => router.push("/"), 2000);
+      setMessage("Account created successfully! Please check your email to verify your account. Redirecting...");
+      setTimeout(() => router.push(redirectUrl), 3000);
 
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");

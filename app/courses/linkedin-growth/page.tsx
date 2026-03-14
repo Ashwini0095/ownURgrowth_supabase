@@ -3,6 +3,8 @@
 import { Check, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../../lib/AuthContext";
+import Link from "next/link";
 
 const plans = [
   {
@@ -35,12 +37,19 @@ const plans = [
 export default function LinkedInGrowthPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const router = useRouter();
+  const { user, loading } = useAuth();
   
   // Mock purchased plan - in real app, get this from user's purchase history
-  const purchasedPlan = "basic"; // Change to null if not purchased, or "basic"/"plus"/"pro"
+  const purchasedPlan = null; // Change to null if not purchased, or "basic"/"plus"/"pro"
 
   const handleContinue = async () => {
     if (!selectedPlan) return;
+    
+    // Check if user is logged in
+    if (!user) {
+      router.push('/login?redirect=/courses/linkedin-growth');
+      return;
+    }
     
     const selectedPlanData = plans.find(plan => plan.id === selectedPlan);
     if (!selectedPlanData) return;
@@ -69,13 +78,39 @@ export default function LinkedInGrowthPage() {
         name: 'ownURgrowth',
         description: selectedPlanData.name,
         order_id: orderId,
-        handler: function (response: any) {
-          // Payment successful
-          router.push(`/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`);
+        handler: async function (response: any) {
+          try {
+            // Verify payment and send receipt
+            const verifyResponse = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                userEmail: user?.email,
+                userName: user?.displayName || user?.email,
+                courseName: 'Grow on LinkedIn',
+                plan: selectedPlanData.name,
+                amount: amount,
+              }),
+            });
+
+            if (verifyResponse.ok) {
+              router.push(`/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`);
+            } else {
+              alert('Payment verification failed. Please contact support.');
+            }
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            alert('Payment verification failed. Please contact support.');
+          }
         },
         prefill: {
-          name: '',
-          email: '',
+          name: user?.displayName || '',
+          email: user?.email || '',
           contact: '',
         },
         theme: {
@@ -196,6 +231,23 @@ export default function LinkedInGrowthPage() {
                   </button>
                 )}
               </div>
+            ) : !user ? (
+              <div className="flex gap-3">
+                <Link
+                  href="/login?redirect=/courses/linkedin-growth"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400"
+                >
+                  Login to Purchase
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/signup?redirect=/courses/linkedin-growth"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/10"
+                >
+                  Sign Up
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
             ) : (
               <button
                 type="button"
@@ -210,6 +262,8 @@ export default function LinkedInGrowthPage() {
             <p className="text-xs text-slate-400">
               {purchasedPlan 
                 ? "You have lifetime access to this course. You can upgrade anytime by paying the difference."
+                : !user
+                ? "Create an account or login to purchase this course and get lifetime access."
                 : "After successful payment, you'll be redirected to your course area to watch the video lectures and download notes (if included in your plan)."
               }
             </p>

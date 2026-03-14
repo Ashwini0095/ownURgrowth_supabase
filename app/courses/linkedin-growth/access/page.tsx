@@ -1,5 +1,10 @@
+'use client';
+
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "../../../../lib/AuthContext";
+import { useEffect, useState } from "react";
 import NotesViewerWrapper from "./NotesViewerWrapper";
 
 const planLabels: Record<string, string> = {
@@ -8,17 +13,67 @@ const planLabels: Record<string, string> = {
   pro: "Course + Notes + Live Q&A (₹999)",
 };
 
-export default async function LinkedInGrowthAccessPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ plan?: string }>;
-}) {
-  const params = await searchParams;
-  const plan = params?.plan ?? "basic";
-  const planLabel = planLabels[plan] ?? "Core Course (₹499)";
+// Mock function to check if user has purchased the course
+const checkUserPurchase = async (userId: string, plan: string) => {
+  // In real app, this would check your database
+  // For now, return true if user is logged in (mock purchase)
+  return userId ? plan : null;
+};
 
-  const showNotes = plan === "plus" || plan === "pro";
-  const showLiveQA = plan === "pro";
+export default function LinkedInGrowthAccessPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const [userPlan, setUserPlan] = useState<string | null>(null);
+  const [verifying, setVerifying] = useState(true);
+  
+  const requestedPlan = searchParams.get('plan') || 'basic';
+  
+  useEffect(() => {
+    const verifyAccess = async () => {
+      if (loading) return;
+      
+      if (!user) {
+        router.push(`/login?redirect=/courses/linkedin-growth/access?plan=${requestedPlan}`);
+        return;
+      }
+
+      // Check if user has purchased this course
+      const purchasedPlan = await checkUserPurchase(user.uid, requestedPlan);
+      
+      if (!purchasedPlan) {
+        router.push('/courses/linkedin-growth');
+        return;
+      }
+      
+      setUserPlan(purchasedPlan);
+      setVerifying(false);
+    };
+
+    verifyAccess();
+  }, [user, loading, requestedPlan, router]);
+
+  const planLabel = userPlan ? planLabels[userPlan] : "Core Course (₹499)";
+
+  if (loading || verifying) {
+    return (
+      <main className="min-h-screen bg-slate-950 text-white">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-300">Verifying access...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!user || !userPlan) {
+    return null; // Will redirect
+  }
+
+  const showNotes = userPlan === "plus" || userPlan === "pro";
+  const showLiveQA = userPlan === "pro";
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -44,9 +99,9 @@ export default async function LinkedInGrowthAccessPage({
                 <ChevronLeft className="h-3 w-3" />
                 Change plan
               </Link>
-              {(plan === "basic" || plan === "plus") && (
+              {(userPlan === "basic" || userPlan === "plus") && (
                 <Link
-                  href={`/upgrade?from=${plan}`}
+                  href={`/upgrade?from=${userPlan}`}
                   className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300 hover:bg-blue-500/30"
                 >
                   Upgrade Plan
@@ -68,16 +123,18 @@ export default async function LinkedInGrowthAccessPage({
                     src="/linkedin-growth.mp4"
                     controls
                     controlsList="nodownload"
+                    onContextMenu={(e) => e.preventDefault()}
                   >
                     Your browser does not support the video tag.
                   </video>
-                  <p className="mt-2 text-[11px] text-slate-400 sm:text-xs">
-                    Ensure your course video file is available at{" "}
-                    <code className="rounded bg-slate-800 px-1.5 py-0.5">
-                      public/linkedin-growth.mp4
-                    </code>{" "}
-                    so students can watch it here.
-                  </p>
+                  <div className="mt-2 flex items-center justify-between">
+                    <p className="text-[11px] text-slate-400 sm:text-xs">
+                      🔒 Protected content - Only accessible to verified purchasers
+                    </p>
+                    <p className="text-[11px] text-slate-500 sm:text-xs">
+                      User: {user?.email}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,8 +1,9 @@
 'use client';
 
 import { ChevronRight } from "lucide-react";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "../../lib/AuthContext";
 
 const plans = [
   { id: "basic", name: "Core Course", price: 499 },
@@ -25,7 +26,32 @@ function UpgradeContent() {
   const [selectedUpgrade, setSelectedUpgrade] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, loading } = useAuth();
   const currentPlan = searchParams.get('from') || 'basic';
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push(`/login?redirect=/upgrade?from=${currentPlan}`);
+    }
+  }, [user, loading, router, currentPlan]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-slate-950 text-white">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-300">Loading...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect
+  }
 
   const availableUpgrades = upgradePaths[currentPlan as keyof typeof upgradePaths] || [];
 
@@ -88,12 +114,39 @@ function UpgradeContent() {
         name: 'ownURgrowth',
         description: `Upgrade to ${upgradeOption.name}`,
         order_id: orderId,
-        handler: function (response: any) {
-          router.push(`/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`);
+        handler: async function (response: any) {
+          try {
+            // Verify payment and send receipt
+            const verifyResponse = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                userEmail: user?.email,
+                userName: user?.displayName || user?.email,
+                courseName: `Upgrade to ${upgradeOption.name}`,
+                plan: upgradeOption.name,
+                amount: amount,
+              }),
+            });
+
+            if (verifyResponse.ok) {
+              router.push(`/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`);
+            } else {
+              alert('Payment verification failed. Please contact support.');
+            }
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            alert('Payment verification failed. Please contact support.');
+          }
         },
         prefill: {
-          name: '',
-          email: '',
+          name: user?.displayName || '',
+          email: user?.email || '',
           contact: '',
         },
         theme: {
