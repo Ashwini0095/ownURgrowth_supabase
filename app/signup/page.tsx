@@ -41,9 +41,28 @@ function SignupContent() {
         displayName: name
       });
 
-      // Send Firebase verification email instead of custom email
-      const { sendEmailVerification } = await import("firebase/auth");
-      await sendEmailVerification(userCredential.user);
+      // Try Firebase verification first, fallback to custom email
+      try {
+        const { sendEmailVerification } = await import("firebase/auth");
+        await sendEmailVerification(userCredential.user);
+      } catch (firebaseError) {
+        console.log('Firebase email failed, using custom email');
+        // Fallback to custom verification email
+        const emailResponse = await fetch('/api/send-verification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            name: name,
+          }),
+        });
+        
+        if (!emailResponse.ok) {
+          console.error('Both Firebase and custom email failed');
+        }
+      }
 
       // Track signup event
       trackSignUp();
