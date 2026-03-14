@@ -6,7 +6,6 @@ import { useAuth } from "../../lib/AuthContext";
 import { getUserPurchases, recordPurchase } from "../../lib/purchases";
 import { useEffect, useState } from "react";
 import Navigation from "../../components/Navigation";
-import Navigation from "../../components/Navigation";
 
 declare global {
   interface Window {
