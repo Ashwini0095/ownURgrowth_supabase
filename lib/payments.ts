@@ -16,8 +16,8 @@ export async function getUserPaymentHistory(userId: string): Promise<PaymentReco
     const paymentsRef = collection(db, 'payments');
     const q = query(
       paymentsRef, 
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
+      where('userId', '==', userId)
+      // Removed orderBy to avoid index requirement
     );
     
     const querySnapshot = await getDocs(q);
@@ -35,6 +35,9 @@ export async function getUserPaymentHistory(userId: string): Promise<PaymentReco
         razorpayPaymentId: data.razorpayPaymentId
       });
     });
+    
+    // Sort in JavaScript instead of Firestore
+    payments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     
     return payments;
   } catch (error) {
