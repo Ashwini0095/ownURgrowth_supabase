@@ -35,6 +35,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe;
   }, []);
 
+  // Auto-logout after 20 minutes of inactivity
+  useEffect(() => {
+    if (!user) return;
+
+    let timeout: NodeJS.Timeout;
+    
+    const resetTimeout = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        firebaseSignOut(auth);
+        alert('You have been logged out due to inactivity.');
+      }, 20 * 60 * 1000); // 20 minutes
+    };
+
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    
+    // Set initial timeout
+    resetTimeout();
+    
+    // Reset timeout on user activity
+    events.forEach(event => {
+      document.addEventListener(event, resetTimeout, true);
+    });
+
+    return () => {
+      clearTimeout(timeout);
+      events.forEach(event => {
+        document.removeEventListener(event, resetTimeout, true);
+      });
+    };
+  }, [user]);
+
   const signOut = async () => {
     await firebaseSignOut(auth);
   };
