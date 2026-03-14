@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const plans = [
@@ -21,7 +21,7 @@ const upgradePaths = {
   pro: [],
 };
 
-export default function UpgradePage() {
+function UpgradeContent() {
   const [selectedUpgrade, setSelectedUpgrade] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -178,5 +178,13 @@ export default function UpgradePage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function UpgradePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading...</div>}>
+      <UpgradeContent />
+    </Suspense>
   );
 }
