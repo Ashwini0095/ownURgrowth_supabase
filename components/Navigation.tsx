@@ -20,9 +20,9 @@ export default function Navigation() {
               <Link href="/courses" className="text-sm text-slate-300 hover:text-white transition">
                 Courses
               </Link>
-              <Link href="/about" className="text-sm text-slate-300 hover:text-white transition">
+              <a href="/#why-choose" className="text-sm text-slate-300 hover:text-white transition">
                 About
-              </Link>
+              </a>
               <Link href="/reviews" className="text-sm text-slate-300 hover:text-white transition">
                 Reviews
               </Link>
