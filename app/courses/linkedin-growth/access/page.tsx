@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../../lib/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import NotesViewerWrapper from "./NotesViewerWrapper";
 
 const planLabels: Record<string, string> = {
@@ -20,7 +20,7 @@ const checkUserPurchase = async (userId: string, plan: string) => {
   return userId ? plan : null;
 };
 
-export default function LinkedInGrowthAccessPage() {
+function AccessPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -175,6 +175,14 @@ export default function LinkedInGrowthAccessPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function LinkedInGrowthAccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading...</div>}>
+      <AccessPageContent />
+    </Suspense>
   );
 }
 
