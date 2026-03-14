@@ -23,9 +23,9 @@ export default function Navigation() {
               <a href="/#why-choose" className="text-sm text-slate-300 hover:text-white transition">
                 About
               </a>
-              <Link href="/reviews" className="text-sm text-slate-300 hover:text-white transition">
+              <a href="/#reviews" className="text-sm text-slate-300 hover:text-white transition">
                 Reviews
-              </Link>
+              </a>
             </div>
           </div>
 

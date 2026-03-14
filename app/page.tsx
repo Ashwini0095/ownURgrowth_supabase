@@ -243,7 +243,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="border-b border-white/5 bg-slate-950">
+      <section id="reviews" className="border-b border-white/5 bg-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-4">
