@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut as firebaseSignOut, User } from 'firebase/auth';
 import { trackLogin, setAnalyticsUser } from './analytics';
+import { createUserSession, updateSessionActivity, removeUserSession, checkSessionValidity } from './sessionManager';
 
 interface AuthContextType {
   user: User | null;
@@ -22,13 +23,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       setLoading(false);
       
       if (user) {
+        // Check session validity and create new session
+        const isValidSession = await checkSessionValidity(user.uid);
+        if (!isValidSession) {
+          const sessionCreated = await createUserSession(user.uid);
+          if (!sessionCreated) {
+            alert('Maximum device limit reached. Please log out from another device.');
+            await firebaseSignOut(auth);
+            return;
+          }
+        }
+        
         trackLogin();
         setAnalyticsUser(user.uid, user.email || '', user.displayName || '');
+      } else {
+        // Remove session when user logs out
+        await removeUserSession();
       }
     });
 
@@ -47,6 +62,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         firebaseSignOut(auth);
         alert('You have been logged out due to inactivity.');
       }, 20 * 60 * 1000); // 20 minutes
+      
+      // Update session activity
+      if (user) {
+        updateSessionActivity(user.uid);
+      }
     };
 
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
@@ -68,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const signOut = async () => {
+    await removeUserSession();
     await firebaseSignOut(auth);
   };
 
