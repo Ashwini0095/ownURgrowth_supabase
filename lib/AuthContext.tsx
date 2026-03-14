@@ -20,7 +20,6 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -28,15 +27,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       
       if (user) {
-        // Check if email is verified (in real app, check your database)
-        // For now, we'll use localStorage to simulate verification
-        const verified = localStorage.getItem(`email_verified_${user.uid}`) === 'true';
-        setIsEmailVerified(verified);
-        
         trackLogin();
         setAnalyticsUser(user.uid, user.email || '', user.displayName || '');
-      } else {
-        setIsEmailVerified(false);
       }
     });
 
@@ -48,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Show email verification screen if user is logged in but not verified
-  if (!loading && user && !isEmailVerified) {
+  if (!loading && user && !user.emailVerified) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
         <div className="max-w-md mx-auto text-center p-6">
@@ -69,14 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           <div className="space-y-3">
             <button
-              onClick={() => {
-                // Check if email is now verified
-                const verified = localStorage.getItem(`email_verified_${user.uid}`) === 'true';
-                setIsEmailVerified(verified);
-                if (!verified) {
-                  alert('Please click the verification link in your email first.');
-                }
-              }}
+              onClick={() => window.location.reload()}
               className="w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded-lg transition"
             >
               I've Verified My Email
@@ -84,22 +69,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             <button
               onClick={async () => {
-                const response = await fetch('/api/send-verification', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    email: user.email,
-                    name: user.displayName || user.email,
-                  }),
-                });
-                
-                if (response.ok) {
-                  alert('Verification email sent again!');
-                } else {
-                  alert('Failed to send email. Please try again.');
-                }
+                const { sendEmailVerification } = await import("firebase/auth");
+                await sendEmailVerification(user);
+                alert('Verification email sent again!');
               }}
               className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition"
             >

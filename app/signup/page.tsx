@@ -41,21 +41,9 @@ function SignupContent() {
         displayName: name
       });
 
-      // Send custom verification email
-      const emailResponse = await fetch('/api/send-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          name: name,
-        }),
-      });
-
-      if (!emailResponse.ok) {
-        console.error('Failed to send verification email');
-      }
+      // Send Firebase verification email instead of custom email
+      const { sendEmailVerification } = await import("firebase/auth");
+      await sendEmailVerification(userCredential.user);
 
       // Track signup event
       trackSignUp();
