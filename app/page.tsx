@@ -44,6 +44,9 @@ export default function Home() {
                   <span className="text-sm text-slate-300">
                     Welcome, {user.displayName || user.email?.split('@')[0]}
                   </span>
+                  <Link href="/profile" className="text-sm text-slate-300 hover:text-white transition">
+                    Profile
+                  </Link>
                   <button 
                     onClick={signOut}
                     className="text-sm text-slate-300 hover:text-white"
