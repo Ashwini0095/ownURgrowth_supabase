@@ -131,6 +131,7 @@ function UpgradeContent() {
                 courseName: `Upgrade to ${upgradeOption.name}`,
                 plan: upgradeOption.name,
                 amount: amount,
+                userId: user?.uid,
               }),
             });
 

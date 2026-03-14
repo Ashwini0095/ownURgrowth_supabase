@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { db } from '../../../lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,7 +13,8 @@ export async function POST(request: NextRequest) {
       userName,
       courseName,
       plan,
-      amount 
+      amount,
+      userId 
     } = await request.json();
 
     // Verify payment signature
@@ -28,6 +31,25 @@ export async function POST(request: NextRequest) {
         { error: 'Payment verification failed' },
         { status: 400 }
       );
+    }
+
+    // Store payment record in Firebase
+    try {
+      await addDoc(collection(db, 'payments'), {
+        userId,
+        userEmail,
+        userName,
+        courseName,
+        planName: plan,
+        amount: amount / 100, // Convert from paise to rupees
+        razorpayOrderId: razorpay_order_id,
+        razorpayPaymentId: razorpay_payment_id,
+        status: 'completed',
+        createdAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Failed to store payment record:', error);
+      // Continue with email sending even if storage fails
     }
 
     // Send receipt email

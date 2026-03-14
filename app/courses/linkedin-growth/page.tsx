@@ -95,6 +95,7 @@ export default function LinkedInGrowthPage() {
                 courseName: 'Grow on LinkedIn',
                 plan: selectedPlanData.name,
                 amount: amount,
+                userId: user?.uid,
               }),
             });
 
