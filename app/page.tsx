@@ -45,13 +45,13 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Link href="/courses" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
+              <Link href="/courses" className="group inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:bg-blue-400 hover:shadow-blue-400/40 hover:scale-105">
                 Start Learning Today
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
-              <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
+              <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
                 Connect 1:1
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </a>
             </div>
           </div>
@@ -71,8 +71,8 @@ export default function Home() {
           </div>
           
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-              <h3 className="text-2xl font-bold text-slate-50 mb-3">LinkedIn Decoded</h3>
+            <div className="group rounded-2xl border border-white/10 bg-slate-950/70 p-6 transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/90 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10">
+              <h3 className="text-2xl font-bold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">LinkedIn Decoded</h3>
               <p className="text-slate-300 text-base mb-4">
                 No theory. No fillers. Just raw secrets and tactics that actually get results.
               </p>
@@ -81,13 +81,13 @@ export default function Home() {
                   <Star className="h-4 w-4 fill-blue-400 text-blue-400" />
                   <span className="text-sm font-semibold text-slate-100">4.9</span>
                 </div>
-                <Link href="/courses/linkedin-growth" className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-400">
+                <Link href="/courses/linkedin-growth" className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-blue-400 hover:scale-110">
                   Enroll Now
                 </Link>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
+            <div className="group rounded-2xl border border-white/10 bg-slate-950/70 p-6 transition-all duration-300 hover:border-slate-600/50 hover:bg-slate-950/90">
               <h3 className="text-2xl font-bold text-slate-50 mb-3">System Design Notes</h3>
               <p className="text-slate-300 text-base mb-4">
                 Clear, practical notes to master scalable system design for real-world systems and interviews.
@@ -116,51 +116,51 @@ export default function Home() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Clock className="h-8 w-8 text-blue-400" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Clock className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">Lifetime Access</h3>
+              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Lifetime Access</h3>
               <p className="text-slate-300">
                 Learn at your own pace with permanent access to all course materials and updates.
               </p>
             </div>
 
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Shield className="h-8 w-8 text-blue-400" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Shield className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">Affordable Pricing</h3>
+              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Affordable Pricing</h3>
               <p className="text-slate-300">
                 High-quality learning resources priced far below typical market rates.
               </p>
             </div>
 
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Users className="h-8 w-8 text-blue-400" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Users className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">Live QNA Session</h3>
+              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Live QNA Session</h3>
               <p className="text-slate-300">
                 Get your doubts cleared in live Q&A sessions with the instructor.
               </p>
             </div>
 
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Award className="h-8 w-8 text-blue-400" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Award className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">Free Course Updates</h3>
+              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Free Course Updates</h3>
               <p className="text-slate-300">
                 All future improvements and additional content are included at no extra cost.
               </p>
             </div>
 
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <BookOpen className="h-8 w-8 text-blue-400" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <BookOpen className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50">Concise & High-Signal Notes</h3>
+              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Concise & High-Signal Notes</h3>
               <p className="text-slate-300">
                 No fluff — only the ideas, patterns, and trade-offs that actually matter.
               </p>
@@ -179,61 +179,61 @@ export default function Home() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Users className="h-8 w-8 text-blue-400" />
+            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Users className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3">Students</h3>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Students</h3>
               <p className="text-slate-300 text-sm">
                 Learn concepts that are not covered in traditional schooling and get ahead in your career.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Award className="h-8 w-8 text-blue-400" />
+            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Award className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3">Working Professionals</h3>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Working Professionals</h3>
               <p className="text-slate-300 text-sm">
                 Develop essential skills to enhance your career and boost productivity in your current role.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Shield className="h-8 w-8 text-blue-400" />
+            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Shield className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3">Freelancers</h3>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Freelancers</h3>
               <p className="text-slate-300 text-sm">
                 Discover ways to grow, manage, and streamline your freelance business effectively.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Clock className="h-8 w-8 text-blue-400" />
+            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Clock className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3">Career Shifters</h3>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Career Shifters</h3>
               <p className="text-slate-300 text-sm">
                 Get the guidance needed to pivot confidently into a new field or industry.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Users className="h-8 w-8 text-blue-400" />
+            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Users className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3">Parents</h3>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Parents</h3>
               <p className="text-slate-300 text-sm">
                 Manage time and personal growth while balancing family responsibilities.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Award className="h-8 w-8 text-blue-400" />
+            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
+                <Award className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3">Dreamers</h3>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Dreamers</h3>
               <p className="text-slate-300 text-sm">
                 Gain insights and strategies to create your own journey and achieve your goals.
               </p>
@@ -255,55 +255,55 @@ export default function Home() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur">
+            <div className="group rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mb-4 flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400" />
+                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400 transition-all duration-300 group-hover:scale-110" />
                 ))}
               </div>
-              <p className="mb-4 text-slate-300">
+              <p className="mb-4 text-slate-300 group-hover:text-slate-200 transition-colors">
                 "The LinkedIn course completely changed how I approach networking. I got 3 job offers within 2 months!"
               </p>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400" />
+                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400 transition-all duration-300 group-hover:scale-110" />
                 <div>
-                  <div className="font-semibold text-slate-100">Sarah Chen</div>
+                  <div className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">Sarah Chen</div>
                   <div className="text-sm text-slate-400">Product Manager, Google</div>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur">
+            <div className="group rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mb-4 flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400" />
+                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400 transition-all duration-300 group-hover:scale-110" />
                 ))}
               </div>
-              <p className="mb-4 text-slate-300">
+              <p className="mb-4 text-slate-300 group-hover:text-slate-200 transition-colors">
                 "System design notes helped me crack interviews at FAANG companies. Worth every penny!"
               </p>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400" />
+                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400 transition-all duration-300 group-hover:scale-110" />
                 <div>
-                  <div className="font-semibold text-slate-100">Alex Rodriguez</div>
+                  <div className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">Alex Rodriguez</div>
                   <div className="text-sm text-slate-400">Senior Engineer, Meta</div>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur">
+            <div className="group rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mb-4 flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400" />
+                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400 transition-all duration-300 group-hover:scale-110" />
                 ))}
               </div>
-              <p className="mb-4 text-slate-300">
+              <p className="mb-4 text-slate-300 group-hover:text-slate-200 transition-colors">
                 "Practical, actionable content. No fluff, just real strategies that work in the real world."
               </p>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400" />
+                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400 transition-all duration-300 group-hover:scale-110" />
                 <div>
-                  <div className="font-semibold text-slate-100">Priya Sharma</div>
+                  <div className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">Priya Sharma</div>
                   <div className="text-sm text-slate-400">Marketing Director, Startup</div>
                 </div>
               </div>
