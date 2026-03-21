@@ -44,7 +44,7 @@ export default function Home() {
               You didn't come this far to stay average. Land your dream job, grow your LinkedIn, and build a brand that works for you, ownURgrowth got you covered.
             </p>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:flex-wrap">
               <Link href="/courses" className="group inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:bg-blue-400 hover:shadow-blue-400/40 hover:scale-105">
                 Start Learning Today
                 <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -53,6 +53,14 @@ export default function Home() {
                 Connect 1:1
                 <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </a>
+              <Link href="/ghostwriting" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-400/40 hover:scale-105">
+                Ghostwriting Services
+                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link href="/partnerships" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
+                Brand Partnerships
+                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
         </div>

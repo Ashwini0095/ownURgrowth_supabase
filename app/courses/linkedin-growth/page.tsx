@@ -129,6 +129,17 @@ export default function LinkedInGrowthPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
+      {/* Navigation */}
+      <nav className="border-b border-white/5">
+        <div className="mx-auto max-w-6xl px-4 py-4 lg:px-6">
+          <Link href="/" className="text-2xl font-bold">
+            <span className="text-white">own</span>
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
+            <span className="text-white">growth</span>
+          </Link>
+        </div>
+      </nav>
+
       <section className="border-b border-white/5 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
         <div className="mx-auto max-w-5xl px-4 pb-16 pt-20 lg:px-6 lg:pt-24">
           <div className="mb-8">

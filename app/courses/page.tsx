@@ -198,7 +198,6 @@ export default function CoursesPage() {
                       <ChevronRight className="h-4 w-4" />
                     </Link>
                   ) : (
-                  <>
                   <Link
                     href={course.slug === "linkedin-growth" ? `/courses/${course.slug}` : "#"}
                     className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-400"
@@ -206,15 +205,6 @@ export default function CoursesPage() {
                     {course.slug === "linkedin-growth" ? "View Course" : "Coming Soon"}
                     {course.slug === "linkedin-growth" && <ChevronRight className="h-4 w-4" />}
                   </Link>
-                  {course.slug === "linkedin-growth" && (
-                    <button
-                      onClick={() => handlePurchase(course.slug, course.title, 500)}
-                      className="inline-flex items-center gap-2 rounded-full border border-blue-400 px-6 py-3 text-sm font-semibold text-blue-400 transition hover:bg-blue-400 hover:text-white"
-                    >
-                      Buy Now ₹500
-                    </button>
-                  )}
-                  </>
                   )}
                 </div>
               </div>
