@@ -1,18 +1,24 @@
 'use client';
 
 import Link from "next/link";
-import { ChevronRight, PlayCircle, Star, Users, Award, Clock, Shield, BookOpen } from "lucide-react";
+import { ChevronRight, PlayCircle, Star, Users, Award, Clock, Shield, BookOpen, RefreshCw, GraduationCap, Briefcase, Laptop, ArrowRight, Heart, Building } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { trackPageView, trackButtonClick } from "../lib/analytics";
 import Navigation from "../components/Navigation";
 
 export default function Home() {
   const { user, signOut } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     trackPageView('Home');
   }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -44,23 +50,27 @@ export default function Home() {
               You didn't come this far to stay average. Land your dream job, grow your LinkedIn, and build a brand that works for you, ownURgrowth got you covered.
             </p>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:flex-wrap">
-              <Link href="/courses" className="group inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:bg-blue-400 hover:shadow-blue-400/40 hover:scale-105">
-                Start Learning Today
-                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
-                Connect 1:1
-                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </a>
-              <Link href="/ghostwriting" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-400/40 hover:scale-105">
-                Ghostwriting Services
-                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link href="/partnerships" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
-                Brand Partnerships
-                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                <Link href="/courses" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-400/40 hover:scale-105">
+                  Start Learning Today
+                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <Link href="/partnerships" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
+                  Amplify Your Brand with LinkedIn Creators
+                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
+                  Connect 1:1
+                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </a>
+                <Link href="/ghostwriting" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-400/40 hover:scale-105">
+                  Let us grow your Linkedin
+                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -71,7 +81,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-20">
           <div className="text-center mb-12">
             <h2 className="text-5xl font-bold text-slate-50 sm:text-6xl">
-              Practical <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Courses</span>
+              Learn & Earn <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Programs</span>
             </h2>
             <p className="text-2xl text-slate-300 mt-2">
               Built for The <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Ambitious</span>
@@ -82,13 +92,9 @@ export default function Home() {
             <div className="group rounded-2xl border border-white/10 bg-slate-950/70 p-6 transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/90 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10">
               <h3 className="text-2xl font-bold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">LinkedIn Decoded</h3>
               <p className="text-slate-300 text-base mb-4">
-                No theory. No fillers. Just raw secrets and tactics that actually get results.
+                No theory. No fillers. Just raw secrets and tactics that actually grows your linkedin.
               </p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-blue-400 text-blue-400" />
-                  <span className="text-sm font-semibold text-slate-100">4.9</span>
-                </div>
+              <div className="flex items-center justify-end">
                 <Link href="/courses/linkedin-growth" className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-blue-400 hover:scale-110">
                   Enroll Now
                 </Link>
@@ -98,7 +104,7 @@ export default function Home() {
             <div className="group rounded-2xl border border-white/10 bg-slate-950/70 p-6 transition-all duration-300 hover:border-slate-600/50 hover:bg-slate-950/90">
               <h3 className="text-2xl font-bold text-slate-50 mb-3">System Design Notes</h3>
               <p className="text-slate-300 text-base mb-4">
-                Clear, practical notes to master scalable system design for real-world systems and interviews.
+                Clear notes to master scalable system design for real-world systems and interviews(which will get you in MAANG)
               </p>
               <div className="flex items-center justify-between">
                 <div></div>
@@ -136,11 +142,11 @@ export default function Home() {
 
             <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
               <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Shield className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <span className="text-2xl font-bold text-blue-400 transition-all duration-300 group-hover:scale-110">₹</span>
               </div>
               <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Affordable Pricing</h3>
               <p className="text-slate-300">
-                High-quality learning resources priced far below typical market rates.
+                You have wasted a lot of money in useless things, make smart decision this time, you won't regret
               </p>
             </div>
 
@@ -150,13 +156,13 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Live QNA Session</h3>
               <p className="text-slate-300">
-                Get your doubts cleared in live Q&A sessions with the instructor.
+                Get your doubts cleared in live Q&A sessions with the experienced & experts.
               </p>
             </div>
 
             <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
               <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Award className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <RefreshCw className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
               <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Free Course Updates</h3>
               <p className="text-slate-300">
@@ -170,7 +176,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Concise & High-Signal Notes</h3>
               <p className="text-slate-300">
-                No fluff — only the ideas, patterns, and trade-offs that actually matter.
+                No fluff. Just ideas, patterns, and trade-offs that count.
               </p>
             </div>
           </div>
@@ -189,17 +195,17 @@ export default function Home() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Users className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <GraduationCap className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
               <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Students</h3>
               <p className="text-slate-300 text-sm">
-                Learn concepts that are not covered in traditional schooling and get ahead in your career.
+                Learn what school and college don't teach, the skills that actually make money.
               </p>
             </div>
 
             <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Award className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Briefcase className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
               <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Working Professionals</h3>
               <p className="text-slate-300 text-sm">
@@ -209,7 +215,7 @@ export default function Home() {
 
             <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Shield className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Laptop className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
               <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Freelancers</h3>
               <p className="text-slate-300 text-sm">
@@ -219,7 +225,7 @@ export default function Home() {
 
             <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Clock className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <ArrowRight className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
               <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Career Shifters</h3>
               <p className="text-slate-300 text-sm">
@@ -229,7 +235,7 @@ export default function Home() {
 
             <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Users className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Heart className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
               <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Parents</h3>
               <p className="text-slate-300 text-sm">
@@ -239,11 +245,11 @@ export default function Home() {
 
             <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Award className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Building className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Dreamers</h3>
+              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Founders and Business Owners</h3>
               <p className="text-slate-300 text-sm">
-                Gain insights and strategies to create your own journey and achieve your goals.
+                Turn LinkedIn into a consistent source of leads and authority.
               </p>
             </div>
           </div>
@@ -255,10 +261,10 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-4">
-              What Our Students Say
+              Hear From Our Family
             </h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              Join thousands of professionals who have transformed their careers with our courses.
+              Join professionals who have upskilled and grew in their careers.
             </p>
           </div>
 

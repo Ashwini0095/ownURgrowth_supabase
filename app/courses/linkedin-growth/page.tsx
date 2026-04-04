@@ -9,27 +9,42 @@ import Link from "next/link";
 const plans = [
   {
     id: "basic",
-    name: "Core Course",
-    price: "₹499",
-    description: "Full video course on how to grow on LinkedIn.",
-    includes: ["Full video curriculum", "Lifetime access"],
+    name: "Basic Crash Course",
+    price: "₹499/-",
+    description: "Essential LinkedIn growth fundamentals.",
+    includes: [
+      "✓ Pre-recorded video courses",
+      "✓ Exclusive Community Access", 
+      "✗ Downloadable PDF Notes Course with ready to use AI Prompts",
+      "✗ Lifetime Updates at No Extra Cost",
+      "✗ Live group QNA Sessions"
+    ],
   },
   {
-    id: "plus",
-    name: "Course + Notes",
-    price: "₹799",
-    description: "Course plus downloadable notes and templates.",
-    includes: ["Everything in Core", "Downloadable notes", "Content prompts & hooks"],
+    id: "plus", 
+    name: "Pro Program",
+    price: "₹799/-",
+    description: "Advanced LinkedIn growth strategies.",
+    includes: [
+      "✓ Pre-recorded video courses",
+      "✓ Exclusive Community Access",
+      "✓ Downloadable PDF Notes Course with ready to use AI Prompts", 
+      "✗ Lifetime Updates at No Extra Cost",
+      "✗ Live group QNA Sessions"
+    ],
   },
   {
     id: "pro",
-    name: "Course + Notes + Live Q&A",
-    price: "₹999",
-    description: "Best value for serious LinkedIn growth.",
+    name: "Master Program", 
+    price: "₹999/-",
+    description: "Complete LinkedIn mastery with all features.",
+    bestValue: true,
     includes: [
-      "Everything in Course + Notes",
-      "Access to live Q&A session",
-      "Priority question submission",
+      "✓ Pre-recorded video courses",
+      "✓ Exclusive Community Access",
+      "✓ Downloadable PDF Notes Course with ready to use AI Prompts",
+      "✓ Lifetime Updates at No Extra Cost", 
+      "✓ Live group QNA Sessions"
     ],
   },
 ];
@@ -150,8 +165,8 @@ export default function LinkedInGrowthPage() {
               Grow on LinkedIn
             </h1>
             <p className="mt-3 max-w-2xl text-sm text-slate-300 sm:text-base">
-              Learn a practical system to grow your LinkedIn audience, generate
-              opportunities, and build your personal brand—with lifetime access
+              Build a system to grow your LinkedIn audience, generate
+              opportunities, and build your personal brand with lifetime access
               and three simple plans.
             </p>
           </div>
@@ -178,14 +193,25 @@ export default function LinkedInGrowthPage() {
                   type="button"
                   onClick={() => !isPurchased && setSelectedPlan(plan.id)}
                   disabled={isPurchased}
-                  className={`flex flex-col items-stretch rounded-2xl border px-4 py-4 text-left transition ${
+                  className={`relative flex flex-col items-stretch rounded-2xl border px-4 py-4 text-left transition ${
                     isPurchased
                       ? "border-green-500/30 bg-green-500/10 cursor-default"
                       : isSelected
-                      ? "border-blue-400 bg-slate-900"
+                      ? plan.bestValue 
+                        ? "border-orange-400 bg-gradient-to-br from-orange-500/10 to-yellow-500/10 ring-2 ring-orange-400/50"
+                        : "border-blue-400 bg-slate-900"
+                      : plan.bestValue
+                      ? "border-orange-300/60 bg-gradient-to-br from-orange-500/5 to-yellow-500/5 hover:border-orange-400 hover:ring-2 hover:ring-orange-400/30"
                       : "border-white/5 bg-slate-900/60 hover:border-blue-300/60 hover:bg-slate-900"
                   }`}
                 >
+                  {plan.bestValue && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500 to-yellow-500 px-3 py-1 text-[10px] font-bold text-white shadow-lg">
+                        ⭐ BEST VALUE
+                      </span>
+                    </div>
+                  )}
                   <div className="mb-2 flex items-center justify-between gap-2">
                     <h2 className="text-sm font-semibold text-slate-50">
                       {plan.name}
@@ -211,12 +237,24 @@ export default function LinkedInGrowthPage() {
                   </p>
                   <p className="mt-1 text-xs text-slate-400">{plan.description}</p>
                   <ul className="mt-3 space-y-1 text-xs text-slate-300">
-                    {plan.includes.map((item) => (
-                      <li key={item} className="flex items-center gap-2">
-                        <span className={`h-1.5 w-1.5 rounded-full ${isPurchased ? 'bg-green-400' : 'bg-blue-400'}`} />
-                        <span>{item}</span>
-                      </li>
-                    ))}
+                    {plan.includes.map((item) => {
+                      const isIncluded = item.startsWith('✓');
+                      const isExcluded = item.startsWith('✗');
+                      const text = item.substring(2); // Remove the ✓ or ✗ symbol
+                      
+                      return (
+                        <li key={item} className={`flex items-center gap-2 ${isExcluded ? 'opacity-50' : ''}`}>
+                          {isIncluded ? (
+                            <span className="text-green-400">✓</span>
+                          ) : isExcluded ? (
+                            <span className="text-red-400">✗</span>
+                          ) : (
+                            <span className={`h-1.5 w-1.5 rounded-full ${isPurchased ? 'bg-green-400' : 'bg-blue-400'}`} />
+                          )}
+                          <span className={isExcluded ? 'line-through' : ''}>{text}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </button>
               );

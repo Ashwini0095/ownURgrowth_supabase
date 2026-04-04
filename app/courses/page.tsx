@@ -18,25 +18,19 @@ const courses = [
     title: "Grow on LinkedIn",
     category: "LinkedIn Growth",
     description: "Master LinkedIn to build your personal brand, grow your network, and unlock career opportunities",
-    students: "₹499 course • ₹799 course + notes • ₹999 course + notes + live Q&A",
+    students: "",
     price: "₹499",
     badge: "3 plans available",
-    slug: "linkedin-growth",
-    rating: 4.9,
-    studentCount: "12,000+",
-    duration: "4 weeks"
+    slug: "linkedin-growth"
   },
   {
     title: "System Design Notes",
     category: "System Design",
     description: "Clear, practical notes to master scalable system design for real-world systems and interviews.",
-    students: "₹1000 one-time • lifetime access to notes",
+    students: "",
     price: "₹1000",
     badge: "Notes only",
-    slug: "system-design-notes",
-    rating: 4.8,
-    studentCount: "8,500+",
-    duration: "Self-paced"
+    slug: "system-design-notes"
   },
 ];
 
@@ -162,24 +156,7 @@ export default function CoursesPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-6 text-sm text-slate-400 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="text-slate-200">{course.rating}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    <span>{course.studentCount}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{course.duration}</span>
-                  </div>
-                </div>
-
                 <div className="mb-6">
-                  <p className="text-sm text-slate-400 mb-2">Pricing Options:</p>
-                  <p className="text-slate-200">{course.students}</p>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -227,18 +204,7 @@ export default function CoursesPage() {
               </p>
             </>
           ) : (
-            <>
-              <h2 className="text-3xl font-bold text-slate-50 mb-4">
-                Ready to Start Learning?
-              </h2>
-              <p className="text-lg text-slate-300 mb-8">
-                Join thousands of professionals who are already transforming their careers
-              </p>
-              <Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400">
-                Get Started Today
-                <ChevronRight className="h-5 w-5" />
-              </Link>
-            </>
+            <></>
           )}
         </div>
       </section>
