@@ -6,6 +6,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useEffect, useState } from "react";
 import { trackPageView, trackButtonClick } from "../lib/analytics";
 import Navigation from "../components/Navigation";
+import ReviewsCarousel from "../components/ReviewsCarousel";
 
 export default function Home() {
   const { user, signOut } = useAuth();
@@ -268,61 +269,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="group rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
-              <div className="mb-4 flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400 transition-all duration-300 group-hover:scale-110" />
-                ))}
-              </div>
-              <p className="mb-4 text-slate-300 group-hover:text-slate-200 transition-colors">
-                "The LinkedIn course completely changed how I approach networking. I got 3 job offers within 2 months!"
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400 transition-all duration-300 group-hover:scale-110" />
-                <div>
-                  <div className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">Sarah Chen</div>
-                  <div className="text-sm text-slate-400">Product Manager, Google</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="group rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
-              <div className="mb-4 flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400 transition-all duration-300 group-hover:scale-110" />
-                ))}
-              </div>
-              <p className="mb-4 text-slate-300 group-hover:text-slate-200 transition-colors">
-                "System design notes helped me crack interviews at FAANG companies. Worth every penny!"
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400 transition-all duration-300 group-hover:scale-110" />
-                <div>
-                  <div className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">Alex Rodriguez</div>
-                  <div className="text-sm text-slate-400">Senior Engineer, Meta</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="group rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
-              <div className="mb-4 flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400 transition-all duration-300 group-hover:scale-110" />
-                ))}
-              </div>
-              <p className="mb-4 text-slate-300 group-hover:text-slate-200 transition-colors">
-                "Practical, actionable content. No fluff, just real strategies that work in the real world."
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400 transition-all duration-300 group-hover:scale-110" />
-                <div>
-                  <div className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">Priya Sharma</div>
-                  <div className="text-sm text-slate-400">Marketing Director, Startup</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ReviewsCarousel />
         </div>
       </section>
 

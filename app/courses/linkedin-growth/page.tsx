@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
 import Link from "next/link";
@@ -51,11 +51,36 @@ const plans = [
 
 export default function LinkedInGrowthPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [purchasedPlan, setPurchasedPlan] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { user, loading } = useAuth();
-  
-  // Mock purchased plan - in real app, get this from user's purchase history
-  const purchasedPlan = null; // Change to null if not purchased, or "basic"/"plus"/"pro"
+  const { user } = useAuth();
+
+  // Check user's purchase history
+  useEffect(() => {
+    const checkPurchaseHistory = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Check if user has purchased this course
+        const response = await fetch(`/api/check-purchase?userId=${user.uid}&courseId=linkedin-growth`);
+        const data = await response.json();
+        
+        if (data.purchased) {
+          setPurchasedPlan(data.planId);
+        }
+      } catch (error) {
+        console.error('Error checking purchase:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkPurchaseHistory();
+  }, [user]);
 
   const handleContinue = async () => {
     if (!selectedPlan) return;
@@ -191,11 +216,10 @@ export default function LinkedInGrowthPage() {
                 <button
                   key={plan.id}
                   type="button"
-                  onClick={() => !isPurchased && setSelectedPlan(plan.id)}
-                  disabled={isPurchased}
+                  onClick={() => setSelectedPlan(plan.id)}
                   className={`relative flex flex-col items-stretch rounded-2xl border px-4 py-4 text-left transition ${
                     isPurchased
-                      ? "border-green-500/30 bg-green-500/10 cursor-default"
+                      ? "border-green-500/30 bg-green-500/10 cursor-pointer"
                       : isSelected
                       ? plan.bestValue 
                         ? "border-orange-400 bg-gradient-to-br from-orange-500/10 to-yellow-500/10 ring-2 ring-orange-400/50"
@@ -264,14 +288,41 @@ export default function LinkedInGrowthPage() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {purchasedPlan ? (
               <div className="flex gap-3">
-                <button
-                  onClick={() => router.push(`/courses/linkedin-growth/access?plan=${purchasedPlan}`)}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-green-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-green-500/30 transition hover:bg-green-400"
-                >
-                  Access Course
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-                {(purchasedPlan === "basic" || purchasedPlan === "plus") && (
+                {/* Show Access Course if no plan is selected OR selected plan is purchased */}
+                {(!selectedPlan || selectedPlan === purchasedPlan) && (
+                  <button
+                    onClick={() => router.push(`/courses/linkedin-growth/access?plan=${purchasedPlan}`)}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-green-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-green-500/30 transition hover:bg-green-400"
+                  >
+                    Access Course
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                )}
+                
+                {/* Show upgrade button for higher plans */}
+                {selectedPlan && selectedPlan !== purchasedPlan && (
+                  <button
+                    onClick={handleContinue}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400"
+                  >
+                    Upgrade to {plans.find(p => p.id === selectedPlan)?.name}
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                )}
+                
+                {/* Show upgrade option when purchased plan is selected AND it's not the highest plan */}
+                {selectedPlan === purchasedPlan && (purchasedPlan === "basic" || purchasedPlan === "plus") && (
+                  <button
+                    onClick={() => router.push(`/upgrade?from=${purchasedPlan}`)}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/10"
+                  >
+                    Upgrade Plan
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                )}
+                
+                {/* General upgrade option when no specific plan selected */}
+                {!selectedPlan && (purchasedPlan === "basic" || purchasedPlan === "plus") && (
                   <button
                     onClick={() => router.push(`/upgrade?from=${purchasedPlan}`)}
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/10"
