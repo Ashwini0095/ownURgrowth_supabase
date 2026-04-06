@@ -80,10 +80,10 @@ export default function Home() {
               </div>
             </div>
 
-            <h1 className="text-5xl font-bold leading-relaxed tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl sm:leading-relaxed lg:leading-relaxed xl:leading-relaxed">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl sm:leading-relaxed lg:leading-relaxed xl:leading-relaxed">
               <span className="text-[#141619]">Master Skills That</span>
               <br />
-              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent font-black text-6xl sm:text-7xl lg:text-8xl xl:text-9xl">
+              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
                 <Typewriter 
                   phrases={[
                     "Builds Passive Income",
@@ -97,7 +97,7 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-lg text-[#2C2E3A] sm:text-xl lg:text-2xl font-semibold leading-relaxed max-w-7xl mx-auto tracking-normal px-4">
+            <p className="text-base text-[#2C2E3A] sm:text-lg md:text-xl lg:text-2xl font-semibold leading-relaxed max-w-7xl mx-auto tracking-normal px-4">
               You didn't come this far to stay average. Land your dream job, grow your LinkedIn, and build a brand that works for you, ownURgrowth got you covered.
             </p>
 
@@ -159,9 +159,9 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid gap-10 md:grid-cols-2 max-w-6xl mx-auto">
+          <div className="grid gap-6 md:gap-10 md:grid-cols-2 max-w-6xl mx-auto">
             <ScrollAnimation delay={200}>
-              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
+              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
               {/* Premium glow effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
               
@@ -176,14 +176,14 @@ export default function Home() {
                 <div className="w-6 h-6 bg-[#1D4ED8]/30 rounded-lg"></div>
               </div>
               
-              <h3 className="text-4xl font-bold text-[#141619] mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#141619] mb-4 md:mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
                 LinkedIn Decoded
               </h3>
-              <p className="text-[#2C2E3A] text-xl mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
+              <p className="text-[#2C2E3A] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
                 No theory. No fillers. Just raw secrets and tactics that actually grows your linkedin.
               </p>
               <div className="flex items-center justify-end mt-auto relative z-10">
-                <Link href="/courses/linkedin-growth" className="relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-16 py-4 text-xl font-bold text-white transition-all duration-500 hover:scale-105 shadow-xl hover:shadow-2xl rounded-2xl group-hover:shadow-[#1D4ED8]/30">
+                <Link href="/courses/linkedin-growth" className="relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-8 md:px-16 py-3 md:py-4 text-lg md:text-xl font-bold text-white transition-all duration-500 hover:scale-105 shadow-xl hover:shadow-2xl rounded-2xl group-hover:shadow-[#1D4ED8]/30">
                   <span className="relative z-10">Enroll Now</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 </Link>
@@ -192,7 +192,7 @@ export default function Home() {
             </ScrollAnimation>
 
             <ScrollAnimation delay={400}>
-              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
+              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
               {/* Premium glow effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
               
@@ -207,14 +207,14 @@ export default function Home() {
                 <div className="w-6 h-6 bg-[#1D4ED8]/30 rounded-lg"></div>
               </div>
               
-              <h3 className="text-4xl font-bold text-[#141619] mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#141619] mb-4 md:mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
                 System Design Notes
               </h3>
-              <p className="text-[#2C2E3A] text-xl mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
+              <p className="text-[#2C2E3A] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
                 Clear notes to master scalable system design for real-world systems and interviews(which will get you in MAANG)
               </p>
               <div className="flex items-center justify-end mt-auto relative z-10">
-                <button className="relative overflow-hidden bg-gradient-to-r from-gray-400 to-gray-500 px-16 py-4 text-xl font-bold text-white shadow-xl rounded-2xl cursor-not-allowed opacity-70">
+                <button className="relative overflow-hidden bg-gradient-to-r from-gray-400 to-gray-500 px-8 md:px-16 py-3 md:py-4 text-lg md:text-xl font-bold text-white shadow-xl rounded-2xl cursor-not-allowed opacity-70">
                   <span className="relative z-10">Coming Soon</span>
                 </button>
               </div>
@@ -269,7 +269,7 @@ export default function Home() {
             </div>
           </ScrollAnimation>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-6 md:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
             <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105 bg-white border border-[#B3B4BD]/20 rounded-2xl p-6">
               <div className="mx-auto h-16 w-16 rounded-2xl bg-[#1D4ED8]/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[#1D4ED8]/20 group-hover:scale-110">
                 <Clock className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
@@ -345,7 +345,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <div className="group rounded-2xl border border-[#B3B4BD]/20 bg-gray-50/50 p-6 text-center transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-gray-50/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
                 <GraduationCap className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
