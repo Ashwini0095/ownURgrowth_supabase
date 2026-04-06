@@ -42,13 +42,13 @@ function VerifyEmailContent() {
   }, [searchParams, router, user]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619] flex items-center justify-center">
       <div className="max-w-md mx-auto text-center p-6">
         {status === 'verifying' && (
           <>
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-white mb-2">Verifying Email...</h2>
-            <p className="text-slate-300">Please wait while we verify your email address.</p>
+            <h2 className="text-2xl font-bold text-[#141619] mb-2">Verifying Email...</h2>
+            <p className="text-[#2C2E3A]">Please wait while we verify your email address.</p>
           </>
         )}
         
@@ -59,11 +59,11 @@ function VerifyEmailContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Email Verified!</h2>
-            <p className="text-slate-300 mb-4">
+            <h2 className="text-2xl font-bold text-[#141619] mb-2">Email Verified!</h2>
+            <p className="text-[#2C2E3A] mb-4">
               Your email has been successfully verified. You can now access all features.
             </p>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[#B3B4BD]">
               Redirecting to homepage in 3 seconds...
             </p>
           </>
@@ -76,13 +76,13 @@ function VerifyEmailContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Verification Failed</h2>
-            <p className="text-slate-300 mb-4">
+            <h2 className="text-2xl font-bold text-[#141619] mb-2">Verification Failed</h2>
+            <p className="text-[#2C2E3A] mb-4">
               The verification link is invalid or has expired.
             </p>
             <button
               onClick={() => router.push('/signup')}
-              className="bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded-lg transition"
+              className="bg-[#1D4ED8] text-white font-semibold py-2 px-4 rounded-lg transition"
             >
               Sign Up Again
             </button>
@@ -95,7 +95,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619] flex items-center justify-center">Loading...</div>}>
       <VerifyEmailContent />
     </Suspense>
   );

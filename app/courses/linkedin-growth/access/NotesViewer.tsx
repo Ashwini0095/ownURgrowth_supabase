@@ -60,7 +60,7 @@ export default function NotesViewer({ pdfUrl }: Props) {
               type="button"
               onClick={goPrev}
               disabled={pageNumber <= 1}
-              className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-slate-300 transition hover:bg-white/10 hover:text-white disabled:opacity-40 disabled:hover:bg-white/5"
+              className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-slate-300 transition hover:bg-white/10 hover:text-[#141619] disabled:opacity-40 disabled:hover:bg-white/5"
               aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -72,7 +72,7 @@ export default function NotesViewer({ pdfUrl }: Props) {
               type="button"
               onClick={goNext}
               disabled={pageNumber >= numPages}
-              className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-slate-300 transition hover:bg-white/10 hover:text-white disabled:opacity-40 disabled:hover:bg-white/5"
+              className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-slate-300 transition hover:bg-white/10 hover:text-[#141619] disabled:opacity-40 disabled:hover:bg-white/5"
               aria-label="Next page"
             >
               <ChevronRight className="h-4 w-4" />

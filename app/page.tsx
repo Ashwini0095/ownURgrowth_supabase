@@ -7,6 +7,15 @@ import { useEffect, useState } from "react";
 import { trackPageView, trackButtonClick } from "../lib/analytics";
 import Navigation from "../components/Navigation";
 import ReviewsCarousel from "../components/ReviewsCarousel";
+import InteractiveCounter from "../components/InteractiveCounter";
+import FloatingCTA from "../components/FloatingCTA";
+import InteractiveFAQ from "../components/InteractiveFAQ";
+import ParallaxBackground from "../components/ParallaxBackground";
+import AnimatedText from "../components/AnimatedText";
+import ScrollProgressBar from "../components/ScrollProgressBar";
+import BackToTop from "../components/BackToTop";
+import Typewriter from "../components/Typewriter";
+import ScrollAnimation from "../components/ScrollAnimation";
 
 export default function Home() {
   const { user, signOut } = useAuth();
@@ -22,54 +31,107 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white relative overflow-hidden">
+      {/* Abstract background shapes */}
+      <div className="absolute top-20 right-20 w-64 h-64 bg-[#1D4ED8]/5 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-40 left-10 w-80 h-80 bg-[#0F172A]/3 rounded-full blur-2xl"></div>
+      <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-[#B3B4BD]/10 rotate-45 blur-xl"></div>
+      
       <Navigation />
 
       {/* Hero Section */}
-      <section className="border-b border-white/5 bg-gradient-to-b from-slate-950 to-slate-900">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
-          <div className="mx-auto max-w-4xl space-y-8">
-            <div className="flex flex-wrap gap-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 backdrop-blur">
-                <span className="inline-flex h-2 w-2 rounded-full bg-blue-400" />
-                Transform Your Career & Life
+      <section className="relative min-h-[85vh] flex items-start justify-center pt-16 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 overflow-hidden">
+        {/* Square Grid Background */}
+        <div 
+          className="absolute inset-0 opacity-[0.15]"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(29, 78, 216, 0.4) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(29, 78, 216, 0.4) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px'
+          }}
+        />
+        
+        {/* Professional Background Elements */}
+        <div className="absolute inset-0">
+          {/* Gradient Orbs */}
+          <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-indigo-600/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-tr from-indigo-400/15 to-blue-500/10 rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-300/10 to-indigo-400/10 rounded-full blur-3xl"></div>
+          
+          {/* Geometric Patterns */}
+          <div className="absolute top-32 left-32 w-32 h-32 border border-blue-200/30 rounded-2xl rotate-12 animate-pulse"></div>
+          <div className="absolute bottom-32 right-32 w-24 h-24 bg-gradient-to-br from-indigo-200/20 to-blue-300/20 rounded-full"></div>
+          <div className="absolute top-1/3 right-1/4 w-16 h-16 border-2 border-blue-300/20 rotate-45"></div>
+        </div>
+        
+        <div className="w-full max-w-none px-8 lg:px-12 relative z-10">
+          <div className="w-full space-y-6 text-center">
+            {/* Floating badges */}
+            <div className="flex flex-wrap justify-center gap-6">
+              <div className="group transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-3 bg-[#1D4ED8]/10 backdrop-blur-sm border border-[#1D4ED8]/20 px-6 py-3 rounded-full shadow-lg hover:shadow-[#1D4ED8]/30">
+                <span className="w-2 h-2 bg-[#1D4ED8] rounded-full animate-pulse" />
+                <span className="text-[#141619] font-medium text-lg">Transform Your Career & Life</span>
               </div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 backdrop-blur">
-                <span className="inline-flex h-2 w-2 rounded-full bg-cyan-400" />
-                Build your personal brand
+              <div className="group transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-3 bg-[#1D4ED8]/10 backdrop-blur-sm border border-[#1D4ED8]/20 px-6 py-3 rounded-full shadow-lg hover:shadow-[#1D4ED8]/30">
+                <span className="w-2 h-2 bg-[#0F172A] rounded-full animate-pulse" />
+                <span className="text-[#141619] font-medium text-lg">Build your personal brand</span>
               </div>
             </div>
 
-            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl">
-              <span className="text-slate-200">Master Skills That</span>{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                Actually Matter
+            <h1 className="text-5xl font-bold leading-relaxed tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl sm:leading-relaxed lg:leading-relaxed xl:leading-relaxed">
+              <span className="text-[#141619]">Master Skills That</span>
+              <br />
+              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent font-black text-6xl sm:text-7xl lg:text-8xl xl:text-9xl">
+                <Typewriter 
+                  phrases={[
+                    "Builds Passive Income",
+                    "Actually Matters", 
+                    "Builds Personal Brand"
+                  ]}
+                  typingSpeed={80}
+                  deletingSpeed={40}
+                  pauseDuration={1500}
+                />
               </span>
             </h1>
 
-            <p className="text-lg text-slate-300 sm:text-xl lg:text-2xl">
+            <p className="text-lg text-[#2C2E3A] sm:text-xl lg:text-2xl font-semibold leading-relaxed max-w-7xl mx-auto tracking-normal px-4">
               You didn't come this far to stay average. Land your dream job, grow your LinkedIn, and build a brand that works for you, ownURgrowth got you covered.
             </p>
 
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <Link href="/courses" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-400/40 hover:scale-105">
-                  Start Learning Today
-                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <div className="flex flex-col gap-6 mt-12">
+              <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
+                <Link href="/courses" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                  <span className="relative z-10 flex items-center gap-3">
+                    Start Learning Today
+                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
-                <Link href="/partnerships" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
-                  Amplify Your Brand with LinkedIn Creators
-                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <Link href="/partnerships" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                  <span className="relative z-10 flex items-center gap-3">
+                    Amplify Your Brand
+                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
               </div>
-              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:shadow-cyan-400/40 hover:scale-105">
-                  Connect 1:1
-                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
+                <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                  <span className="relative z-10 flex items-center gap-3">
+                    Connect 1:1
+                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
-                <Link href="/ghostwriting" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-blue-400/40 hover:scale-105">
-                  Let us grow your Linkedin
-                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <Link href="/ghostwriting" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                  <span className="relative z-10 flex items-center gap-3">
+                    Let us grow your Linkedin
+                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
               </div>
             </div>
@@ -78,105 +140,182 @@ export default function Home() {
       </section>
 
       {/* Course Preview Section */}
-      <section className="border-b border-white/5 bg-slate-900/90" style={{background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%)'}}>
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-20">
-          <div className="text-center mb-12">
-            <h2 className="text-5xl font-bold text-slate-50 sm:text-6xl">
-              Learn & Earn <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Programs</span>
+      <section className="relative bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100 py-24 lg:py-32 shadow-inner">
+        {/* Professional background overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-50/50 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-50/30 via-transparent to-slate-50/30"></div>
+        {/* Subtle 3D elements */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-[#1D4ED8]/10 rotate-12 rounded-lg blur-sm"></div>
+        <div className="absolute bottom-20 right-20 w-16 h-16 bg-[#B3B4BD]/20 -rotate-45 rounded-lg"></div>
+        
+        <div className="mx-auto max-w-7xl px-4 lg:px-6 relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl font-bold text-[#141619] sm:text-6xl lg:text-7xl mb-6">
+              Learn & Earn <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">Programs</span>
             </h2>
-            <p className="text-2xl text-slate-300 mt-2">
-              Built for The <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Ambitious</span>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] mx-auto mb-6"></div>
+            <p className="text-2xl text-[#141619] font-bold">
+              Built for The Ambitious
             </p>
           </div>
           
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="group rounded-2xl border border-white/10 bg-slate-950/70 p-6 transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/90 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10">
-              <h3 className="text-2xl font-bold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">LinkedIn Decoded</h3>
-              <p className="text-slate-300 text-base mb-4">
+          <div className="grid gap-10 md:grid-cols-2 max-w-6xl mx-auto">
+            <ScrollAnimation delay={200}>
+              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
+              {/* Premium glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
+              
+              {/* Animated border glow */}
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#1D4ED8]/20 via-blue-300/30 to-[#1D4ED8]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-sm -z-10"></div>
+              
+              {/* Top accent line */}
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
+              
+              {/* Corner decoration */}
+              <div className="absolute top-6 right-6 w-12 h-12 bg-[#1D4ED8]/10 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform rotate-12 group-hover:rotate-0">
+                <div className="w-6 h-6 bg-[#1D4ED8]/30 rounded-lg"></div>
+              </div>
+              
+              <h3 className="text-4xl font-bold text-[#141619] mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
+                LinkedIn Decoded
+              </h3>
+              <p className="text-[#2C2E3A] text-xl mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
                 No theory. No fillers. Just raw secrets and tactics that actually grows your linkedin.
               </p>
-              <div className="flex items-center justify-end">
-                <Link href="/courses/linkedin-growth" className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-blue-400 hover:scale-110">
-                  Enroll Now
+              <div className="flex items-center justify-end mt-auto relative z-10">
+                <Link href="/courses/linkedin-growth" className="relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-16 py-4 text-xl font-bold text-white transition-all duration-500 hover:scale-105 shadow-xl hover:shadow-2xl rounded-2xl group-hover:shadow-[#1D4ED8]/30">
+                  <span className="relative z-10">Enroll Now</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 </Link>
               </div>
             </div>
+            </ScrollAnimation>
 
-            <div className="group rounded-2xl border border-white/10 bg-slate-950/70 p-6 transition-all duration-300 hover:border-slate-600/50 hover:bg-slate-950/90">
-              <h3 className="text-2xl font-bold text-slate-50 mb-3">System Design Notes</h3>
-              <p className="text-slate-300 text-base mb-4">
+            <ScrollAnimation delay={400}>
+              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
+              {/* Premium glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
+              
+              {/* Animated border glow */}
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#1D4ED8]/20 via-blue-300/30 to-[#1D4ED8]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-sm -z-10"></div>
+              
+              {/* Top accent line */}
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
+              
+              {/* Corner decoration */}
+              <div className="absolute top-6 right-6 w-12 h-12 bg-[#1D4ED8]/10 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform rotate-12 group-hover:rotate-0">
+                <div className="w-6 h-6 bg-[#1D4ED8]/30 rounded-lg"></div>
+              </div>
+              
+              <h3 className="text-4xl font-bold text-[#141619] mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
+                System Design Notes
+              </h3>
+              <p className="text-[#2C2E3A] text-xl mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
                 Clear notes to master scalable system design for real-world systems and interviews(which will get you in MAANG)
               </p>
-              <div className="flex items-center justify-between">
-                <div></div>
-                <button className="inline-flex items-center gap-2 rounded-full border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-400 cursor-not-allowed">
-                  Coming Soon
+              <div className="flex items-center justify-end mt-auto relative z-10">
+                <button className="relative overflow-hidden bg-gradient-to-r from-gray-400 to-gray-500 px-16 py-4 text-xl font-bold text-white shadow-xl rounded-2xl cursor-not-allowed opacity-70">
+                  <span className="relative z-10">Coming Soon</span>
                 </button>
               </div>
             </div>
+            </ScrollAnimation>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="why-choose" className="border-b border-white/5 bg-slate-950">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-4">
-              Why Choose <span className="text-white">own</span><span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span><span className="text-white">growth</span>?
-            </h2>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              We focus on practical skills that make a real difference in your career and life.
-            </p>
-          </div>
+      <section id="why-choose" className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30 relative overflow-hidden">
+        {/* Modern Background Elements */}
+        <div className="absolute inset-0">
+          {/* Animated gradient orbs */}
+          <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-br from-blue-400/10 to-indigo-500/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-gradient-to-tl from-indigo-400/8 to-blue-500/5 rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-300/5 to-indigo-400/8 rounded-full blur-3xl"></div>
+          
+          {/* Floating geometric shapes */}
+          <div className="absolute top-20 right-1/4 w-20 h-20 border border-blue-200/40 rounded-2xl rotate-12 animate-bounce" style={{animationDuration: '3s'}}></div>
+          <div className="absolute bottom-32 left-1/4 w-16 h-16 bg-gradient-to-br from-indigo-200/30 to-blue-300/20 rounded-full animate-pulse"></div>
+          <div className="absolute top-1/3 right-1/6 w-12 h-12 border-2 border-blue-300/30 rotate-45 animate-spin" style={{animationDuration: '8s'}}></div>
+          
+          {/* Additional cubes and shapes */}
+          <div className="absolute top-40 left-1/3 w-14 h-14 bg-blue-200/20 rounded-lg rotate-45 animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-20 right-1/3 w-18 h-18 border border-indigo-300/30 rounded-xl rotate-12 animate-bounce" style={{animationDuration: '4s', animationDelay: '0.5s'}}></div>
+          <div className="absolute top-60 right-20 w-10 h-10 bg-gradient-to-br from-blue-300/25 to-indigo-400/15 rounded-md rotate-90 animate-spin" style={{animationDuration: '6s'}}></div>
+          <div className="absolute bottom-40 left-20 w-22 h-22 border-2 border-blue-400/25 rounded-2xl -rotate-12 animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/4 left-1/5 w-8 h-8 bg-indigo-300/20 rounded-full animate-bounce" style={{animationDuration: '2.5s', animationDelay: '1.5s'}}></div>
+          <div className="absolute bottom-60 right-1/5 w-16 h-16 border border-blue-300/35 rounded-lg rotate-45 animate-spin" style={{animationDuration: '10s'}}></div>
+          <div className="absolute top-80 left-1/6 w-12 h-12 bg-gradient-to-tr from-blue-200/30 to-indigo-300/20 rounded-xl rotate-30 animate-pulse" style={{animationDelay: '3s'}}></div>
+          
+          {/* Subtle dot pattern */}
+          <div 
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: `radial-gradient(circle, rgba(29, 78, 216, 0.3) 1px, transparent 1px)`,
+              backgroundSize: '30px 30px'
+            }}
+          />
+        </div>
+        
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24 relative z-10">
+          <ScrollAnimation>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-[#141619] sm:text-5xl mb-4">
+                Why Choose ownURgrowth?
+              </h2>
+              <p className="text-xl text-[#2C2E3A] max-w-3xl mx-auto font-light">
+                We focus on practical skills that make a real difference in your career and life.
+              </p>
+            </div>
+          </ScrollAnimation>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
-            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Clock className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105 bg-white border border-[#B3B4BD]/20 rounded-2xl p-6">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-[#1D4ED8]/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[#1D4ED8]/20 group-hover:scale-110">
+                <Clock className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Lifetime Access</h3>
-              <p className="text-slate-300">
+              <h3 className="text-xl font-semibold text-[#141619] group-hover:text-[#1D4ED8] transition-colors">Lifetime Access</h3>
+              <p className="text-[#2C2E3A] font-light">
                 Learn at your own pace with permanent access to all course materials and updates.
               </p>
             </div>
 
-            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <span className="text-2xl font-bold text-blue-400 transition-all duration-300 group-hover:scale-110">₹</span>
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105 bg-white border border-[#B3B4BD]/20 rounded-2xl p-6">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-[#1D4ED8]/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[#1D4ED8]/20 group-hover:scale-110">
+                <span className="text-2xl font-bold text-[#1D4ED8] transition-all duration-300 group-hover:scale-110">₹</span>
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Affordable Pricing</h3>
-              <p className="text-slate-300">
+              <h3 className="text-xl font-semibold text-[#141619] group-hover:text-[#1D4ED8] transition-colors">Affordable Pricing</h3>
+              <p className="text-[#2C2E3A] font-light">
                 You have wasted a lot of money in useless things, make smart decision this time, you won't regret
               </p>
             </div>
 
-            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Users className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105 bg-white border border-[#B3B4BD]/20 rounded-2xl p-6">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-[#1D4ED8]/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[#1D4ED8]/20 group-hover:scale-110">
+                <Users className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Live QNA Session</h3>
-              <p className="text-slate-300">
+              <h3 className="text-xl font-semibold text-[#141619] group-hover:text-[#1D4ED8] transition-colors">Live QNA Session</h3>
+              <p className="text-[#2C2E3A] font-light">
                 Get your doubts cleared in live Q&A sessions with the experienced & experts.
               </p>
             </div>
 
-            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
-              <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <RefreshCw className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105 bg-white border border-[#B3B4BD]/20 rounded-2xl p-6">
+              <div className="mx-auto h-16 w-16 rounded-2xl bg-[#1D4ED8]/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[#1D4ED8]/20 group-hover:scale-110">
+                <RefreshCw className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Free Course Updates</h3>
-              <p className="text-slate-300">
+              <h3 className="text-xl font-semibold text-[#141619] group-hover:text-[#1D4ED8] transition-colors">Free Course Updates</h3>
+              <p className="text-[#2C2E3A] font-light">
                 All future improvements and additional content are included at no extra cost.
               </p>
             </div>
 
-            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105">
+            <div className="group text-center space-y-4 transition-all duration-300 hover:scale-105 bg-white border border-[#B3B4BD]/20 rounded-2xl p-6">
               <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <BookOpen className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <BookOpen className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 group-hover:text-blue-400 transition-colors">Concise & High-Signal Notes</h3>
-              <p className="text-slate-300">
+              <h3 className="text-xl font-semibold text-[#141619] group-hover:text-[#1D4ED8] transition-colors">Concise & High-Signal Notes</h3>
+              <p className="text-[#2C2E3A]">
                 No fluff. Just ideas, patterns, and trade-offs that count.
               </p>
             </div>
@@ -185,71 +324,84 @@ export default function Home() {
       </section>
 
       {/* Who Is ownURgrowth For Section */}
-      <section className="border-b border-white/5 bg-gradient-to-b from-slate-800 to-slate-900">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
+      <section className="border-b border-white/5 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
+        {/* Background shading overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 via-transparent to-blue-300/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-200/40 via-transparent to-blue-200/40"></div>
+        
+        {/* Subtle geometric elements */}
+        <div className="absolute top-10 right-10 w-32 h-32 bg-blue-300/20 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-10 left-10 w-40 h-40 bg-blue-400/15 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-blue-200/25 rounded-2xl rotate-45 blur-xl"></div>
+        
+        {/* Additional subtle shapes */}
+        <div className="absolute top-20 left-1/3 w-16 h-16 border border-blue-300/30 rounded-lg rotate-12"></div>
+        <div className="absolute bottom-20 right-1/3 w-12 h-12 bg-blue-300/20 rounded-full"></div>
+        <div className="absolute top-1/3 left-20 w-8 h-8 border-2 border-blue-400/25 rotate-45"></div>
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-4">
-              Who Is <span className="text-white">own</span><span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span><span className="text-white">growth</span> For?
+            <h2 className="text-3xl font-bold text-[#141619] sm:text-4xl mb-4">
+              Who Is ownURgrowth For?
             </h2>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+            <div className="group rounded-2xl border border-[#B3B4BD]/20 bg-gray-50/50 p-6 text-center transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-gray-50/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <GraduationCap className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <GraduationCap className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Students</h3>
-              <p className="text-slate-300 text-sm">
+              <h3 className="text-xl font-semibold text-[#141619] mb-3 group-hover:text-[#1D4ED8] transition-colors">Students</h3>
+              <p className="text-[#2C2E3A] text-sm">
                 Learn what school and college don't teach, the skills that actually make money.
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+            <div className="group rounded-2xl border border-[#B3B4BD]/20 bg-gray-50/50 p-6 text-center transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-gray-50/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Briefcase className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Briefcase className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Working Professionals</h3>
-              <p className="text-slate-300 text-sm">
+              <h3 className="text-xl font-semibold text-[#141619] mb-3 group-hover:text-[#1D4ED8] transition-colors">Working Professionals</h3>
+              <p className="text-[#2C2E3A] text-sm">
                 Develop essential skills to enhance your career and boost productivity in your current role.
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+            <div className="group rounded-2xl border border-[#B3B4BD]/20 bg-gray-50/50 p-6 text-center transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-gray-50/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Laptop className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Laptop className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Freelancers</h3>
-              <p className="text-slate-300 text-sm">
+              <h3 className="text-xl font-semibold text-[#141619] mb-3 group-hover:text-[#1D4ED8] transition-colors">Freelancers</h3>
+              <p className="text-[#2C2E3A] text-sm">
                 Discover ways to grow, manage, and streamline your freelance business effectively.
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+            <div className="group rounded-2xl border border-[#B3B4BD]/20 bg-gray-50/50 p-6 text-center transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-gray-50/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <ArrowRight className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <ArrowRight className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Career Shifters</h3>
-              <p className="text-slate-300 text-sm">
+              <h3 className="text-xl font-semibold text-[#141619] mb-3 group-hover:text-[#1D4ED8] transition-colors">Career Shifters</h3>
+              <p className="text-[#2C2E3A] text-sm">
                 Get the guidance needed to pivot confidently into a new field or industry.
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+            <div className="group rounded-2xl border border-[#B3B4BD]/20 bg-gray-50/50 p-6 text-center transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-gray-50/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Heart className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Heart className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Parents</h3>
-              <p className="text-slate-300 text-sm">
+              <h3 className="text-xl font-semibold text-[#141619] mb-3 group-hover:text-[#1D4ED8] transition-colors">Parents</h3>
+              <p className="text-[#2C2E3A] text-sm">
                 Manage time and personal growth while balancing family responsibilities.
               </p>
             </div>
 
-            <div className="group rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-900/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+            <div className="group rounded-2xl border border-[#B3B4BD]/20 bg-gray-50/50 p-6 text-center transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-gray-50/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10">
               <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 flex items-center justify-center transition-all duration-300 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 group-hover:scale-110">
-                <Building className="h-8 w-8 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Building className="h-6 w-6 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-50 mb-3 group-hover:text-blue-400 transition-colors">Founders and Business Owners</h3>
-              <p className="text-slate-300 text-sm">
+              <h3 className="text-xl font-semibold text-[#141619] mb-3 group-hover:text-[#1D4ED8] transition-colors">Founders and Business Owners</h3>
+              <p className="text-[#2C2E3A] text-sm">
                 Turn LinkedIn into a consistent source of leads and authority.
               </p>
             </div>
@@ -258,13 +410,17 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="reviews" className="border-b border-white/5 bg-slate-950">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24">
+      <section id="reviews" className="bg-gradient-to-b from-white to-gray-50 relative">
+        {/* Abstract background shapes */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-[#1D4ED8]/10 rotate-12 rounded-lg blur-sm"></div>
+        <div className="absolute bottom-20 right-20 w-16 h-16 bg-[#B3B4BD]/20 -rotate-45 rounded-lg"></div>
+        
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-50 sm:text-4xl mb-4">
+            <h2 className="text-4xl font-bold text-[#141619] sm:text-5xl mb-4">
               Hear From Our Family
             </h2>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+            <p className="text-xl text-[#2C2E3A] max-w-3xl mx-auto font-light">
               Join professionals who have upskilled and grew in their careers.
             </p>
           </div>
@@ -273,32 +429,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Interactive FAQ Section */}
+      <InteractiveFAQ />
+
+      {/* Floating CTA */}
+      <FloatingCTA text="Start Learning" href="/courses" />
+
+      {/* Back to Top */}
+      <BackToTop />
+
       {/* Footer */}
-      <footer className="bg-slate-950">
+      <footer className="bg-[#141619]">
         <div className="mx-auto max-w-6xl px-4 py-8 lg:px-6">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-2xl font-bold">
               <span className="text-white">own</span>
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
+              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">UR</span>
               <span className="text-white">growth</span>
             </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-300">
-              <Link href="/courses" className="hover:text-white">
+            <div className="flex flex-wrap gap-6 text-sm text-gray-300">
+              <Link href="/courses" className="hover:text-white transition-colors">
                 Courses
               </Link>
-              <Link href="/about" className="hover:text-white">
+              <Link href="/about" className="hover:text-[#141619]">
                 About
               </Link>
-              <Link href="/contact" className="hover:text-white">
+              <Link href="/contact" className="hover:text-[#141619]">
                 Contact
               </Link>
-              <Link href="/privacy" className="hover:text-white">
+              <Link href="/privacy" className="hover:text-[#141619]">
                 Privacy
               </Link>
             </div>
           </div>
           <div className="mt-8 border-t border-white/5 pt-8 text-center text-sm text-slate-400">
-            © 2024 ownURgrowth. All rights reserved.
+            © 2026 ownURgrowth. All rights reserved.
           </div>
         </div>
       </footer>

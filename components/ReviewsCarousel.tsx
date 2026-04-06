@@ -101,21 +101,21 @@ export default function ReviewsCarousel() {
         {[...reviews, ...reviews].map((review, index) => (
           <div 
             key={index}
-            className="group min-w-[350px] rounded-2xl border border-white/10 bg-slate-950/50 p-6 backdrop-blur transition-all duration-300 hover:border-blue-400/30 hover:bg-slate-950/80 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10"
+            className="group min-w-[350px] rounded-2xl border border-[#B3B4BD]/20 bg-white/800 p-6 backdrop-blur transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-white/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10"
           >
             <div className="mb-4 flex">
               {[...Array(review.rating)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 fill-blue-400 text-blue-400 transition-all duration-300 group-hover:scale-110" />
+                <Star key={i} className="h-5 w-5 fill-blue-400 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
               ))}
             </div>
-            <p className="mb-4 text-slate-300 group-hover:text-slate-200 transition-colors">
+            <p className="mb-4 text-[#2C2E3A] group-hover:text-[#141619] transition-colors">
               "{review.text}"
             </p>
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-400 transition-all duration-300 group-hover:scale-110" />
+              <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-[#1D4ED8] to-[#0F172A] transition-all duration-300 group-hover:scale-110" />
               <div>
-                <div className="font-semibold text-slate-100 group-hover:text-blue-400 transition-colors">{review.name}</div>
-                <div className="text-sm text-slate-400">{review.role}</div>
+                <div className="font-semibold text-slate-100 group-hover:text-[#1D4ED8] transition-colors">{review.name}</div>
+                <div className="text-sm text-[#B3B4BD]">{review.role}</div>
               </div>
             </div>
           </div>

@@ -168,41 +168,44 @@ export default function LinkedInGrowthPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white ">
       {/* Navigation */}
-      <nav className="border-b border-white/5">
+      <nav className="bg-white/90 backdrop-blur-md border-b border-[#B3B4BD]/20 shadow-sm">
         <div className="mx-auto max-w-6xl px-4 py-4 lg:px-6">
           <Link href="/" className="text-2xl font-bold">
-            <span className="text-white">own</span>
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">UR</span>
-            <span className="text-white">growth</span>
+            <span className="text-[#141619]">own</span>
+            <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">UR</span>
+            <span className="text-[#141619]">growth</span>
           </Link>
         </div>
       </nav>
 
-      <section className="border-b border-white/5 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900">
-        <div className="mx-auto max-w-5xl px-4 pb-16 pt-20 lg:px-6 lg:pt-24">
-          <div className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
-              ownURgrowth • Course
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-              Grow on LinkedIn
+      <section className="py-16 lg:py-24 relative">
+        {/* Abstract background shapes */}
+        <div className="absolute top-10 right-10 w-48 h-48 bg-[#1D4ED8]/5 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-20 left-20 w-32 h-32 bg-[#B3B4BD]/10 rotate-45"></div>
+        
+        <div className="mx-auto max-w-5xl px-4 lg:px-6 relative z-10">
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-2 bg-[#1D4ED8]/10 px-4 py-2 rounded-full mb-6">
+              <span className="text-[#141619] font-medium text-sm uppercase tracking-wider">
+                ownURgrowth • Course
+              </span>
+            </div>
+            <h1 className="text-5xl font-bold text-[#141619] sm:text-6xl lg:text-7xl mb-6">
+              Grow on <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">LinkedIn</span>
             </h1>
-            <p className="mt-3 max-w-2xl text-sm text-slate-300 sm:text-base">
-              Build a system to grow your LinkedIn audience, generate
-              opportunities, and build your personal brand with lifetime access
-              and three simple plans.
+            <p className="text-xl text-[#2C2E3A] font-light leading-relaxed max-w-3xl mx-auto">
+              Build a system to grow your LinkedIn audience, generate opportunities, and build your personal brand with lifetime access and three simple plans.
             </p>
           </div>
 
-          <div className="mb-8 rounded-2xl border border-blue-500/40 bg-slate-900/70 p-4 text-xs text-slate-200 sm:text-sm">
-            <p className="font-medium text-blue-200">
+          <div className="mb-12 bg-white/90 backdrop-blur-sm border border-[#B3B4BD]/20 rounded-2xl p-6 shadow-lg text-center">
+            <h2 className="text-2xl font-semibold text-[#141619] mb-2">
               Choose the plan that fits you best.
-            </p>
-            <p className="mt-1 text-slate-400">
-              You can upgrade later by paying the difference. Payments are one-time
-              and include lifetime access.
+            </h2>
+            <p className="text-[#2C2E3A] font-light">
+              You can upgrade later by paying the difference. Payments are one-time and include lifetime access.
             </p>
           </div>
 
@@ -223,21 +226,21 @@ export default function LinkedInGrowthPage() {
                       : isSelected
                       ? plan.bestValue 
                         ? "border-orange-400 bg-gradient-to-br from-orange-500/10 to-yellow-500/10 ring-2 ring-orange-400/50"
-                        : "border-blue-400 bg-slate-900"
+                        : "border-blue-400 bg-white"
                       : plan.bestValue
                       ? "border-orange-300/60 bg-gradient-to-br from-orange-500/5 to-yellow-500/5 hover:border-orange-400 hover:ring-2 hover:ring-orange-400/30"
-                      : "border-white/5 bg-slate-900/60 hover:border-blue-300/60 hover:bg-slate-900"
+                      : "border-[#B3B4BD]/20 bg-white/60 hover:border-blue-300/60 hover:bg-white"
                   }`}
                 >
                   {plan.bestValue && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500 to-yellow-500 px-3 py-1 text-[10px] font-bold text-white shadow-lg">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500 to-yellow-500 px-3 py-1 text-[10px] font-bold  shadow-lg">
                         ⭐ BEST VALUE
                       </span>
                     </div>
                   )}
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <h2 className="text-sm font-semibold text-slate-50">
+                    <h2 className="text-sm font-semibold text-[#141619]">
                       {plan.name}
                     </h2>
                     {isPurchased ? (
@@ -246,7 +249,7 @@ export default function LinkedInGrowthPage() {
                         Purchased
                       </span>
                     ) : isSelected ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/20 px-2 py-0.5 text-[11px] font-medium text-blue-200">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#1D4ED8]/20 px-2 py-0.5 text-[11px] font-medium text-[#1D4ED8]">
                         <Check className="h-3 w-3" />
                         Selected
                       </span>
@@ -256,11 +259,11 @@ export default function LinkedInGrowthPage() {
                       </span>
                     ) : null}
                   </div>
-                  <p className={`text-base font-semibold ${isPurchased ? 'text-green-300' : 'text-blue-300'}`}>
+                  <p className={`text-base font-semibold ${isPurchased ? 'text-green-300' : 'text-[#1D4ED8]'}`}>
                     {plan.price}
                   </p>
-                  <p className="mt-1 text-xs text-slate-400">{plan.description}</p>
-                  <ul className="mt-3 space-y-1 text-xs text-slate-300">
+                  <p className="mt-1 text-xs text-[#B3B4BD]">{plan.description}</p>
+                  <ul className="mt-3 space-y-1 text-xs text-[#2C2E3A]">
                     {plan.includes.map((item) => {
                       const isIncluded = item.startsWith('✓');
                       const isExcluded = item.startsWith('✗');
@@ -292,7 +295,7 @@ export default function LinkedInGrowthPage() {
                 {(!selectedPlan || selectedPlan === purchasedPlan) && (
                   <button
                     onClick={() => router.push(`/courses/linkedin-growth/access?plan=${purchasedPlan}`)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-green-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-green-500/30 transition hover:bg-green-400"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-green-500 px-6 py-2.5 text-sm font-semibold  shadow-lg shadow-green-500/30 transition hover:bg-green-400"
                   >
                     Access Course
                     <ChevronRight className="h-4 w-4" />
@@ -303,7 +306,7 @@ export default function LinkedInGrowthPage() {
                 {selectedPlan && selectedPlan !== purchasedPlan && (
                   <button
                     onClick={handleContinue}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1D4ED8] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#1D4ED8]/30 transition hover:bg-blue-400"
                   >
                     Upgrade to {plans.find(p => p.id === selectedPlan)?.name}
                     <ChevronRight className="h-4 w-4" />
@@ -314,7 +317,7 @@ export default function LinkedInGrowthPage() {
                 {selectedPlan === purchasedPlan && (purchasedPlan === "basic" || purchasedPlan === "plus") && (
                   <button
                     onClick={() => router.push(`/upgrade?from=${purchasedPlan}`)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/10"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-[#1D4ED8] px-6 py-2.5 text-sm font-semibold text-[#1D4ED8] transition hover:bg-[#1D4ED8]/10"
                   >
                     Upgrade Plan
                     <ChevronRight className="h-4 w-4" />
@@ -325,7 +328,7 @@ export default function LinkedInGrowthPage() {
                 {!selectedPlan && (purchasedPlan === "basic" || purchasedPlan === "plus") && (
                   <button
                     onClick={() => router.push(`/upgrade?from=${purchasedPlan}`)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/10"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-[#1D4ED8] px-6 py-2.5 text-sm font-semibold text-[#1D4ED8] transition hover:bg-[#1D4ED8]/10"
                   >
                     Upgrade Plan
                     <ChevronRight className="h-4 w-4" />
@@ -336,14 +339,14 @@ export default function LinkedInGrowthPage() {
               <div className="flex gap-3">
                 <Link
                   href="/login?redirect=/courses/linkedin-growth"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1D4ED8] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#1D4ED8]/30 transition hover:bg-blue-400"
                 >
                   Login to Purchase
                   <ChevronRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/signup?redirect=/courses/linkedin-growth"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/10"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#1D4ED8] px-6 py-2.5 text-sm font-semibold text-[#1D4ED8] transition hover:bg-[#1D4ED8]/10"
                 >
                   Sign Up
                   <ChevronRight className="h-4 w-4" />
@@ -354,13 +357,13 @@ export default function LinkedInGrowthPage() {
                 type="button"
                 onClick={handleContinue}
                 disabled={!selectedPlan}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300 disabled:shadow-none"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1D4ED8] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#1D4ED8]/30 transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-[#2C2E3A] disabled:shadow-none"
               >
                 Continue to payment
                 <ChevronRight className="h-4 w-4" />
               </button>
             )}
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#B3B4BD]">
               {purchasedPlan 
                 ? "You have lifetime access to this course. You can upgrade anytime by paying the difference."
                 : !user

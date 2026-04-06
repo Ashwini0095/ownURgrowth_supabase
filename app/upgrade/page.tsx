@@ -38,11 +38,11 @@ function UpgradeContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 text-white">
+      <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619]">
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-slate-300">Loading...</p>
+            <p className="text-[#2C2E3A]">Loading...</p>
           </div>
         </div>
       </main>
@@ -165,14 +165,14 @@ function UpgradeContent() {
 
   if (availableUpgrades.length === 0) {
     return (
-      <main className="min-h-screen bg-slate-950 text-white">
+      <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619]">
         <div className="mx-auto max-w-3xl px-4 py-20">
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-4">No Upgrades Available</h1>
-            <p className="text-slate-300 mb-8">You already have the highest plan!</p>
+            <p className="text-[#2C2E3A] mb-8">You already have the highest plan!</p>
             <button
               onClick={() => router.back()}
-              className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-6 py-3 font-semibold text-white hover:bg-blue-400"
+              className="inline-flex items-center gap-2 rounded-full bg-[#1D4ED8] text-white hover:bg-blue-400"
             >
               Go Back
             </button>
@@ -183,11 +183,11 @@ function UpgradeContent() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619]">
       <div className="mx-auto max-w-3xl px-4 py-20">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold mb-4">Upgrade Your Plan</h1>
-          <p className="text-slate-300">Pay only the difference to upgrade your current plan</p>
+          <p className="text-[#2C2E3A]">Pay only the difference to upgrade your current plan</p>
         </div>
 
         <div className="space-y-4">
@@ -196,19 +196,19 @@ function UpgradeContent() {
               key={upgrade.to}
               className={`cursor-pointer rounded-2xl border p-6 transition ${
                 selectedUpgrade === upgrade.to
-                  ? 'border-blue-500 bg-blue-500/10'
-                  : 'border-white/10 bg-slate-900/50 hover:border-white/20'
+                  ? 'border-blue-500 bg-[#1D4ED8]/10'
+                  : 'border-[#B3B4BD]/20 bg-white/800 hover:border-white/20'
               }`}
               onClick={() => setSelectedUpgrade(upgrade.to)}
             >
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-semibold">{upgrade.name}</h3>
-                  <p className="text-slate-300">Upgrade price: ₹{upgrade.price}</p>
+                  <p className="text-[#2C2E3A]">Upgrade price: ₹{upgrade.price}</p>
                 </div>
                 <div className={`h-5 w-5 rounded-full border-2 ${
                   selectedUpgrade === upgrade.to
-                    ? 'border-blue-500 bg-blue-500'
+                    ? 'border-blue-500 bg-[#1D4ED8]'
                     : 'border-white/30'
                 }`}>
                   {selectedUpgrade === upgrade.to && (
@@ -224,7 +224,7 @@ function UpgradeContent() {
           <button
             onClick={handleUpgrade}
             disabled={!selectedUpgrade}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300 disabled:shadow-none"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1D4ED8] text-white shadow-lg shadow-[#1D4ED8]/30 transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-[#2C2E3A] disabled:shadow-none"
           >
             Pay Upgrade Fee
             <ChevronRight className="h-5 w-5" />
@@ -237,7 +237,7 @@ function UpgradeContent() {
 
 export default function UpgradePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619] flex items-center justify-center">Loading...</div>}>
       <UpgradeContent />
     </Suspense>
   );

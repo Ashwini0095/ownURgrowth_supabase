@@ -61,13 +61,13 @@ function SignupContent() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619]">
       <section className="flex items-center justify-center px-4 py-16">
-        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl">
-          <h1 className="text-2xl font-semibold text-slate-50">
+        <div className="w-full max-w-md rounded-2xl border border-[#B3B4BD]/30 bg-white/80 p-6 shadow-xl">
+          <h1 className="text-2xl font-semibold text-[#141619]">
             Create your account
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-[#2C2E3A]">
             Join ownURgrowth and get access to your courses.
           </p>
 
@@ -78,15 +78,15 @@ function SignupContent() {
             />
             
             <div className="my-4 flex items-center">
-              <div className="flex-1 border-t border-white/10"></div>
-              <span className="px-3 text-xs text-slate-500">or</span>
-              <div className="flex-1 border-t border-white/10"></div>
+              <div className="flex-1 border-t border-[#B3B4BD]/30"></div>
+              <span className="px-3 text-xs text-[#141619]0">or</span>
+              <div className="flex-1 border-t border-[#B3B4BD]/30"></div>
             </div>
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1 text-sm">
-              <label htmlFor="name" className="block text-slate-200">
+              <label htmlFor="name" className="block text-[#141619]">
                 Name
               </label>
               <input
@@ -94,12 +94,12 @@ function SignupContent() {
                 name="name"
                 type="text"
                 required
-                className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none ring-0 placeholder:text-slate-500 focus:border-fuchsia-400"
+                className="w-full rounded-lg border border-[#B3B4BD]/30 bg-white px-3 py-2 text-sm text-[#141619] outline-none ring-0 placeholder:text-[#141619]0 focus:border-fuchsia-400"
                 placeholder="Your name"
               />
             </div>
             <div className="space-y-1 text-sm">
-              <label htmlFor="email" className="block text-slate-200">
+              <label htmlFor="email" className="block text-[#141619]">
                 Email
               </label>
               <input
@@ -107,12 +107,12 @@ function SignupContent() {
                 type="email"
                 name="email"
                 required
-                className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white outline-none ring-0 placeholder:text-slate-500 focus:border-fuchsia-400"
+                className="w-full rounded-lg border border-[#B3B4BD]/30 bg-white px-3 py-2 text-sm text-[#141619] outline-none ring-0 placeholder:text-[#141619]0 focus:border-fuchsia-400"
                 placeholder="you@example.com"
               />
             </div>
             <div className="space-y-1 text-sm">
-              <label htmlFor="password" className="block text-slate-200">
+              <label htmlFor="password" className="block text-[#141619]">
                 Password
               </label>
               <div className="relative">
@@ -122,13 +122,13 @@ function SignupContent() {
                   name="password"
                   required
                   minLength={6}
-                  className="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 pr-10 text-sm text-white outline-none ring-0 placeholder:text-slate-500 focus:border-fuchsia-400"
+                  className="w-full rounded-lg border border-[#B3B4BD]/30 bg-white px-3 py-2 pr-10 text-sm text-[#141619] outline-none ring-0 placeholder:text-[#141619]0 focus:border-fuchsia-400"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2C2E3A] hover:text-[#141619]"
                 >
                   {showPassword ? (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +169,7 @@ function SignupContent() {
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619] flex items-center justify-center">Loading...</div>}>
       <SignupContent />
     </Suspense>
   );

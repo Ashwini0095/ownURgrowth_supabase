@@ -113,17 +113,21 @@ export default function CoursesPage() {
     }
   };
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
       <Navigation />
 
       {/* Header */}
-      <section className="border-b border-white/5 bg-gradient-to-b from-slate-950 to-slate-900">
-        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold text-slate-50 sm:text-5xl">
-              Our <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Courses</span>
+      <section className="bg-gradient-to-b from-white to-gray-50 relative">
+        {/* Abstract background shapes */}
+        <div className="absolute top-10 right-10 w-48 h-48 bg-[#1D4ED8]/5 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-20 left-20 w-32 h-32 bg-[#B3B4BD]/10 rotate-45"></div>
+        
+        <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 relative z-10">
+          <div className="text-center space-y-6">
+            <h1 className="text-5xl font-bold text-[#141619] sm:text-6xl">
+              Our <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">Courses</span>
             </h1>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+            <p className="text-xl text-[#2C2E3A] max-w-3xl mx-auto font-light leading-relaxed">
               Practical courses designed to accelerate your career and personal growth
             </p>
           </div>
@@ -137,21 +141,21 @@ export default function CoursesPage() {
             {courses.map((course) => {
               const isPurchased = purchasedCourses.includes(course.slug);
               return (
-              <div key={course.slug} className={`rounded-3xl border ${isPurchased ? 'border-green-500/30' : 'border-white/10'} bg-slate-900/70 p-6 shadow-xl`}>
+              <div key={course.slug} className={`rounded-3xl border ${isPurchased ? 'border-green-300' : 'border-[#B3B4BD]/20'} bg-white/90 p-6 shadow-xl`}>
                 {isPurchased && (
-                  <div className="flex items-center gap-2 mb-4 rounded-full bg-green-500/10 px-4 py-2 w-fit">
-                    <CheckCircle className="h-4 w-4 text-green-400" />
-                    <span className="text-sm font-semibold text-green-400">Purchased</span>
+                  <div className="flex items-center gap-2 mb-4 rounded-full bg-green-100 px-4 py-2 w-fit">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-semibold text-green-600">Purchased</span>
                   </div>
                 )}
                 <div className="mb-4">
-                  <span className="inline-block rounded-full bg-blue-400/10 px-3 py-1 text-xs font-semibold text-blue-300 mb-3">
+                  <span className="inline-block rounded-full bg-[#1D4ED8]/10 px-3 py-1 text-xs font-semibold text-[#1D4ED8] mb-3">
                     {course.category}
                   </span>
-                  <h3 className="text-2xl font-bold text-slate-50 mb-2">
+                  <h3 className="text-2xl font-bold text-[#141619] mb-2">
                     {course.title}
                   </h3>
-                  <p className="text-slate-300 mb-4">
+                  <p className="text-[#2C2E3A] mb-4">
                     {course.description}
                   </p>
                 </div>
@@ -161,15 +165,15 @@ export default function CoursesPage() {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-bold text-blue-400">
+                    <span className="text-2xl font-bold text-[#1D4ED8]">
                       {isPurchased ? 'Owned' : `Starts at ${course.price}`}
                     </span>
-                    <p className="text-xs text-slate-400">{isPurchased ? 'You have access' : course.badge}</p>
+                    <p className="text-xs text-[#B3B4BD]">{isPurchased ? 'You have access' : course.badge}</p>
                   </div>
                   {isPurchased ? (
                     <Link
                       href={`/courses/${course.slug}`}
-                      className="inline-flex items-center gap-2 rounded-full bg-green-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-400"
+                      className="inline-flex items-center gap-2 rounded-full bg-green-500 px-6 py-3 text-sm font-semibold text-[#141619] transition hover:bg-green-400"
                     >
                       Access Course
                       <ChevronRight className="h-4 w-4" />
@@ -177,7 +181,7 @@ export default function CoursesPage() {
                   ) : (
                   <Link
                     href={course.slug === "linkedin-growth" ? `/courses/${course.slug}` : "#"}
-                    className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-400"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#1D4ED8] text-white transition hover:bg-blue-400"
                   >
                     {course.slug === "linkedin-growth" ? "View Course" : "Coming Soon"}
                     {course.slug === "linkedin-growth" && <ChevronRight className="h-4 w-4" />}
@@ -192,14 +196,14 @@ export default function CoursesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="border-t border-white/5 bg-slate-950">
+      <section className="border-t border-[#B3B4BD]/20 bg-gradient-to-br from-gray-100 via-gray-50 to-white">
         <div className="mx-auto max-w-4xl px-4 py-16 text-center lg:px-6">
           {user ? (
             <>
-              <h2 className="text-3xl font-bold text-slate-50 mb-4">
+              <h2 className="text-3xl font-bold text-[#141619] mb-4">
                 Continue Your Learning Journey
               </h2>
-              <p className="text-lg text-slate-300 mb-8">
+              <p className="text-lg text-[#2C2E3A] mb-8">
                 You're logged in and ready to access your courses
               </p>
             </>

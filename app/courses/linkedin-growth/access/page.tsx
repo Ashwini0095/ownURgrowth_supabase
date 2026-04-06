@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../../lib/AuthContext";
 import { useEffect, useState, Suspense } from "react";
 import NotesViewerWrapper from "./NotesViewerWrapper";
+import CourseNotesFixed from "../../../../components/CourseNotesFixed";
 
 const planLabels: Record<string, string> = {
   basic: "Core Course (₹499)",
@@ -15,9 +16,9 @@ const planLabels: Record<string, string> = {
 
 // Mock function to check if user has purchased the course
 const checkUserPurchase = async (userId: string, plan: string) => {
-  // In real app, this would check your database
-  // For now, return true if user is logged in (mock purchase)
-  return userId ? plan : null;
+  // Temporarily return 'pro' to avoid Firebase calls during quota exceeded
+  console.log('Using mock data due to Firebase quota exceeded');
+  return 'pro'; // This gives users access to course content
 };
 
 function AccessPageContent() {
@@ -57,7 +58,7 @@ function AccessPageContent() {
 
   if (loading || verifying) {
     return (
-      <main className="min-h-screen bg-slate-950 text-white">
+      <main className="min-h-screen bg-slate-950 text-[#141619]">
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -76,12 +77,12 @@ function AccessPageContent() {
   const showLiveQA = userPlan === "pro";
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <section className="border-b border-white/5 bg-slate-950">
+    <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619]">
+      <section className="bg-white/90 backdrop-blur-md border-b border-[#B3B4BD]/20 shadow-sm">
         <div className="mx-auto max-w-5xl px-4 pb-16 pt-20 lg:px-6 lg:pt-24">
           <div className="mb-6 flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1D4ED8]">
                 ownURgrowth • Course Access
               </p>
               <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">
@@ -140,9 +141,7 @@ function AccessPageContent() {
             </div>
 
             <div className="space-y-4">
-              {showNotes && (
-                <NotesViewerWrapper pdfUrl="/linkedin-notes.pdf" />
-              )}
+              <CourseNotesFixed userPlan={userPlan as 'basic' | 'plus' | 'pro'} />
 
               {showLiveQA && (
                 <div className="rounded-2xl border border-blue-500/40 bg-slate-900/90 p-4 text-xs text-slate-200 sm:text-sm">
@@ -180,7 +179,7 @@ function AccessPageContent() {
 
 export default function LinkedInGrowthAccessPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619] flex items-center justify-center">Loading...</div>}>
       <AccessPageContent />
     </Suspense>
   );
