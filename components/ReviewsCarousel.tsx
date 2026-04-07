@@ -103,9 +103,9 @@ export default function ReviewsCarousel() {
             key={index}
             className="group min-w-[350px] rounded-2xl border border-[#B3B4BD]/20 bg-white/800 p-6 backdrop-blur transition-all duration-300 hover:border-[#1D4ED8]/30 hover:bg-white/80 hover:scale-105 hover:shadow-lg hover:shadow-[#1D4ED8]/10"
           >
-            <div className="mb-4 flex">
+            <div className="mb-4 flex gap-1">
               {[...Array(review.rating)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 fill-blue-400 text-[#1D4ED8] transition-all duration-300 group-hover:scale-110" />
+                <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
               ))}
             </div>
             <p className="mb-4 text-[#2C2E3A] group-hover:text-[#141619] transition-colors">
@@ -114,7 +114,7 @@ export default function ReviewsCarousel() {
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-[#1D4ED8] to-[#0F172A] transition-all duration-300 group-hover:scale-110" />
               <div>
-                <div className="font-semibold text-slate-100 group-hover:text-[#1D4ED8] transition-colors">{review.name}</div>
+                <div className="font-semibold text-[#141619] group-hover:text-[#1D4ED8] transition-colors">{review.name}</div>
                 <div className="text-sm text-[#B3B4BD]">{review.role}</div>
               </div>
             </div>

@@ -161,25 +161,20 @@ export default function Home() {
           
           <div className="grid gap-6 md:gap-10 md:grid-cols-2 max-w-6xl mx-auto">
             <ScrollAnimation delay={200}>
-              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
-              {/* Premium glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
+              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
               
-              {/* Animated border glow */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#1D4ED8]/20 via-blue-300/30 to-[#1D4ED8]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-sm -z-10"></div>
-              
-              {/* Top accent line */}
+              {/* Animated top border on hover */}
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
               
-              {/* Corner decoration */}
-              <div className="absolute top-6 right-6 w-12 h-12 bg-[#1D4ED8]/10 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform rotate-12 group-hover:rotate-0">
-                <div className="w-6 h-6 bg-[#1D4ED8]/30 rounded-lg"></div>
+              {/* Corner symbol on hover */}
+              <div className="absolute top-6 right-6 w-12 h-12 bg-[#1D4ED8]/20 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform rotate-12 group-hover:rotate-0">
+                <div className="w-6 h-6 bg-[#1D4ED8]/50 rounded-lg"></div>
               </div>
               
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#141619] mb-4 md:mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1D4ED8] mb-4 md:mb-6 transition-colors duration-500 relative z-10 tracking-tight">
                 LinkedIn Decoded
               </h3>
-              <p className="text-[#2C2E3A] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
+              <p className="text-[#141619] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed transition-colors flex-grow relative z-10">
                 No theory. No fillers. Just raw secrets and tactics that actually grows your linkedin.
               </p>
               <div className="flex items-center justify-end mt-auto relative z-10">
@@ -192,25 +187,20 @@ export default function Home() {
             </ScrollAnimation>
 
             <ScrollAnimation delay={400}>
-              <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm border-2 border-[#B3B4BD]/20 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40 hover:-translate-y-2 flex flex-col h-full">
-              {/* Premium glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl"></div>
+              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
               
-              {/* Animated border glow */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#1D4ED8]/20 via-blue-300/30 to-[#1D4ED8]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-sm -z-10"></div>
-              
-              {/* Top accent line */}
+              {/* Animated top border on hover */}
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
               
-              {/* Corner decoration */}
-              <div className="absolute top-6 right-6 w-12 h-12 bg-[#1D4ED8]/10 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform rotate-12 group-hover:rotate-0">
-                <div className="w-6 h-6 bg-[#1D4ED8]/30 rounded-lg"></div>
+              {/* Corner symbol on hover */}
+              <div className="absolute top-6 right-6 w-12 h-12 bg-[#1D4ED8]/20 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform rotate-12 group-hover:rotate-0">
+                <div className="w-6 h-6 bg-[#1D4ED8]/50 rounded-lg"></div>
               </div>
               
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#141619] mb-4 md:mb-6 group-hover:text-[#1D4ED8] transition-colors duration-500 relative z-10 tracking-tight">
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1D4ED8] mb-4 md:mb-6 transition-colors duration-500 relative z-10 tracking-tight">
                 System Design Notes
               </h3>
-              <p className="text-[#2C2E3A] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed group-hover:text-[#141619] transition-colors flex-grow relative z-10">
+              <p className="text-[#141619] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed transition-colors flex-grow relative z-10">
                 Clear notes to master scalable system design for real-world systems and interviews(which will get you in MAANG)
               </p>
               <div className="flex items-center justify-end mt-auto relative z-10">
@@ -324,7 +314,7 @@ export default function Home() {
       </section>
 
       {/* Who Is ownURgrowth For Section */}
-      <section className="border-b border-white/5 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden">
+      <section className="border-b border-white/5 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">
         {/* Background shading overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 via-transparent to-blue-300/30"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-blue-200/40 via-transparent to-blue-200/40"></div>
@@ -410,19 +400,32 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="reviews" className="bg-gradient-to-b from-white to-gray-50 relative">
-        {/* Abstract background shapes */}
-        <div className="absolute top-10 left-10 w-20 h-20 bg-[#1D4ED8]/10 rotate-12 rounded-lg blur-sm"></div>
-        <div className="absolute bottom-20 right-20 w-16 h-16 bg-[#B3B4BD]/20 -rotate-45 rounded-lg"></div>
+      <section id="reviews" className="bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/30 relative overflow-hidden">
+        {/* Enhanced background elements */}
+        <div className="absolute inset-0">
+          {/* Gradient orbs */}
+          <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-indigo-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-gradient-to-tl from-indigo-400/8 to-blue-500/5 rounded-full blur-2xl"></div>
+          
+          {/* Geometric shapes */}
+          <div className="absolute top-32 left-1/4 w-16 h-16 border border-blue-200/30 rounded-2xl rotate-12 animate-pulse"></div>
+          <div className="absolute bottom-32 right-1/4 w-12 h-12 bg-blue-300/20 rounded-full"></div>
+          <div className="absolute top-1/2 right-20 w-8 h-8 border-2 border-indigo-300/25 rotate-45"></div>
+        </div>
         
         <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6 lg:py-24 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-[#141619] sm:text-5xl mb-4">
-              Hear From Our Family
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1D4ED8]/10 to-blue-100 px-6 py-3 rounded-full border border-[#1D4ED8]/20 mb-6 backdrop-blur-sm">
+              <div className="w-2 h-2 bg-[#1D4ED8] rounded-full animate-pulse"></div>
+              <span className="text-[#1D4ED8] font-semibold text-sm tracking-wide uppercase">Success Stories</span>
+            </div>
+            <h2 className="text-4xl font-bold text-[#141619] sm:text-5xl mb-6 tracking-tight">
+              Hear From Our <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">Family</span>
             </h2>
-            <p className="text-xl text-[#2C2E3A] max-w-3xl mx-auto font-light">
-              Join professionals who have upskilled and grew in their careers.
+            <p className="text-xl text-[#2C2E3A] max-w-4xl mx-auto font-light leading-relaxed">
+              Join professionals who have upskilled and grew in their careers with our proven methods.
             </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#1D4ED8] to-[#1E40AF] mx-auto mt-8 rounded-full"></div>
           </div>
 
           <ReviewsCarousel />
