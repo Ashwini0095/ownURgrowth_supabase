@@ -65,13 +65,42 @@ export default function LinkedInGrowthPage() {
       }
 
       try {
-        // Check if user has purchased this course
-        const response = await fetch(`/api/check-purchase?userId=${user.uid}&courseId=linkedin-growth`);
-        const data = await response.json();
+        const { collection, query, where, getDocs } = await import('firebase/firestore');
+        const { db } = await import('../../../lib/firebase');
         
-        if (data.purchased) {
-          setPurchasedPlan(data.planId);
+        // Check cache first
+        const cacheKey = `purchase_${user.uid}`;
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          setPurchasedPlan(cached);
+          setLoading(false);
+          return;
         }
+        
+        // Check payments by userId and email
+        const paymentsRef = collection(db, 'payments');
+        
+        let q = query(paymentsRef, where('userId', '==', user.uid));
+        let querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty && user.email) {
+          q = query(paymentsRef, where('userEmail', '==', user.email));
+          querySnapshot = await getDocs(q);
+        }
+        
+        if (!querySnapshot.empty) {
+          const data = querySnapshot.docs[0].data();
+          if (data.status === 'completed') {
+            let planId = 'basic';
+            if (data.amount >= 999) planId = 'pro';
+            else if (data.amount >= 799) planId = 'plus';
+            
+            // Cache result
+            localStorage.setItem(cacheKey, planId);
+            setPurchasedPlan(planId);
+          }
+        }
+        
       } catch (error) {
         console.error('Error checking purchase:', error);
       } finally {

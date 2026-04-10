@@ -11,14 +11,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Missing userId or courseId' }, { status: 400 });
     }
 
+    console.log('API: Checking for userId:', userId);
+
     // Get user's payment history
     const payments = await getUserPaymentHistory(userId);
+    console.log('API: Found payments:', payments);
     
     // Check if user has purchased this course
     const coursePurchase = payments.find(payment => 
       payment.course.toLowerCase().includes('linkedin') && 
       payment.status === 'completed'
     );
+
+    console.log('API: Course purchase found:', coursePurchase);
 
     if (coursePurchase) {
       // Determine plan based on amount or plan name
