@@ -15,11 +15,80 @@ const planLabels: Record<string, string> = {
 };
 
 // Mock function to check if user has purchased the course
-const checkUserPurchase = async (userId: string, plan: string) => {
-  // Temporarily return 'pro' to avoid Firebase calls during quota exceeded
-  console.log('Using mock data due to Firebase quota exceeded');
-  return 'pro'; // This gives users access to course content
+// const checkUserPurchase = async (userId: string, plan: string) => {
+//   // Temporarily return 'pro' to avoid Firebase calls during quota exceeded
+//   console.log('Using mock data due to Firebase quota exceeded');
+//   return 'pro'; // This gives users access to course content
+// };
+
+// add this function to backend with api
+// const checkUserPurchase = async (user: any) => {
+//   try {
+//     const { collection, query, where, getDocs } =
+//       await import("firebase/firestore");
+//     const { db } = await import("../../../../lib/firebase");
+
+//     const paymentsRef = collection(db, "payments");
+
+//     let q = query(paymentsRef, where("userId", "==", user.uid));
+//     let snapshot = await getDocs(q);
+
+//     if (snapshot.empty && user.email) {
+//       q = query(paymentsRef, where("userEmail", "==", user.email));
+//       snapshot = await getDocs(q);
+//     }
+
+//     if (snapshot.empty) return null;
+
+//     // Find the highest plan
+//     let highestPlan: "basic" | "plus" | "pro" | null = null;
+
+//     snapshot.forEach((doc) => {
+//       const data = doc.data();
+
+//       if (data.status !== "completed") return;
+
+//       if (data.amount >= 999) highestPlan = "pro";
+//       else if (data.amount >= 799 && highestPlan !== "pro")
+//         highestPlan = "plus";
+//       else if (!highestPlan) highestPlan = "basic";
+//     });
+
+//     return highestPlan;
+//   } catch (err) {
+//     console.error(err);
+//     return null;
+//   }
+// };
+
+const checkUserPurchase = async (user: any) => {
+  try {
+    const res = await fetch("/api/check-purchase", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user.uid,
+        userEmail: user.email,
+      }),
+    });
+
+    console.log("STATUS:", res.status);
+
+    const text = await res.text();
+    console.log("RAW RESPONSE:", text);
+
+    const data = text ? JSON.parse(text) : null;
+
+    return data?.plan || null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 };
+
+
 
 function AccessPageContent() {
   const searchParams = useSearchParams();
@@ -27,32 +96,30 @@ function AccessPageContent() {
   const { user, loading } = useAuth();
   const [userPlan, setUserPlan] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(true);
-  
-  const requestedPlan = searchParams.get('plan') || 'basic';
+
   
   useEffect(() => {
     const verifyAccess = async () => {
       if (loading) return;
-      
+
       if (!user) {
-        router.push(`/login?redirect=/courses/linkedin-growth/access?plan=${requestedPlan}`);
+        router.push(`/login?redirect=/courses/linkedin-growth/access`);
         return;
       }
 
-      // Check if user has purchased this course
-      const purchasedPlan = await checkUserPurchase(user.uid, requestedPlan);
-      
+      const purchasedPlan = await checkUserPurchase(user);
+
       if (!purchasedPlan) {
-        router.push('/courses/linkedin-growth');
+        router.push("/courses/linkedin-growth");
         return;
       }
-      
+
       setUserPlan(purchasedPlan);
       setVerifying(false);
     };
 
     verifyAccess();
-  }, [user, loading, requestedPlan, router]);
+  }, [user, loading, router]);
 
   const planLabel = userPlan ? planLabels[userPlan] : "Core Course (₹499)";
 

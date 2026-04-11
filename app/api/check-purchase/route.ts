@@ -1,50 +1,48 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUserPaymentHistory } from '../../../lib/payments';
+import { NextResponse } from "next/server";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
-export async function GET(request: NextRequest) {
+type Plan = "basic" | "plus" | "pro";
+
+export async function POST(req: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const courseId = searchParams.get('courseId');
+    const body = await req.json();
+    const { userId, userEmail } = body;
 
-    if (!userId || !courseId) {
-      return NextResponse.json({ error: 'Missing userId or courseId' }, { status: 400 });
+    if (!userId && !userEmail) {
+      return NextResponse.json({ plan: null }, { status: 400 });
     }
 
-    console.log('API: Checking for userId:', userId);
+    const paymentsRef = collection(db, "payments");
 
-    // Get user's payment history
-    const payments = await getUserPaymentHistory(userId);
-    console.log('API: Found payments:', payments);
-    
-    // Check if user has purchased this course
-    const coursePurchase = payments.find(payment => 
-      payment.course.toLowerCase().includes('linkedin') && 
-      payment.status === 'completed'
-    );
+    let q = query(paymentsRef, where("userId", "==", userId));
+    let snapshot = await getDocs(q);
 
-    console.log('API: Course purchase found:', coursePurchase);
-
-    if (coursePurchase) {
-      // Determine plan based on amount or plan name
-      let planId = 'basic';
-      if (coursePurchase.amount >= 999 || coursePurchase.plan.toLowerCase().includes('master')) {
-        planId = 'pro';
-      } else if (coursePurchase.amount >= 799 || coursePurchase.plan.toLowerCase().includes('pro')) {
-        planId = 'plus';
-      }
-
-      return NextResponse.json({
-        purchased: true,
-        planId: planId,
-        purchaseDate: coursePurchase.date,
-        amount: coursePurchase.amount
-      });
+    if (snapshot.empty && userEmail) {
+      q = query(paymentsRef, where("userEmail", "==", userEmail));
+      snapshot = await getDocs(q);
     }
 
-    return NextResponse.json({ purchased: false });
+    if (snapshot.empty) {
+      return NextResponse.json({ plan: null });
+    }
+
+    let highestPlan: Plan | null = null;
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      if (data.status !== "completed") return;
+
+      if (data.amount >= 999) highestPlan = "pro";
+      else if (data.amount >= 799 && highestPlan !== "pro")
+        highestPlan = "plus";
+      else if (!highestPlan) highestPlan = "basic";
+    });
+
+    return NextResponse.json({ plan: highestPlan });
   } catch (error) {
-    console.error('Error checking purchase:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("API error:", error);
+    return NextResponse.json({ plan: null }, { status: 500 });
   }
 }
