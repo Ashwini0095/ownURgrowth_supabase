@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../lib/AuthContext";
+import Navigation from "../components/Navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,7 +53,10 @@ export default function RootLayout({
       >
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />
         <AuthProvider>
-          {children}
+          <Navigation />
+          <div className="pt-16">
+            {children}
+          </div>
         </AuthProvider>
       </body>
     </html>

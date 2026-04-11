@@ -5,7 +5,6 @@ import { ChevronRight, PlayCircle, Star, Users, Award, Clock, Shield, BookOpen, 
 import { useAuth } from "../lib/AuthContext";
 import { useEffect, useState } from "react";
 import { trackPageView, trackButtonClick } from "../lib/analytics";
-import Navigation from "../components/Navigation";
 import ReviewsCarousel from "../components/ReviewsCarousel";
 import InteractiveCounter from "../components/InteractiveCounter";
 import FloatingCTA from "../components/FloatingCTA";
@@ -37,8 +36,6 @@ export default function Home() {
       <div className="absolute bottom-40 left-10 w-80 h-80 bg-[#0F172A]/3 rounded-full blur-2xl"></div>
       <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-[#B3B4BD]/10 rotate-45 blur-xl"></div>
       
-      <Navigation />
-
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-start justify-center pt-16 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 overflow-hidden">
         {/* Square Grid Background */}

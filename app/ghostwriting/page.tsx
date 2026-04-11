@@ -6,17 +6,6 @@ import { ChevronRight, Edit3, Users, Clock, CheckCircle } from "lucide-react";
 export default function GhostwritingPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
-      {/* Navigation */}
-      <nav className="bg-white/90 backdrop-blur-md border-b border-[#B3B4BD]/20 shadow-sm">
-        <div className="mx-auto max-w-6xl px-4 py-4 lg:px-6">
-          <Link href="/" className="text-xl font-bold">
-            <span className="text-[#141619]">own</span>
-            <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">UR</span>
-            <span className="text-[#141619]">growth</span>
-          </Link>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="py-16 lg:py-24 relative">
         {/* Abstract background shapes */}
@@ -36,7 +25,7 @@ export default function GhostwritingPage() {
               From content creation to brand deals, we manage your LinkedIn end-to-end so you can focus on what you do best, while your profile works for you 24/7.
             </p>
             <div className="mt-8">
-              <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-5 text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl rounded-2xl">
+              <a href="https://forms.gle/D2e3RsbyqbkAHaGE6" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-5 text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl rounded-2xl">
                 Get Started Today
                 <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
               </a>
@@ -191,7 +180,7 @@ export default function GhostwritingPage() {
           <p className="text-xl text-[#2C2E3A] mb-8 font-light">
             Let's discuss your content needs and create a strategy that works for you.
           </p>
-          <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-5 text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl rounded-2xl">
+          <a href="https://forms.gle/D2e3RsbyqbkAHaGE6" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-5 text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl rounded-2xl">
             Schedule a Consultation
             <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
           </a>

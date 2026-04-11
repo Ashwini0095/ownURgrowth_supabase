@@ -7,6 +7,7 @@ import { useAuth } from "../../../../lib/AuthContext";
 import { useEffect, useState, Suspense } from "react";
 import NotesViewerWrapper from "./NotesViewerWrapper";
 import CourseNotesFixed from "../../../../components/CourseNotesFixed";
+import PromptVaultClean from "../../../../components/PromptVaultClean";
 
 const planLabels: Record<string, string> = {
   basic: "Core Course (₹499)",
@@ -225,6 +226,10 @@ function AccessPageContent() {
             <div className="space-y-6">
               <div className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl overflow-hidden">
                 <CourseNotesFixed userPlan={userPlan as 'basic' | 'plus' | 'pro'} />
+              </div>
+
+              <div className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl overflow-hidden">
+                <PromptVaultClean hasAccess={true} />
               </div>
 
               {showLiveQA && (

@@ -6,17 +6,6 @@ import { ChevronRight, Target, TrendingUp, Users, Zap, BarChart3, Globe } from "
 export default function PartnershipsPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
-      {/* Navigation */}
-      <nav className="bg-white/90 backdrop-blur-md border-b border-[#B3B4BD]/20 shadow-sm">
-        <div className="mx-auto max-w-6xl px-4 py-4 lg:px-6">
-          <Link href="/" className="text-xl font-bold">
-            <span className="text-[#141619]">own</span>
-            <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">UR</span>
-            <span className="text-[#141619]">growth</span>
-          </Link>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="py-20 lg:py-28 relative overflow-hidden">
         {/* Enhanced background elements */}

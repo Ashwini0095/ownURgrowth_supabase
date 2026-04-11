@@ -5,7 +5,6 @@ import { ChevronRight, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
 import { getUserPurchases, recordPurchase } from "../../lib/purchases";
 import { useEffect, useState } from "react";
-import Navigation from "../../components/Navigation";
 
 declare global {
   interface Window {
@@ -114,8 +113,6 @@ export default function CoursesPage() {
   };
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
-      <Navigation />
-
       {/* Header */}
       <section className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">
         {/* Enhanced background elements */}

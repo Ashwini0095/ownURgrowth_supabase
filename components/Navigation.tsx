@@ -7,7 +7,7 @@ export default function Navigation() {
   const { user, signOut } = useAuth();
 
   return (
-    <nav className="relative bg-white/90 backdrop-blur-md border-b border-[#B3B4BD]/20 shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#B3B4BD]/20 shadow-sm">
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
