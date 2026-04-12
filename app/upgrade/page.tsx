@@ -59,68 +59,85 @@ function UpgradeContent() {
   console.log('Available upgrades:', availableUpgrades);
 
   const handleUpgrade = async () => {
-    if (!selectedUpgrade) return;
-    
-    const upgradeOption = availableUpgrades.find(upgrade => upgrade.to === selectedUpgrade);
-    if (!upgradeOption) return;
+    if (!selectedUpgrade) {
+      console.log("Selected upgrade is null");
+      return;
+    }
 
-    console.log('Upgrade option:', upgradeOption);
-    console.log('Current plan:', currentPlan);
-    console.log('Selected upgrade:', selectedUpgrade);
-    console.log('Upgrade price:', upgradeOption.price);
+    const upgradeOption = availableUpgrades.find(
+      (upgrade) => upgrade.to === selectedUpgrade,
+    );
+    if (!upgradeOption) {
+      console.log("upgradeOption is null");
+
+      return;
+    }
+
+    console.log("Upgrade option:", upgradeOption);
+    console.log("Current plan:", currentPlan);
+    console.log("Selected upgrade:", selectedUpgrade);
+    console.log("Upgrade price:", upgradeOption.price);
+
+    // Map the internal 'to' ID to the Database Plan Name
+    const dbPlanName =
+      selectedUpgrade === "pro"
+        ? "Master Program"
+        : selectedUpgrade === "plus"
+          ? "Pro Program"
+          : "Basic Crash Course";
 
     try {
-      console.log('Making API request...');
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
+      console.log("Making API request...");
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          courseId: 'linkedin-growth-upgrade',
+          courseId: "linkedin-growth-upgrade",
           courseName: `Upgrade to ${upgradeOption.name}`,
           price: upgradeOption.price,
         }),
       });
 
-      console.log('Response received:', response);
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
+      console.log("Response received:", response);
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
 
       const responseText = await response.text();
-      console.log('Response text:', responseText);
+      console.log("Response text:", responseText);
 
       let responseData;
       try {
         responseData = JSON.parse(responseText);
       } catch (e) {
-        console.error('Failed to parse JSON:', e);
-        throw new Error('Invalid response from server');
+        console.error("Failed to parse JSON:", e);
+        throw new Error("Invalid response from server");
       }
 
       if (!response.ok) {
-        console.error('API Error:', responseData);
-        throw new Error(responseData.error || 'Payment failed');
+        console.error("API Error:", responseData);
+        throw new Error(responseData.error || "Payment failed");
       }
 
       const { orderId, amount, currency, key } = responseData;
 
-      console.log('Razorpay response:', { orderId, amount, currency, key });
+      console.log("Razorpay response:", { orderId, amount, currency, key });
 
       const options = {
         key: key,
         amount,
         currency,
-        name: 'ownURgrowth',
+        name: "ownURgrowth",
         description: `Upgrade to ${upgradeOption.name}`,
         order_id: orderId,
         handler: async function (response: any) {
           try {
             // Verify payment and send receipt
-            const verifyResponse = await fetch('/api/verify-payment', {
-              method: 'POST',
+            const verifyResponse = await fetch("/api/verify-payment", {
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
@@ -128,40 +145,45 @@ function UpgradeContent() {
                 razorpay_signature: response.razorpay_signature,
                 userEmail: user?.email,
                 userName: user?.displayName || user?.email,
-                courseName: `Upgrade to ${upgradeOption.name}`,
-                plan: upgradeOption.name,
+                courseName: "Grow on LinkedIn",
+                plan: dbPlanName,
                 amount: amount,
                 userId: user?.uid,
+                isUpgrade: true,
               }),
             });
 
             if (verifyResponse.ok) {
-              router.push(`/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`);
+              // Clear the cache so the new plan reflects immediately
+              localStorage.removeItem(`purchase_${user?.uid}`);
+              router.push(
+                `/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`,
+              );
             } else {
-              alert('Payment verification failed. Please contact support.');
+              alert("Payment verification failed. Please contact support.");
             }
           } catch (error) {
-            console.error('Payment verification error:', error);
-            alert('Payment verification failed. Please contact support.');
+            console.error("Payment verification error:", error);
+            alert("Payment verification failed. Please contact support.");
           }
         },
         prefill: {
-          name: user?.displayName || '',
-          email: user?.email || '',
-          contact: '',
+          name: user?.displayName || "",
+          email: user?.email || "",
+          contact: "",
         },
         theme: {
-          color: '#3B82F6',
+          color: "#3B82F6",
         },
       };
 
       const razorpay = new (window as any).Razorpay(options);
       razorpay.open();
     } catch (error) {
-      console.error('Upgrade payment error:', error);
-      alert('Upgrade failed. Please try again.');
+      console.error("Upgrade payment error:", error);
+      alert("Upgrade failed. Please try again.");
     }
-  };
+  };;
 
   if (availableUpgrades.length === 0) {
     return (

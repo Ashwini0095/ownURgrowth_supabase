@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
 import Link from "next/link";
+const { collection, query, where, getDocs, orderBy, limit } =
+  await import("firebase/firestore");
 
 const plans = [
   {
@@ -65,10 +67,10 @@ export default function LinkedInGrowthPage() {
       }
 
       try {
-        const { collection, query, where, getDocs } = await import('firebase/firestore');
-        const { db } = await import('../../../lib/firebase');
-        
-        // Check cache first
+        const { collection, query, where, getDocs } =
+          await import("firebase/firestore");
+        const { db } = await import("../../../lib/firebase");
+
         const cacheKey = `purchase_${user.uid}`;
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
@@ -76,33 +78,74 @@ export default function LinkedInGrowthPage() {
           setLoading(false);
           return;
         }
-        
-        // Check payments by userId and email
-        const paymentsRef = collection(db, 'payments');
-        
-        let q = query(paymentsRef, where('userId', '==', user.uid));
+
+        const paymentsRef = collection(db, "payments");
+
+        // We query for all completed payments to find the best plan owned
+        const q = query(
+          paymentsRef,
+          where("userId", "==", user.uid),
+          where("status", "==", "completed"),
+        );
+
         let querySnapshot = await getDocs(q);
-        
+
+        // Fallback to email if no records found for UID
         if (querySnapshot.empty && user.email) {
-          q = query(paymentsRef, where('userEmail', '==', user.email));
-          querySnapshot = await getDocs(q);
+          const qEmail = query(
+            paymentsRef,
+            where("userEmail", "==", user.email),
+            where("status", "==", "completed"),
+          );
+          querySnapshot = await getDocs(qEmail);
         }
-        
+
         if (!querySnapshot.empty) {
-          const data = querySnapshot.docs[0].data();
-          if (data.status === 'completed') {
-            let planId = 'basic';
-            if (data.amount >= 999) planId = 'pro';
-            else if (data.amount >= 799) planId = 'plus';
-            
-            // Cache result
-            localStorage.setItem(cacheKey, planId);
-            setPurchasedPlan(planId);
+          // Priority Mapping: Higher number = Better plan
+          const priorityMap: Record<string, number> = {
+            pro: 3, // Master Program
+            plus: 2, // Pro Program
+            basic: 1, // Basic Crash Course
+          };
+
+          // Map Display Names from DB to internal IDs
+          const nameToId: Record<string, string> = {
+            "Master Program": "pro",
+            "Pro Program": "plus",
+            "Basic Crash Course": "basic",
+          };
+
+          let bestPlanId: string | null = null;
+          let highestPriority = 0;
+
+          querySnapshot.docs.forEach((doc) => {
+            const data = doc.data();
+            // Use the plan name from DB, fallback to amount-based logic if plan name is missing
+            let currentPlanId = nameToId[data.planName] || nameToId[data.plan];
+
+            // Fallback for older records that might only have 'amount'
+            if (!currentPlanId) {
+              if (data.amount >= 999) currentPlanId = "pro";
+              else if (data.amount >= 799) currentPlanId = "plus";
+              else if (data.amount >= 499) currentPlanId = "basic";
+            }
+
+            if (currentPlanId) {
+              const currentPriority = priorityMap[currentPlanId];
+              if (currentPriority > highestPriority) {
+                highestPriority = currentPriority;
+                bestPlanId = currentPlanId;
+              }
+            }
+          });
+
+          if (bestPlanId) {
+            localStorage.setItem(cacheKey, bestPlanId);
+            setPurchasedPlan(bestPlanId);
           }
         }
-        
       } catch (error) {
-        console.error('Error checking purchase:', error);
+        console.error("Error checking purchase:", error);
       } finally {
         setLoading(false);
       }
