@@ -150,10 +150,13 @@ function AccessPageContent() {
       <div className="absolute inset-0">
         <div className="absolute top-20 right-20 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-indigo-500/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tl from-indigo-400/8 to-blue-500/5 rounded-full blur-2xl"></div>
-        
+
         {/* Floating shapes */}
         <div className="absolute top-32 left-1/4 w-16 h-16 border border-blue-200/40 rounded-2xl rotate-12 animate-pulse"></div>
-        <div className="absolute bottom-32 right-1/4 w-12 h-12 bg-blue-300/20 rounded-full animate-bounce" style={{animationDuration: '3s'}}></div>
+        <div
+          className="absolute bottom-32 right-1/4 w-12 h-12 bg-blue-300/20 rounded-full animate-bounce"
+          style={{ animationDuration: "3s" }}
+        ></div>
       </div>
 
       <section className="bg-gradient-to-br from-white/95 to-blue-50/30 backdrop-blur-md border-b-2 border-[#1D4ED8]/20 shadow-xl relative z-10">
@@ -162,13 +165,21 @@ function AccessPageContent() {
             <div>
               <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1D4ED8]/10 to-blue-100 px-4 py-2 rounded-full border border-[#1D4ED8]/20 mb-4 backdrop-blur-sm">
                 <div className="w-2 h-2 bg-[#1D4ED8] rounded-full animate-pulse"></div>
-                <span className="text-[#1D4ED8] font-semibold text-sm tracking-wide uppercase">Course Access</span>
+                <span className="text-[#1D4ED8] font-semibold text-sm tracking-wide uppercase">
+                  Course Access
+                </span>
               </div>
               <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl tracking-tight">
-                Grow on <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">LinkedIn</span>
+                Grow on{" "}
+                <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">
+                  LinkedIn
+                </span>
               </h1>
               <p className="mt-4 text-lg text-[#2C2E3A] font-light">
-                You&apos;re viewing content for: <span className="font-semibold text-[#1D4ED8]">{planLabel}</span>
+                You&apos;re viewing content for:{" "}
+                <span className="font-semibold text-[#1D4ED8]">
+                  {planLabel}
+                </span>
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -196,24 +207,35 @@ function AccessPageContent() {
               <div className="group relative overflow-hidden bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl transition-all duration-700 hover:shadow-2xl hover:shadow-[#1D4ED8]/15">
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] rounded-t-3xl"></div>
-                
+
                 <div className="border-b border-[#1D4ED8]/10 px-6 py-4">
-                  <h3 className="text-xl font-bold text-[#141619]">Video Lectures</h3>
-                  <p className="text-sm text-[#2C2E3A] mt-1">Premium LinkedIn growth strategies</p>
+                  <h3 className="text-xl font-bold text-[#141619]">
+                    Video Lectures
+                  </h3>
+                  <p className="text-sm text-[#2C2E3A] mt-1">
+                    Premium LinkedIn growth strategies
+                  </p>
                 </div>
                 <div className="p-6">
-                  <video
-                    className="aspect-video w-full rounded-2xl bg-black shadow-xl"
-                    src="/linkedin-growth.mp4"
-                    controls
-                    controlsList="nodownload"
-                    onContextMenu={(e) => e.preventDefault()}
-                  >
-                    Your browser does not support the video tag.
-                  </video>
+                  <div className="relative w-full overflow-hidden rounded-2xl bg-black shadow-xl aspect-video">
+                    <iframe
+                      src={`https://iframe.mediadelivery.net/embed/${process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID}/${process.env.NEXT_PUBLIC_BUNNY_VIDEO_ID}?autoplay=false&preload=true&responsive=true`}
+                      loading="lazy"
+                      style={{
+                        border: 0,
+                        position: "absolute",
+                        top: 0,
+                        height: "100%",
+                        width: "100%",
+                      }}
+                      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+
                   <div className="mt-4 flex items-center justify-between bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3">
                     <p className="text-sm text-green-700 font-medium flex items-center gap-2">
-                      🔒 Protected content - Only accessible to verified purchasers
+                      🔒 Protected Stream - Optimized by Bunny.net
                     </p>
                     <p className="text-xs text-green-600">
                       User: {user?.email}
@@ -225,7 +247,9 @@ function AccessPageContent() {
 
             <div className="space-y-6">
               <div className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl overflow-hidden">
-                <CourseNotesFixed userPlan={userPlan as 'basic' | 'plus' | 'pro'} />
+                <CourseNotesFixed
+                  userPlan={userPlan as "basic" | "plus" | "pro"}
+                />
               </div>
 
               <div className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl overflow-hidden">
@@ -236,10 +260,13 @@ function AccessPageContent() {
                 <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 transition-all duration-700 hover:shadow-xl">
                   {/* Top accent line */}
                   <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] rounded-t-3xl"></div>
-                  
-                  <h3 className="text-xl font-bold text-[#1D4ED8] mb-3">Live Q&A Sessions</h3>
+
+                  <h3 className="text-xl font-bold text-[#1D4ED8] mb-3">
+                    Live Q&A Sessions
+                  </h3>
                   <p className="text-[#2C2E3A] mb-4 leading-relaxed">
-                    This plan includes access to exclusive live Q&A sessions with direct access to expert guidance.
+                    This plan includes access to exclusive live Q&A sessions
+                    with direct access to expert guidance.
                   </p>
                   <div className="bg-white/70 rounded-2xl p-4 border border-[#1D4ED8]/20">
                     <ul className="space-y-2 text-sm text-[#2C2E3A]">
@@ -264,10 +291,13 @@ function AccessPageContent() {
                 <div className="group relative overflow-hidden bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl p-6 transition-all duration-700 hover:shadow-xl">
                   {/* Top accent line */}
                   <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] rounded-t-3xl"></div>
-                  
-                  <h3 className="text-xl font-bold text-[#141619] mb-3">What You Get</h3>
+
+                  <h3 className="text-xl font-bold text-[#141619] mb-3">
+                    What You Get
+                  </h3>
                   <p className="text-[#2C2E3A] leading-relaxed">
-                    Lifetime access to the full LinkedIn growth video course. Upgrade later if you want notes or live Q&A access.
+                    Lifetime access to the full LinkedIn growth video course.
+                    Upgrade later if you want notes or live Q&A access.
                   </p>
                 </div>
               )}

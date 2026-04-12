@@ -70,12 +70,12 @@ export default function LinkedInGrowthPage() {
         
         // Check cache first
         const cacheKey = `purchase_${user.uid}`;
-        // const cached = localStorage.getItem(cacheKey);
-        // if (cached) {
-        //   setPurchasedPlan(cached);
-        //   setLoading(false);
-        //   return;
-        // }
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          setPurchasedPlan(cached);
+          setLoading(false);
+          return;
+        }
         
         // Check payments by userId and email
         const paymentsRef = collection(db, 'payments');
