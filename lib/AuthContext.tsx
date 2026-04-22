@@ -41,6 +41,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         trackLogin();
         setAnalyticsUser(user.uid, user.email || '', user.displayName || '');
+
+        try {
+          await fetch('/api/user-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+            }),
+          });
+        } catch (err) {
+          console.error('Failed to upsert user profile:', err);
+        }
       } else {
         // Remove session when user logs out
         await removeUserSession();

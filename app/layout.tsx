@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../lib/AuthContext";
 import Navigation from "../components/Navigation";
+import LoginNudgePopup from "../components/LoginNudgePopup";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,7 @@ export default function RootLayout({
           <div className="pt-16">
             {children}
           </div>
+          <LoginNudgePopup />
         </AuthProvider>
       </body>
     </html>
