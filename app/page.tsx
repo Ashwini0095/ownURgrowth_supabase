@@ -37,7 +37,7 @@ export default function Home() {
       <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-[#B3B4BD]/10 rotate-45 blur-xl"></div>
       
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-start justify-center pt-16 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 overflow-hidden">
+      <section className="relative min-h-[75vh] flex items-start justify-center pt-12 pb-20 lg:pb-24 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 overflow-hidden">
         {/* Square Grid Background */}
         <div 
           className="absolute inset-0 opacity-[0.15]"
@@ -67,20 +67,20 @@ export default function Home() {
           <div className="w-full space-y-6 text-center">
             {/* Floating badges */}
             <div className="flex flex-wrap justify-center gap-6">
-              <div className="group transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-3 bg-[#1D4ED8]/10 backdrop-blur-sm border border-[#1D4ED8]/20 px-6 py-3 rounded-full shadow-lg hover:shadow-[#1D4ED8]/30">
+              <div className="group transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-2.5 bg-[#1D4ED8]/10 backdrop-blur-sm border border-[#1D4ED8]/20 px-5 py-2 rounded-full shadow-lg hover:shadow-[#1D4ED8]/30">
                 <span className="w-2 h-2 bg-[#1D4ED8] rounded-full animate-pulse" />
-                <span className="text-[#141619] font-medium text-lg">Transform Your Career & Life</span>
+                <span className="text-[#141619] font-medium text-sm sm:text-base">Transform Your Career & Life</span>
               </div>
-              <div className="group transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-3 bg-[#1D4ED8]/10 backdrop-blur-sm border border-[#1D4ED8]/20 px-6 py-3 rounded-full shadow-lg hover:shadow-[#1D4ED8]/30">
+              <div className="group transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-2.5 bg-[#1D4ED8]/10 backdrop-blur-sm border border-[#1D4ED8]/20 px-5 py-2 rounded-full shadow-lg hover:shadow-[#1D4ED8]/30">
                 <span className="w-2 h-2 bg-[#0F172A] rounded-full animate-pulse" />
-                <span className="text-[#141619] font-medium text-lg">Build your personal brand</span>
+                <span className="text-[#141619] font-medium text-sm sm:text-base">Build your personal brand</span>
               </div>
             </div>
 
-            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl sm:leading-relaxed lg:leading-relaxed xl:leading-relaxed">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl sm:leading-relaxed lg:leading-relaxed xl:leading-relaxed">
               <span className="text-[#141619]">Master Skills That</span>
               <br />
-              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
+              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
                 <Typewriter 
                   phrases={[
                     "Builds Passive Income",
@@ -94,39 +94,39 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-base text-[#2C2E3A] sm:text-lg md:text-xl lg:text-2xl font-semibold leading-relaxed max-w-7xl mx-auto tracking-normal px-4">
+            <p className="text-sm text-[#2C2E3A] sm:text-base md:text-lg lg:text-xl font-semibold leading-relaxed max-w-5xl mx-auto tracking-normal px-4">
               You didn't come this far to stay average. Land your dream job, grow your LinkedIn, and build a brand that works for you, ownURgrowth got you covered.
             </p>
 
-            <div className="flex flex-col gap-6 mt-12">
-              <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
-                <Link href="/courses" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+            <div className="flex flex-col gap-4 mt-8">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                <Link href="/courses" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Start Learning Today
-                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
-                <Link href="/partnerships" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                <Link href="/partnerships" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Amplify Your Brand
-                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
               </div>
-              <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
-                <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Connect 1:1
-                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
-                <Link href="/ghostwriting" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                <Link href="/ghostwriting" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Let us grow your Linkedin
-                    <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
@@ -137,7 +137,7 @@ export default function Home() {
       </section>
 
       {/* Course Preview Section */}
-      <section className="relative bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100 py-24 lg:py-32 shadow-inner">
+      <section className="relative bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100 py-16 lg:py-24 shadow-inner">
         {/* Professional background overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-50/50 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-slate-50/30 via-transparent to-slate-50/30"></div>
@@ -146,19 +146,19 @@ export default function Home() {
         <div className="absolute bottom-20 right-20 w-16 h-16 bg-[#B3B4BD]/20 -rotate-45 rounded-lg"></div>
         
         <div className="mx-auto max-w-7xl px-4 lg:px-6 relative z-10">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl font-bold text-[#141619] sm:text-6xl lg:text-7xl mb-6">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-4xl font-bold text-[#141619] sm:text-5xl lg:text-6xl mb-4">
               Learn & Earn <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">Programs</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] mx-auto mb-6"></div>
-            <p className="text-2xl text-[#141619] font-bold">
+            <div className="w-20 h-1 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] mx-auto mb-4"></div>
+            <p className="text-lg md:text-xl text-[#141619] font-bold">
               Built for The Ambitious
             </p>
           </div>
           
           <div className="grid gap-6 md:gap-10 md:grid-cols-2 max-w-6xl mx-auto">
             <ScrollAnimation delay={200}>
-              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
+              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-8 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
               
               {/* Animated top border on hover */}
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
@@ -168,14 +168,14 @@ export default function Home() {
                 <div className="w-6 h-6 bg-[#1D4ED8]/50 rounded-lg"></div>
               </div>
               
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1D4ED8] mb-4 md:mb-6 transition-colors duration-500 relative z-10 tracking-tight">
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#1D4ED8] mb-3 md:mb-4 transition-colors duration-500 relative z-10 tracking-tight">
                 LinkedIn Decoded
               </h3>
-              <p className="text-[#141619] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed transition-colors flex-grow relative z-10">
+              <p className="text-[#141619] text-base md:text-lg mb-6 md:mb-8 font-light leading-relaxed transition-colors flex-grow relative z-10">
                 No theory. No fillers. Just raw secrets and tactics that actually grows your linkedin.
               </p>
               <div className="flex items-center justify-end mt-auto relative z-10">
-                <Link href="/courses/linkedin-growth" className="relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-8 md:px-16 py-3 md:py-4 text-lg md:text-xl font-bold text-white transition-all duration-500 hover:scale-105 shadow-xl hover:shadow-2xl rounded-2xl group-hover:shadow-[#1D4ED8]/30">
+                <Link href="/courses/linkedin-growth" className="relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-6 md:px-12 py-3 text-base md:text-lg font-bold text-white transition-all duration-500 hover:scale-105 shadow-xl hover:shadow-2xl rounded-2xl group-hover:shadow-[#1D4ED8]/30">
                   <span className="relative z-10">Enroll Now</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 </Link>
@@ -184,7 +184,7 @@ export default function Home() {
             </ScrollAnimation>
 
             <ScrollAnimation delay={400}>
-              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-10 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
+              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-8 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
               
               {/* Animated top border on hover */}
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
@@ -194,14 +194,14 @@ export default function Home() {
                 <div className="w-6 h-6 bg-[#1D4ED8]/50 rounded-lg"></div>
               </div>
               
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1D4ED8] mb-4 md:mb-6 transition-colors duration-500 relative z-10 tracking-tight">
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#1D4ED8] mb-3 md:mb-4 transition-colors duration-500 relative z-10 tracking-tight">
                 System Design Notes
               </h3>
-              <p className="text-[#141619] text-lg md:text-xl mb-8 md:mb-10 font-light leading-relaxed transition-colors flex-grow relative z-10">
+              <p className="text-[#141619] text-base md:text-lg mb-6 md:mb-8 font-light leading-relaxed transition-colors flex-grow relative z-10">
                 Clear notes to master scalable system design for real-world systems and interviews(which will get you in MAANG)
               </p>
               <div className="flex items-center justify-end mt-auto relative z-10">
-                <button className="relative overflow-hidden bg-gradient-to-r from-gray-400 to-gray-500 px-8 md:px-16 py-3 md:py-4 text-lg md:text-xl font-bold text-white shadow-xl rounded-2xl cursor-not-allowed opacity-70">
+                <button className="relative overflow-hidden bg-gradient-to-r from-gray-400 to-gray-500 px-6 md:px-12 py-3 text-base md:text-lg font-bold text-white shadow-xl rounded-2xl cursor-not-allowed opacity-70">
                   <span className="relative z-10">Coming Soon</span>
                 </button>
               </div>

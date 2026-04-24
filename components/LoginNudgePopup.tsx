@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { X, LogIn, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 
 const STORAGE_KEY = 'loginNudge:shownCount';
@@ -99,82 +100,74 @@ export default function LoginNudgePopup() {
         type="button"
         aria-label="Dismiss"
         onClick={handleDismiss}
-        className="absolute inset-0 bg-slate-900/15 backdrop-blur-[2px] animate-[fadeIn_0.3s_ease-out]"
+        className="absolute inset-0 bg-[#0F172A]/30 backdrop-blur-[2px] animate-[fadeIn_0.3s_ease-out]"
       />
 
       <div
-        className="relative w-full max-w-md rounded-3xl border border-white/40 bg-white/70 p-8 shadow-2xl shadow-fuchsia-500/20 backdrop-blur-2xl animate-[popIn_0.35s_cubic-bezier(0.34,1.56,0.64,1)]"
+        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-[#1D4ED8]/15 bg-white/95 shadow-2xl shadow-[#1D4ED8]/20 backdrop-blur-2xl animate-[popIn_0.35s_cubic-bezier(0.34,1.56,0.64,1)]"
       >
+        {/* Decorative gradient blobs, same recipe as the login/signup card */}
+        <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-gradient-to-br from-blue-400/30 to-indigo-600/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-gradient-to-tr from-indigo-300/25 to-blue-400/15 blur-3xl" />
+
         <button
           type="button"
           onClick={handleDismiss}
           aria-label="Close"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-slate-500 transition hover:bg-black/10 hover:text-slate-900"
+          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[#0F172A]/5 text-[#2C2E3A] transition-colors hover:bg-[#1D4ED8]/10 hover:text-[#1D4ED8]"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 14 14"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          >
-            <path d="M1 1l12 12M13 1L1 13" />
-          </svg>
+          <X className="h-4 w-4" strokeWidth={2.5} />
         </button>
 
-        <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-400 to-purple-500 shadow-lg shadow-fuchsia-400/40">
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <div className="relative p-7 sm:p-8">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1D4ED8] to-[#0F172A] shadow-xl shadow-[#1D4ED8]/30">
+            <LogIn className="h-6 w-6 text-white" strokeWidth={2.25} />
+          </div>
+
+          <h2
+            id="login-nudge-title"
+            className="mt-5 text-2xl font-bold tracking-tight text-[#141619]"
           >
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-            <polyline points="10 17 15 12 10 7" />
-            <line x1="15" y1="12" x2="3" y2="12" />
-          </svg>
-        </div>
+            Join ownURgrowth
+          </h2>
+          <p className="mt-1.5 text-sm font-light leading-relaxed text-[#2C2E3A]">
+            Create your free account in 30 seconds — save progress, unlock courses, and pick up right where you left off.
+          </p>
 
-        <h2
-          id="login-nudge-title"
-          className="text-2xl font-bold tracking-tight text-slate-900"
-        >
-          Join ownURgrowth
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-          Sign up in 30 seconds to continue.
-        </p>
+          <div className="mt-5 flex items-center gap-2 rounded-xl border border-[#1D4ED8]/10 bg-[#1D4ED8]/[0.04] px-3 py-2 text-[11px] font-medium text-[#2C2E3A]">
+            <ShieldCheck className="h-3.5 w-3.5 flex-shrink-0 text-[#1D4ED8]" strokeWidth={2.25} />
+            <span>Lifetime access · Progress syncs across devices</span>
+          </div>
 
-        <div className="mt-6 space-y-3">
+          <div className="mt-5 space-y-2.5">
+            <button
+              type="button"
+              onClick={handleSignup}
+              className="group relative w-full overflow-hidden rounded-full bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/40"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                Create an account
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/25 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
+            </button>
+            <button
+              type="button"
+              onClick={handleLogin}
+              className="w-full rounded-full border border-[#B3B4BD]/60 bg-white px-4 py-3 text-sm font-semibold text-[#141619] transition-colors hover:border-[#1D4ED8]/40 hover:bg-[#1D4ED8]/5 hover:text-[#1D4ED8]"
+            >
+              I already have an account
+            </button>
+          </div>
+
           <button
             type="button"
-            onClick={handleSignup}
-            className="w-full rounded-full bg-gradient-to-r from-fuchsia-400 to-purple-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 transition hover:scale-[1.02] hover:shadow-xl hover:shadow-fuchsia-500/40"
+            onClick={handleDismiss}
+            className="mt-4 block w-full text-center text-xs font-medium text-[#2C2E3A]/70 transition-colors hover:text-[#1D4ED8]"
           >
-            Create an account
-          </button>
-          <button
-            type="button"
-            onClick={handleLogin}
-            className="w-full rounded-full border border-slate-300 bg-white/80 px-4 py-3 text-sm font-semibold text-slate-800 backdrop-blur transition hover:bg-white"
-          >
-            I already have an account
+            Maybe later
           </button>
         </div>
-
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="mt-4 w-full text-center text-xs font-medium text-slate-500 transition hover:text-slate-700"
-        >
-          Maybe later
-        </button>
       </div>
 
       <style jsx>{`

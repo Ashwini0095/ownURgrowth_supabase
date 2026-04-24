@@ -2,8 +2,10 @@
 
 import { useState, Suspense } from "react";
 import type { FormEvent } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { Sparkles, ShieldCheck, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
 import { auth } from "../../lib/firebase";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 
@@ -13,8 +15,9 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const redirectUrl = searchParams.get('redirect') || '/courses';
+  const signupHref = `/signup${redirectUrl !== '/courses' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,99 +39,195 @@ function LoginContent() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white relative">
-      {/* Abstract background shapes */}
-      <div className="absolute top-20 right-20 w-64 h-64 bg-[#1D4ED8]/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-40 left-10 w-80 h-80 bg-[#0F172A]/3 rounded-full blur-2xl"></div>
-      
-      <section className="flex items-center justify-center px-4 py-16 relative z-10">
-        <div className="w-full max-w-md rounded-3xl border border-[#B3B4BD]/20 bg-white/90 backdrop-blur-md p-8 shadow-xl">
-          <h1 className="text-3xl font-bold text-[#141619] mb-2">Log in</h1>
-          <p className="text-[#2C2E3A] font-light mb-8">
-            Access your ownURgrowth courses.
-          </p>
+    <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619] relative overflow-hidden">
+      {/* Ambient background decoration — aligned with homepage */}
+      <div
+        className="absolute inset-0 opacity-[0.12] pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(29, 78, 216, 0.35) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(29, 78, 216, 0.35) 1px, transparent 1px)
+          `,
+          backgroundSize: '44px 44px'
+        }}
+      />
+      <div className="absolute -top-24 -right-24 w-[28rem] h-[28rem] bg-gradient-to-br from-blue-400/25 to-indigo-600/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute -bottom-32 -left-20 w-[24rem] h-[24rem] bg-gradient-to-tr from-indigo-400/20 to-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-gradient-to-r from-blue-300/10 to-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="mb-6">
-            <GoogleSignInButton 
-              redirectUrl={redirectUrl}
-              onError={setError}
-            />
-            
-            <div className="my-4 flex items-center">
-              <div className="flex-1 border-t border-[#B3B4BD]/30"></div>
-              <span className="px-3 text-xs text-[#141619]0">or</span>
-              <div className="flex-1 border-t border-[#B3B4BD]/30"></div>
+      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center justify-center px-4 py-6 sm:py-10 lg:px-8 lg:py-8">
+        <div className="w-full overflow-hidden rounded-3xl border border-[#1D4ED8]/15 bg-white/70 shadow-2xl shadow-[#1D4ED8]/10 backdrop-blur-xl lg:grid lg:grid-cols-2">
+          {/* ── Left hero panel ─────────────────────────────────── */}
+          <div className="relative hidden overflow-hidden bg-gradient-to-br from-[#1D4ED8] to-[#0F172A] p-8 text-white lg:flex lg:flex-col lg:justify-between xl:p-10">
+            {/* Decorative shapes */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-20 translate-x-16" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-300/20 rounded-full blur-3xl translate-y-20 -translate-x-12" />
+            <div className="absolute top-1/2 right-1/4 w-20 h-20 border border-white/20 rounded-2xl rotate-12" />
+            <div className="absolute bottom-1/3 left-1/3 w-14 h-14 border border-white/15 rounded-full" />
+
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wide backdrop-blur-sm">
+                <Sparkles className="h-3.5 w-3.5" />
+                WELCOME BACK
+              </div>
+
+              <h2 className="mt-6 text-3xl font-bold leading-tight tracking-tight xl:text-4xl 2xl:text-5xl">
+                Pick up where
+                <span className="block bg-gradient-to-r from-white via-blue-100 to-indigo-200 bg-clip-text text-transparent">
+                  you left off.
+                </span>
+              </h2>
+
+              <p className="mt-4 max-w-md text-sm font-light leading-relaxed text-white/80 xl:text-base">
+                Your courses, your progress, and your personal growth roadmap —
+                all waiting for you.
+              </p>
+            </div>
+
+            <div className="relative z-10 mt-6 space-y-2.5 xl:mt-8 xl:space-y-3">
+              {[
+                { icon: Rocket, title: "Lifetime access", sub: "Every course you've unlocked" },
+                { icon: ShieldCheck, title: "Secure & private", sub: "Your data stays yours" },
+                { icon: CheckCircle2, title: "Continue anywhere", sub: "Progress syncs across devices" },
+              ].map(({ icon: Icon, title, sub }) => (
+                <div key={title} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm xl:p-4">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-white/15">
+                    <Icon className="h-[18px] w-[18px]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{title}</p>
+                    <p className="text-xs text-white/70">{sub}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <style jsx>{`
-              input:-webkit-autofill,
-              input:-webkit-autofill:hover,
-              input:-webkit-autofill:focus,
-              input:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
-                -webkit-text-fill-color: white !important;
-                border-color: rgba(255, 255, 255, 0.1) !important;
-              }
-            `}</style>
-            <div className="space-y-1 text-sm">
-              <label htmlFor="email" className="block text-[#141619]">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                required
-                className="w-full rounded-lg border border-[#B3B4BD]/30 bg-white px-3 py-2 text-sm text-[#141619] outline-none ring-0 placeholder:text-[#2C2E3A] focus:border-[#1D4ED8] autofill:bg-white"
-                placeholder="you@example.com"
-              />
-            </div>
-            <div className="space-y-1 text-sm">
-              <label htmlFor="password" className="block text-[#141619]">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  required
-                  className="w-full rounded-lg border border-[#B3B4BD]/30 bg-white px-3 py-2 pr-10 text-sm text-[#141619] outline-none ring-0 placeholder:text-[#2C2E3A] focus:border-[#1D4ED8] autofill:bg-white"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2C2E3A] hover:text-[#141619]"
-                >
-                  {showPassword ? (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  )}
-                </button>
+          {/* ── Right form panel ────────────────────────────────── */}
+          <div className="relative p-6 sm:p-8 lg:p-8 xl:p-10">
+            <div className="mx-auto w-full max-w-md">
+              <div className="lg:hidden inline-flex items-center gap-2 rounded-full border border-[#1D4ED8]/20 bg-[#1D4ED8]/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-[#1D4ED8]">
+                <Sparkles className="h-3 w-3" />
+                WELCOME BACK
               </div>
-            </div>
-            <button
-              type="submit"
-              className="mt-2 w-full rounded-full bg-[#1D4ED8] text-white shadow-lg shadow-[#1D4ED8]/30 transition hover:bg-blue-400"
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Log in"}
-            </button>
-            {error && (
-              <p className="text-xs text-red-400">
-                {error}
+
+              <h1 className="mt-3 text-2xl font-bold tracking-tight text-[#141619] sm:text-3xl lg:text-[1.75rem] xl:text-3xl">
+                Log in
+              </h1>
+              <p className="mt-1.5 text-sm font-light text-[#2C2E3A]">
+                Access your ownURgrowth courses.
               </p>
-            )}
-          </form>
+
+              <div className="mt-5">
+                <GoogleSignInButton
+                  redirectUrl={redirectUrl}
+                  onError={setError}
+                />
+
+                <div className="my-4 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#B3B4BD]/60 to-transparent" />
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#2C2E3A]/70">or log in with email</span>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#B3B4BD]/60 to-transparent" />
+                </div>
+              </div>
+
+              <form className="space-y-3" onSubmit={handleSubmit}>
+                <style jsx>{`
+                  input:-webkit-autofill,
+                  input:-webkit-autofill:hover,
+                  input:-webkit-autofill:focus,
+                  input:-webkit-autofill:active {
+                    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+                    -webkit-text-fill-color: #141619 !important;
+                    caret-color: #141619 !important;
+                  }
+                `}</style>
+
+                <div className="space-y-1">
+                  <label htmlFor="email" className="block text-xs font-semibold text-[#141619]">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    className="w-full rounded-xl border border-[#B3B4BD]/50 bg-white px-4 py-2.5 text-sm text-[#141619] placeholder:text-[#B3B4BD] outline-none transition-all duration-200 focus:border-[#1D4ED8] focus:ring-2 focus:ring-[#1D4ED8]/20"
+                    placeholder="you@example.com"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="block text-xs font-semibold text-[#141619]">
+                      Password
+                    </label>
+                  </div>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      required
+                      autoComplete="current-password"
+                      className="w-full rounded-xl border border-[#B3B4BD]/50 bg-white px-4 py-2.5 pr-11 text-sm text-[#141619] placeholder:text-[#B3B4BD] outline-none transition-all duration-200 focus:border-[#1D4ED8] focus:ring-2 focus:ring-[#1D4ED8]/20"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-[#2C2E3A] transition-colors hover:bg-[#1D4ED8]/5 hover:text-[#1D4ED8]"
+                    >
+                      {showPassword ? (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group relative mt-4 w-full overflow-hidden rounded-full bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-6 py-3 text-sm font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/40 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {loading ? "Logging in..." : (
+                      <>
+                        Log in
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </>
+                    )}
+                  </span>
+                  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/25 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
+                </button>
+
+                {error && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-xs text-red-600">
+                    {error}
+                  </div>
+                )}
+              </form>
+
+              <p className="mt-5 text-center text-sm text-[#2C2E3A]">
+                New to ownURgrowth?{" "}
+                <Link
+                  href={signupHref}
+                  className="font-semibold text-[#1D4ED8] transition-colors hover:text-[#0F172A]"
+                >
+                  Create an account
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </main>

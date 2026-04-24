@@ -4,10 +4,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../../lib/AuthContext";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import NotesViewerWrapper from "./NotesViewerWrapper";
 import CourseNotesFixed from "../../../../components/CourseNotesFixed";
 import PromptVaultClean from "../../../../components/PromptVaultClean";
+import CourseReviewPopup, { hasSubmittedCourseReview } from "../../../../components/CourseReviewPopup";
+
+const COURSE_ID = "linkedin-growth";
+const BUNNY_ORIGIN = "https://iframe.mediadelivery.net";
+const VIDEO_END_DELAY_MS = 3000;
 
 const planLabels: Record<string, string> = {
   basic: "Core Course (₹499)",
@@ -98,7 +103,33 @@ function AccessPageContent() {
   const [userPlan, setUserPlan] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(true);
 
-  
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const navigateOnCloseRef = useRef(false);
+  const videoEndTimerRef = useRef<number | null>(null);
+
+  const openReview = (navigateOnClose: boolean) => {
+    if (hasSubmittedCourseReview(COURSE_ID)) {
+      if (navigateOnClose) router.push("/courses/linkedin-growth");
+      return;
+    }
+    navigateOnCloseRef.current = navigateOnClose;
+    setReviewOpen(true);
+  };
+
+  const handleReviewClose = () => {
+    setReviewOpen(false);
+    if (navigateOnCloseRef.current) {
+      navigateOnCloseRef.current = false;
+      router.push("/courses/linkedin-growth");
+    }
+  };
+
+  const handleBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    openReview(true);
+  };
+
+
   useEffect(() => {
     const verifyAccess = async () => {
       if (loading) return;
@@ -121,6 +152,37 @@ function AccessPageContent() {
 
     verifyAccess();
   }, [user, loading, router]);
+
+  // Listen for Bunny Stream's "ended" event via player.js-style postMessage.
+  // When the video finishes, wait 3s and surface the review popup (unless already submitted).
+  useEffect(() => {
+    if (!userPlan) return;
+
+    const handleMessage = (e: MessageEvent) => {
+      if (e.origin !== BUNNY_ORIGIN) return;
+      let payload: any = e.data;
+      if (typeof payload === "string") {
+        try { payload = JSON.parse(payload); } catch { return; }
+      }
+      const event = payload?.event ?? payload?.type;
+      if (event !== "ended" && event !== "video:ended") return;
+
+      if (videoEndTimerRef.current) return;
+      videoEndTimerRef.current = window.setTimeout(() => {
+        videoEndTimerRef.current = null;
+        openReview(false);
+      }, VIDEO_END_DELAY_MS);
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      if (videoEndTimerRef.current) {
+        window.clearTimeout(videoEndTimerRef.current);
+        videoEndTimerRef.current = null;
+      }
+    };
+  }, [userPlan]);
 
   const planLabel = userPlan ? planLabels[userPlan] : "Core Course (₹499)";
 
@@ -183,13 +245,14 @@ function AccessPageContent() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <Link
-                href="/courses/linkedin-growth"
+              <button
+                type="button"
+                onClick={handleBackClick}
                 className="inline-flex items-center gap-2 text-[#2C2E3A] hover:text-[#1D4ED8] transition-colors font-medium"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Change plan
-              </Link>
+              </button>
               {(userPlan === "basic" || userPlan === "plus") && (
                 <Link
                   href={`/upgrade?from=${userPlan}`}
@@ -305,6 +368,12 @@ function AccessPageContent() {
           </div>
         </div>
       </section>
+
+      <CourseReviewPopup
+        open={reviewOpen}
+        onClose={handleReviewClose}
+        courseId={COURSE_ID}
+      />
     </main>
   );
 }
