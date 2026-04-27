@@ -146,7 +146,7 @@ export default function InteractiveFAQ() {
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">Still have questions?</p>
           <a 
-            href="mailto:contact@ownurgrowth.com" 
+            href="mailto:info@ownurgrowth.com" 
             className="inline-flex items-center gap-2 bg-[#1D4ED8] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#1D4ED8]/90 transition-colors"
           >
             Get in Touch
