@@ -5,64 +5,34 @@ import { useEffect, useRef, useState } from "react";
 
 const reviews = [
   {
-    name: "Sarah Chen",
-    role: "Product Manager, Google",
+    name: "Naman Damani",
+    role: "SDE, UBS",
     rating: 5,
-    text: "The LinkedIn course completely changed how I approach networking. I got 3 job offers within 2 months!"
+    text: "Honestly didn't expect to get so much out of it in one sitting. It's a crash course but nothing feels rushed, every minute is worth it."
   },
   {
-    name: "Alex Rodriguez",
-    role: "Senior Engineer, Meta",
+    name: "Aniket Kolte",
+    role: "Associate SDE, Finarkein",
     rating: 5,
-    text: "System design notes helped me crack interviews at FAANG companies. Worth every penny!"
+    text: "What I liked most is that everything taught actually had a real example behind it. It didn't feel like theory, it felt like someone showing me their own work."
   },
   {
-    name: "Priya Sharma",
-    role: "Marketing Director, Startup",
+    name: "Tejas Kohade",
+    role: "SDE 2, Mindstix",
     rating: 5,
-    text: "Practical, actionable content. No fluff, just real strategies that work in the real world."
+    text: "There's no \"you got this, believe in yourself\" stuff here which I really appreciated. Just straight up sharing of what worked and what didn't, very refreshing."
   },
   {
-    name: "Michael Johnson",
-    role: "Data Scientist, Microsoft",
+    name: "Ishan Shah",
+    role: "Intern, Upstox",
     rating: 5,
-    text: "The course structure is perfect. I learned more in 2 weeks than I did in 6 months of random tutorials."
+    text: "Some of the things shared in this course I genuinely hadn't come across anywhere else. Felt less like a course and more like a conversation with someone who's been in the trenches."
   },
   {
-    name: "Emily Davis",
-    role: "UX Designer, Adobe",
+    name: "Shashank Patil",
+    role: "SDE, Barclays",
     rating: 5,
-    text: "Finally, a course that focuses on what actually matters. My LinkedIn engagement increased by 400%!"
-  },
-  {
-    name: "David Kim",
-    role: "Software Engineer, Amazon",
-    rating: 5,
-    text: "The system design concepts are explained so clearly. Helped me land my dream job at Amazon."
-  },
-  {
-    name: "Lisa Wang",
-    role: "Product Owner, Netflix",
-    rating: 5,
-    text: "Best investment I made for my career. The LinkedIn strategies are pure gold!"
-  },
-  {
-    name: "James Wilson",
-    role: "Tech Lead, Spotify",
-    rating: 5,
-    text: "Concise, practical, and immediately applicable. Exactly what busy professionals need."
-  },
-  {
-    name: "Maria Garcia",
-    role: "Engineering Manager, Uber",
-    rating: 5,
-    text: "The course helped me build my personal brand and establish thought leadership in my field."
-  },
-  {
-    name: "Robert Brown",
-    role: "Senior Developer, Apple",
-    rating: 5,
-    text: "Outstanding content quality. The instructor knows what they're talking about and delivers real value."
+    text: "Every tip had a \"I did this and here's what happened\" energy to it. You can tell none of it was copy pasted from somewhere, it's all been lived and tested."
   }
 ];
 

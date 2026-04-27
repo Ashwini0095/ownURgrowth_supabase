@@ -12,7 +12,19 @@ declare global {
   }
 }
 
-const courses = [
+type CourseCard = {
+  title: string;
+  category: string;
+  description: string;
+  students: string;
+  price: string;
+  badge: string;
+  slug: string;
+  /** Replaces "Starts at …" when set (e.g. coming soon) */
+  priceMessage?: string;
+};
+
+const courses: CourseCard[] = [
   {
     title: "Grow on LinkedIn",
     category: "LinkedIn Growth",
@@ -29,7 +41,8 @@ const courses = [
     students: "",
     price: "₹1000",
     badge: "Notes only",
-    slug: "system-design-notes"
+    slug: "system-design-notes",
+    priceMessage: "Coming soon",
   },
 ];
 
@@ -180,7 +193,7 @@ export default function CoursesPage() {
                 <div className="flex items-center justify-between mt-auto relative z-10">
                   <div>
                     <span className={`text-2xl font-bold ${isPurchased ? 'text-green-600' : 'text-[#1D4ED8]'}`}>
-                      {isPurchased ? 'Owned' : `Starts at ${course.price}`}
+                      {isPurchased ? 'Owned' : course.priceMessage ?? `Starts at ${course.price}`}
                     </span>
                     <p className="text-sm text-gray-500 mt-1">{isPurchased ? 'You have access' : course.badge}</p>
                   </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../../lib/AuthContext";
@@ -104,11 +104,17 @@ function AccessPageContent() {
   const [verifying, setVerifying] = useState(true);
 
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [canReview, setCanReview] = useState(true);
   const navigateOnCloseRef = useRef(false);
   const videoEndTimerRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    setCanReview(!hasSubmittedCourseReview(COURSE_ID));
+  }, []);
+
   const openReview = (navigateOnClose: boolean) => {
     if (hasSubmittedCourseReview(COURSE_ID)) {
+      setCanReview(false);
       if (navigateOnClose) router.push("/courses/linkedin-growth");
       return;
     }
@@ -118,6 +124,7 @@ function AccessPageContent() {
 
   const handleReviewClose = () => {
     setReviewOpen(false);
+    setCanReview(!hasSubmittedCourseReview(COURSE_ID));
     if (navigateOnCloseRef.current) {
       navigateOnCloseRef.current = false;
       router.push("/courses/linkedin-growth");
@@ -128,6 +135,30 @@ function AccessPageContent() {
     e.preventDefault();
     openReview(true);
   };
+
+  const handleReviewClick = () => {
+    openReview(false);
+  };
+
+  useEffect(() => {
+    if (!userPlan) return;
+    if (hasSubmittedCourseReview(COURSE_ID)) return;
+
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
+      if (hasSubmittedCourseReview(COURSE_ID)) {
+        router.push("/courses/linkedin-growth");
+        return;
+      }
+      window.history.pushState(null, "", window.location.href);
+      openReview(true);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userPlan]);
 
 
   useEffect(() => {
@@ -253,6 +284,16 @@ function AccessPageContent() {
                 <ChevronLeft className="h-4 w-4" />
                 Change plan
               </button>
+              {canReview && (
+                <button
+                  type="button"
+                  onClick={handleReviewClick}
+                  className="inline-flex items-center gap-2 rounded-2xl border-2 border-[#1D4ED8]/30 bg-white/80 px-5 py-2.5 text-sm font-bold text-[#1D4ED8] shadow-md shadow-[#1D4ED8]/10 transition-all duration-500 hover:scale-105 hover:border-[#1D4ED8] hover:bg-[#1D4ED8]/5"
+                >
+                  <Star className="h-4 w-4" fill="currentColor" strokeWidth={2} />
+                  Leave a Review
+                </button>
+              )}
               {(userPlan === "basic" || userPlan === "plus") && (
                 <Link
                   href={`/upgrade?from=${userPlan}`}
