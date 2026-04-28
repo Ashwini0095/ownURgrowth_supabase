@@ -82,7 +82,7 @@ export default function Home() {
         </div>
         
         <div className="w-full max-w-none px-4 sm:px-8 lg:px-12 relative z-10">
-          <div className="w-full space-y-6 text-center">
+          <div className="w-full space-y-10 text-center">
             {/* Floating badges */}
             <div className="flex flex-wrap justify-center gap-6">
               <div className="group transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-2.5 bg-[#1D4ED8]/10 backdrop-blur-sm border border-[#1D4ED8]/20 px-5 py-2 rounded-full shadow-lg hover:shadow-[#1D4ED8]/30">
