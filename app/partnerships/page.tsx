@@ -38,7 +38,7 @@ export default function PartnershipsPage() {
             </p>
             <div className="w-32 h-1 bg-gradient-to-r from-[#1D4ED8] to-[#1E40AF] mx-auto rounded-full mb-12"></div>
             <div className="mt-8">
-              <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-12 py-6 text-xl font-bold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl rounded-2xl">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSf4sPPXB5yt-I_ZqKxQXJcYtKHbyyrgthBo_vCyuwNVh1D7_g/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-12 py-6 text-xl font-bold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl rounded-2xl">
                 Partner With Us
                 <ChevronRight className="h-6 w-6 transition-transform group-hover:translate-x-2" />
               </a>
@@ -157,7 +157,7 @@ export default function PartnershipsPage() {
           <p className="text-lg text-[#2C2E3A] mb-8">
             Let's discuss how we can help you reach your target audience and achieve your marketing goals.
           </p>
-          <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-5 text-lg font-semibold text-white shadow-lg shadow-[#1D4ED8]/30 transition-all duration-300 hover:shadow-[#1D4ED8]/40 hover:scale-105">
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSf4sPPXB5yt-I_ZqKxQXJcYtKHbyyrgthBo_vCyuwNVh1D7_g/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-5 text-lg font-semibold text-white shadow-lg shadow-[#1D4ED8]/30 transition-all duration-300 hover:shadow-[#1D4ED8]/40 hover:scale-105">
             Start Partnership Discussion
             <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
           </a>
