@@ -373,20 +373,7 @@ function AccessPageContent() {
                     with direct access to expert guidance.
                   </p>
                   <div className="bg-white/70 rounded-2xl p-4 border border-[#1D4ED8]/20">
-                    <ul className="space-y-2 text-sm text-[#2C2E3A]">
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#1D4ED8] rounded-full"></div>
-                        Next session: Add date & time
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#1D4ED8] rounded-full"></div>
-                        Join link: Add Zoom/Google Meet link
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#1D4ED8] rounded-full"></div>
-                        How to submit questions: Add instructions
-                      </li>
-                    </ul>
+                    <p className="text-sm text-[#2C2E3A]">The next session date, time, and join link will be sent to you via email.</p>
                   </div>
                 </div>
               )}
