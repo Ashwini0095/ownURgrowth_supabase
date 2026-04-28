@@ -39,7 +39,7 @@ const courses: CourseCard[] = [
     category: "System Design",
     description: "Clear, practical notes to master scalable system design for real-world systems and interviews.",
     students: "",
-    price: "₹1000",
+    price: "",
     badge: "Notes only",
     slug: "system-design-notes",
     priceMessage: "Coming soon",

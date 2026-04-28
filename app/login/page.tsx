@@ -16,8 +16,8 @@ function LoginContent() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const redirectUrl = searchParams.get('redirect') || '/courses';
-  const signupHref = `/signup${redirectUrl !== '/courses' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`;
+  const redirectUrl = searchParams.get('redirect') || '/';
+  const signupHref = `/signup${redirectUrl !== '/' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

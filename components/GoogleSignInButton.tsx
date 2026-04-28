@@ -8,7 +8,7 @@ interface GoogleSignInButtonProps {
   onError?: (error: string) => void;
 }
 
-export default function GoogleSignInButton({ redirectUrl = '/courses', onError }: GoogleSignInButtonProps) {
+export default function GoogleSignInButton({ redirectUrl = '/', onError }: GoogleSignInButtonProps) {
   const router = useRouter();
 
   const handleGoogleSignIn = async () => {
