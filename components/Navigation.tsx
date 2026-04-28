@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
@@ -20,10 +21,9 @@ export default function Navigation() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold">
-              <span className="text-[#141619]">own</span>
-              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">UR</span>
-              <span className="text-[#141619]">growth</span>
+            <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+              <Image src="/vercel.png" alt="ownURgrowth" width={40} height={40} className="rounded-lg" />
+              <span><span className="text-[#141619]">own</span><span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">UR</span><span className="text-[#141619]">growth</span></span>
             </Link>
             <div className="hidden md:flex items-center gap-8">
               {navLinks.map(({ href, label }) => (
