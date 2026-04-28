@@ -26,7 +26,25 @@ export default function Home() {
   }, []);
 
   if (!mounted) {
-    return null;
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
+        <section className="min-h-[75vh] flex items-start justify-center pt-12 pb-20 px-4">
+          <div className="w-full max-w-3xl mx-auto space-y-6 text-center animate-pulse">
+            <div className="flex justify-center gap-4">
+              <div className="h-9 w-52 bg-[#B3B4BD]/20 rounded-full" />
+              <div className="h-9 w-48 bg-[#B3B4BD]/20 rounded-full" />
+            </div>
+            <div className="h-12 sm:h-16 w-3/4 bg-[#B3B4BD]/20 rounded-2xl mx-auto" />
+            <div className="h-12 sm:h-16 w-1/2 bg-[#1D4ED8]/10 rounded-2xl mx-auto" />
+            <div className="h-6 w-2/3 bg-[#B3B4BD]/15 rounded-xl mx-auto" />
+            <div className="flex justify-center gap-3 pt-4">
+              <div className="h-12 w-36 bg-[#1D4ED8]/15 rounded-2xl" />
+              <div className="h-12 w-36 bg-[#1D4ED8]/15 rounded-2xl" />
+            </div>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -37,7 +55,7 @@ export default function Home() {
       <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-[#B3B4BD]/10 rotate-45 blur-xl"></div>
       
       {/* Hero Section */}
-      <section className="relative min-h-[75vh] flex items-start justify-center pt-12 pb-20 lg:pb-24 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 overflow-hidden">
+      <section className="relative min-h-[60vh] flex items-start justify-center pt-12 pb-10 lg:pb-14 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 overflow-hidden">
         {/* Square Grid Background */}
         <div 
           className="absolute inset-0 opacity-[0.15]"
@@ -63,7 +81,7 @@ export default function Home() {
           <div className="absolute top-1/3 right-1/4 w-16 h-16 border-2 border-blue-300/20 rotate-45"></div>
         </div>
         
-        <div className="w-full max-w-none px-8 lg:px-12 relative z-10">
+        <div className="w-full max-w-none px-4 sm:px-8 lg:px-12 relative z-10">
           <div className="w-full space-y-6 text-center">
             {/* Floating badges */}
             <div className="flex flex-wrap justify-center gap-6">
@@ -94,39 +112,39 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-sm text-[#2C2E3A] sm:text-base md:text-lg lg:text-xl font-semibold leading-relaxed max-w-5xl mx-auto tracking-normal px-4">
+            <p className="mt-6 text-sm text-[#2C2E3A] sm:text-base md:text-lg lg:text-xl font-semibold leading-relaxed max-w-5xl mx-auto tracking-normal px-4">
               You didn't come this far to stay average. Land your dream job, grow your LinkedIn, and build a brand that works for you, ownURgrowth got you covered.
             </p>
 
-            <div className="flex flex-col gap-4 mt-8">
+            <div className="flex flex-col gap-4 mt-10">
               <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <Link href="/courses" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                <Link href="/courses" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl md:text-2xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Start Learning Today
-                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-7 w-7 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
-                <Link href="/partnerships" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                <Link href="/partnerships" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl md:text-2xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Amplify Your Brand
-                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-7 w-7 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
               </div>
               <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                <a href="https://topmate.io/ashwini_harle" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl md:text-2xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Connect 1:1
-                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-7 w-7 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </a>
-                <Link href="/ghostwriting" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-10 py-4 text-base md:text-lg font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
+                <Link href="/ghostwriting" className="group relative overflow-hidden bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-14 py-6 text-xl md:text-2xl font-semibold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#1D4ED8]/50 rounded-2xl">
                   <span className="relative z-10 flex items-center gap-3">
                     Let us grow your Linkedin
-                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
+                    <ChevronRight className="h-7 w-7 transition-transform group-hover:translate-x-2" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </Link>
@@ -137,7 +155,7 @@ export default function Home() {
       </section>
 
       {/* Course Preview Section */}
-      <section className="relative bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100 py-16 lg:py-24 shadow-inner">
+      <section className="relative bg-gradient-to-br from-gray-50 via-slate-100 to-gray-100 py-10 lg:py-16 shadow-inner">
         {/* Professional background overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-50/50 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-slate-50/30 via-transparent to-slate-50/30"></div>
@@ -158,7 +176,7 @@ export default function Home() {
           
           <div className="grid gap-6 md:gap-10 md:grid-cols-2 max-w-6xl mx-auto">
             <ScrollAnimation delay={200}>
-              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-8 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
+              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-4 sm:p-6 md:p-8 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
               
               {/* Animated top border on hover */}
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
@@ -184,7 +202,7 @@ export default function Home() {
             </ScrollAnimation>
 
             <ScrollAnimation delay={400}>
-              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-6 md:p-8 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
+              <div className="group relative overflow-hidden bg-gradient-to-br from-blue-50/80 to-indigo-50/60 border-2 border-[#1D4ED8]/30 rounded-3xl p-4 sm:p-6 md:p-8 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/50 hover:-translate-y-2 flex flex-col h-full">
               
               {/* Animated top border on hover */}
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl"></div>
