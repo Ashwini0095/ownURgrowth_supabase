@@ -1,7 +1,33 @@
 'use client';
 
-import { FileText, Lock, ChevronDown, ChevronUp } from 'lucide-react';
-import { useState } from 'react';
+import { FileText, Lock, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+
+const STORAGE_KEY = 'course-notes-read-sections';
+
+function useReadTracker(totalSections: number) {
+  const [readSections, setReadSections] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) setReadSections(new Set(JSON.parse(stored)));
+    } catch {}
+  }, []);
+
+  const markRead = useCallback((index: number) => {
+    setReadSections(prev => {
+      if (prev.has(index)) return prev;
+      const next = new Set(prev);
+      next.add(index);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...next]));
+      return next;
+    });
+  }, []);
+
+  const pct = totalSections > 0 ? Math.round((readSections.size / totalSections) * 100) : 0;
+  return { readSections, markRead, pct };
+}
 
 interface CourseNotesProps {
   userPlan: 'basic' | 'plus' | 'pro' | null;
@@ -1773,6 +1799,8 @@ export default function CourseNotesComplete({ userPlan }: CourseNotesProps) {
     },
   ];
 
+  const { readSections, markRead, pct } = useReadTracker(sections.length);
+
   if (!hasAccess) {
     return (
       <div className="bg-gray-50 rounded-lg p-6">
@@ -1804,24 +1832,44 @@ export default function CourseNotesComplete({ userPlan }: CourseNotesProps) {
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <div className="h-12 w-12 rounded-full bg-[#1D4ED8]/20 flex items-center justify-center">
           <FileText className="h-6 w-6 text-[#1D4ED8]" />
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="text-xl font-semibold text-[#141619]">Complete Course Notes</h2>
           <p className="text-[#B3B4BD] text-sm">87-page comprehensive LinkedIn growth guide</p>
         </div>
+        <div className="flex items-center gap-2 text-sm font-medium text-[#1D4ED8]">
+          <BookOpen className="h-4 w-4" />
+          {pct}% read
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="mb-6">
+        <div className="h-2 bg-[#B3B4BD]/20 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] rounded-full transition-all duration-500"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <p className="text-xs text-[#B3B4BD] mt-1">{readSections.size} of {sections.length} sections read</p>
       </div>
 
       <div className="space-y-4">
         {sections.map((section, index) => (
           <div key={index} className="group relative overflow-hidden bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-2xl transition-all duration-700 hover:shadow-xl hover:shadow-[#1D4ED8]/15 hover:border-[#1D4ED8]/40">
             <button
-              onClick={() => toggleSection(index)}
+              onClick={() => { toggleSection(index); markRead(index); }}
               className="w-full flex items-center justify-between p-6 hover:bg-white/50 transition-colors"
             >
-              <h3 className="text-xl font-bold text-[#141619] text-left group-hover:text-[#1D4ED8] transition-colors duration-500">{section.title}</h3>
+              <div className="flex items-center gap-3">
+                {readSections.has(index) && (
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">✓</span>
+                )}
+                <h3 className="text-xl font-bold text-[#141619] text-left group-hover:text-[#1D4ED8] transition-colors duration-500">{section.title}</h3>
+              </div>
               {expandedSections.includes(index) ? (
                 <ChevronUp className="h-5 w-5 text-[#1D4ED8] transition-transform duration-300" />
               ) : (
