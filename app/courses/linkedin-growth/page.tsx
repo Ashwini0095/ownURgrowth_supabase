@@ -16,28 +16,28 @@ const plans = [
     description: "Essential LinkedIn growth fundamentals.",
     includes: [
       "✓ Pre-recorded video courses",
-      "✓ Exclusive Community Access", 
+      "✓ Exclusive Community Access",
       "✗ Downloadable PDF Notes Course with ready to use AI Prompts",
       "✗ Lifetime Updates at No Extra Cost",
       "✗ Live group QNA Sessions"
     ],
   },
   {
-    id: "plus", 
+    id: "plus",
     name: "Pro Program",
     price: "₹799/-",
     description: "Advanced LinkedIn growth strategies.",
     includes: [
       "✓ Pre-recorded video courses",
       "✓ Exclusive Community Access",
-      "✓ Downloadable PDF Notes Course with ready to use AI Prompts", 
+      "✓ Downloadable PDF Notes Course with ready to use AI Prompts",
       "✗ Lifetime Updates at No Extra Cost",
-      "✗ Live group QNA Sessions"
+      "✗ Live group QNA Sessions",
     ],
   },
   {
     id: "pro",
-    name: "Master Program", 
+    name: "Master Program",
     price: "₹999/-",
     description: "Complete LinkedIn mastery with all features.",
     bestValue: true,
@@ -45,7 +45,7 @@ const plans = [
       "✓ Pre-recorded video courses",
       "✓ Exclusive Community Access",
       "✓ Downloadable PDF Notes Course with ready to use AI Prompts",
-      "✓ Lifetime Updates at No Extra Cost", 
+      "✓ Lifetime Updates at No Extra Cost",
       "✓ Live group QNA Sessions"
     ],
   },
@@ -66,117 +66,93 @@ export default function LinkedInGrowthPage() {
         return;
       }
 
+      const cacheKey = `purchase_${user.uid}`;
+      const timeKey = `purchase_time_${user.uid}`;
+      const cached = localStorage.getItem(cacheKey);
+      const cachedTime = localStorage.getItem(timeKey);
+
+      // If cache is less than 5 mins old, don't even call Firebase
+      const isFresh =
+        cachedTime && Date.now() - parseInt(cachedTime) < 5 * 60 * 1000;
+      if (cached && isFresh) {
+        setPurchasedPlan(cached);
+        setLoading(false);
+        return;
+      }
+
+      // If cache exists but is old, show it immediately but revalidate in background
+      if (cached) {
+        setPurchasedPlan(cached);
+        setLoading(false);
+      }
+
       try {
-        const { collection, query, where, getDocs } =
+        const { collection, query, where, getDocs, limit, orderBy } =
           await import("firebase/firestore");
         const { db } = await import("../../../lib/firebase");
 
-        const cacheKey = `purchase_${user.uid}`;
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-          setPurchasedPlan(cached);
-          setLoading(false);
-          return;
-        }
-
-        const paymentsRef = collection(db, "payments");
-
-        // We query for all completed payments to find the best plan owned
+        // OPTIMIZED: Added limit(1) and orderBy to only pay for 1 document read
         const q = query(
-          paymentsRef,
+          collection(db, "payments"),
           where("userId", "==", user.uid),
           where("status", "==", "completed"),
+          orderBy("amount", "desc"), // Gets the highest plan first
+          limit(1),
         );
 
-        let querySnapshot = await getDocs(q);
-
-        // Fallback to email if no records found for UID
-        if (querySnapshot.empty && user.email) {
-          const qEmail = query(
-            paymentsRef,
-            where("userEmail", "==", user.email),
-            where("status", "==", "completed"),
-          );
-          querySnapshot = await getDocs(qEmail);
-        }
+        const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          // Priority Mapping: Higher number = Better plan
-          const priorityMap: Record<string, number> = {
-            pro: 3, // Master Program
-            plus: 2, // Pro Program
-            basic: 1, // Basic Crash Course
-          };
+          const data = querySnapshot.docs[0].data();
 
-          // Map Display Names from DB to internal IDs
           const nameToId: Record<string, string> = {
             "Master Program": "pro",
             "Pro Program": "plus",
             "Basic Crash Course": "basic",
           };
 
-          let bestPlanId: string | null = null;
-          let highestPriority = 0;
-
-          querySnapshot.docs.forEach((doc) => {
-            const data = doc.data();
-            // Use the plan name from DB, fallback to amount-based logic if plan name is missing
-            let currentPlanId = nameToId[data.planName] || nameToId[data.plan];
-
-            // Fallback for older records that might only have 'amount'
-            if (!currentPlanId) {
-              if (data.amount >= 999) currentPlanId = "pro";
-              else if (data.amount >= 799) currentPlanId = "plus";
-              else if (data.amount >= 499) currentPlanId = "basic";
-            }
-
-            if (currentPlanId) {
-              const currentPriority = priorityMap[currentPlanId];
-              if (currentPriority > highestPriority) {
-                highestPriority = currentPriority;
-                bestPlanId = currentPlanId;
-              }
-            }
-          });
+          // Now this will work without errors because the object
+          // is explicitly told it can be indexed by any string.
+          const bestPlanId = nameToId[data.planName] || nameToId[data.plan];
 
           if (bestPlanId) {
             localStorage.setItem(cacheKey, bestPlanId);
+            localStorage.setItem(timeKey, Date.now().toString());
             setPurchasedPlan(bestPlanId);
           }
         }
       } catch (error) {
-        console.error("Error checking purchase:", error);
+        console.error("Error:", error);
       } finally {
         setLoading(false);
       }
     };
-
     checkPurchaseHistory();
   }, [user]);
 
   const handleContinue = async () => {
     if (!selectedPlan) return;
-    
+
     // Check if user is logged in
     if (!user) {
-      router.push('/login?redirect=/courses/linkedin-growth');
+      router.push("/login?redirect=/courses/linkedin-growth");
       return;
     }
-    
-    const selectedPlanData = plans.find(plan => plan.id === selectedPlan);
+
+    const selectedPlanData = plans.find((plan) => plan.id === selectedPlan);
     if (!selectedPlanData) return;
 
     try {
       // Create Razorpay order
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          courseId: 'linkedin-growth',
+          courseId: "linkedin-growth",
           courseName: selectedPlanData.name,
-          price: parseInt(selectedPlanData.price.replace('₹', '')),
+          price: parseInt(selectedPlanData.price.replace("₹", "")),
         }),
       });
 
@@ -187,16 +163,16 @@ export default function LinkedInGrowthPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
         amount,
         currency,
-        name: 'ownURgrowth',
+        name: "ownURgrowth",
         description: selectedPlanData.name,
         order_id: orderId,
         handler: async function (response: any) {
           try {
             // Verify payment and send receipt
-            const verifyResponse = await fetch('/api/verify-payment', {
-              method: 'POST',
+            const verifyResponse = await fetch("/api/verify-payment", {
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
@@ -204,7 +180,7 @@ export default function LinkedInGrowthPage() {
                 razorpay_signature: response.razorpay_signature,
                 userEmail: user?.email,
                 userName: user?.displayName || user?.email,
-                courseName: 'Grow on LinkedIn',
+                courseName: "Grow on LinkedIn",
                 plan: selectedPlanData.name,
                 amount: amount,
                 userId: user?.uid,
@@ -212,30 +188,34 @@ export default function LinkedInGrowthPage() {
             });
 
             if (verifyResponse.ok) {
-              router.push(`/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`);
+              localStorage.removeItem(`purchase_${user?.uid}`);
+              localStorage.removeItem(`purchase_time_${user?.uid}`);
+              router.push(
+                `/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`,
+              );
             } else {
-              alert('Payment verification failed. Please contact support.');
+              alert("Payment verification failed. Please contact support.");
             }
           } catch (error) {
-            console.error('Payment verification error:', error);
-            alert('Payment verification failed. Please contact support.');
+            console.error("Payment verification error:", error);
+            alert("Payment verification failed. Please contact support.");
           }
         },
         prefill: {
-          name: user?.displayName || '',
-          email: user?.email || '',
-          contact: '',
+          name: user?.displayName || "",
+          email: user?.email || "",
+          contact: "",
         },
         theme: {
-          color: '#3B82F6',
+          color: "#3B82F6",
         },
       };
 
       const razorpay = new (window as any).Razorpay(options);
       razorpay.open();
     } catch (error) {
-      console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
+      console.error("Payment error:", error);
+      alert("Payment failed. Please try again.");
     }
   };
 
@@ -247,13 +227,19 @@ export default function LinkedInGrowthPage() {
           <div className="absolute top-20 right-20 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-indigo-500/5 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tl from-indigo-400/8 to-blue-500/5 rounded-full blur-2xl"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-300/5 to-indigo-400/8 rounded-full blur-3xl"></div>
-          
+
           {/* Floating shapes */}
           <div className="absolute top-32 left-1/4 w-16 h-16 border border-blue-200/40 rounded-2xl rotate-12 animate-pulse"></div>
-          <div className="absolute bottom-32 right-1/4 w-12 h-12 bg-blue-300/20 rounded-full animate-bounce" style={{animationDuration: '3s'}}></div>
-          <div className="absolute top-1/3 right-1/6 w-8 h-8 border-2 border-indigo-300/30 rotate-45 animate-spin" style={{animationDuration: '8s'}}></div>
+          <div
+            className="absolute bottom-32 right-1/4 w-12 h-12 bg-blue-300/20 rounded-full animate-bounce"
+            style={{ animationDuration: "3s" }}
+          ></div>
+          <div
+            className="absolute top-1/3 right-1/6 w-8 h-8 border-2 border-indigo-300/30 rotate-45 animate-spin"
+            style={{ animationDuration: "8s" }}
+          ></div>
         </div>
-        
+
         <div className="mx-auto max-w-5xl px-4 lg:px-6 relative z-10">
           <div className="mb-12 text-center">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1D4ED8]/10 to-blue-100 px-6 py-3 rounded-full border border-[#1D4ED8]/20 mb-8 backdrop-blur-sm">
@@ -263,7 +249,10 @@ export default function LinkedInGrowthPage() {
               </span>
             </div>
             <h1 className="text-5xl font-bold text-[#141619] sm:text-6xl lg:text-7xl mb-8 tracking-tight">
-              Grow on <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">LinkedIn</span>
+              Grow on{" "}
+              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">
+                LinkedIn
+              </span>
             </h1>
             <p className="text-xl text-[#2C2E3A] font-light leading-relaxed max-w-4xl mx-auto mb-8">
               Build a system to grow your LinkedIn audience, generate opportunities, and build your personal brand with lifetime access and three simple plans.
@@ -284,8 +273,11 @@ export default function LinkedInGrowthPage() {
             {plans.map((plan) => {
               const isSelected = selectedPlan === plan.id;
               const isPurchased = purchasedPlan === plan.id;
-              const canUpgrade = purchasedPlan && plans.findIndex(p => p.id === purchasedPlan) < plans.findIndex(p => p.id === plan.id);
-              
+              const canUpgrade =
+                purchasedPlan &&
+                plans.findIndex((p) => p.id === purchasedPlan) <
+                  plans.findIndex((p) => p.id === plan.id);
+
               return (
                 <button
                   key={plan.id}
@@ -295,22 +287,24 @@ export default function LinkedInGrowthPage() {
                     isPurchased
                       ? "border-green-400/50 bg-gradient-to-br from-green-50/80 to-emerald-50/60 shadow-xl shadow-green-500/20"
                       : isSelected
-                      ? plan.bestValue 
-                        ? "border-orange-400/60 bg-gradient-to-br from-orange-50/80 to-yellow-50/60 ring-2 ring-orange-400/50 shadow-xl shadow-orange-500/20"
-                        : "border-[#1D4ED8]/60 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 ring-2 ring-[#1D4ED8]/50 shadow-xl shadow-blue-500/20"
-                      : plan.bestValue
-                      ? "border-orange-300/40 bg-gradient-to-br from-orange-50/40 to-yellow-50/40 hover:border-orange-400/60 hover:shadow-xl hover:shadow-orange-500/15"
-                      : "border-[#1D4ED8]/30 bg-gradient-to-br from-blue-50/40 to-indigo-50/40 hover:border-[#1D4ED8]/60 hover:shadow-xl hover:shadow-blue-500/15"
+                        ? plan.bestValue
+                          ? "border-orange-400/60 bg-gradient-to-br from-orange-50/80 to-yellow-50/60 ring-2 ring-orange-400/50 shadow-xl shadow-orange-500/20"
+                          : "border-[#1D4ED8]/60 bg-gradient-to-br from-blue-50/80 to-indigo-50/60 ring-2 ring-[#1D4ED8]/50 shadow-xl shadow-blue-500/20"
+                        : plan.bestValue
+                          ? "border-orange-300/40 bg-gradient-to-br from-orange-50/40 to-yellow-50/40 hover:border-orange-400/60 hover:shadow-xl hover:shadow-orange-500/15"
+                          : "border-[#1D4ED8]/30 bg-gradient-to-br from-blue-50/40 to-indigo-50/40 hover:border-[#1D4ED8]/60 hover:shadow-xl hover:shadow-blue-500/15"
                   }`}
                 >
                   {/* Top accent line */}
-                  <div className={`absolute top-0 left-0 w-full h-2 ${
-                    isPurchased 
-                      ? 'bg-gradient-to-r from-green-500 via-emerald-400 to-green-500' 
-                      : plan.bestValue 
-                      ? 'bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500'
-                      : 'bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8]'
-                  } transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl`}></div>
+                  <div
+                    className={`absolute top-0 left-0 w-full h-2 ${
+                      isPurchased
+                        ? "bg-gradient-to-r from-green-500 via-emerald-400 to-green-500"
+                        : plan.bestValue
+                          ? "bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500"
+                          : "bg-gradient-to-r from-[#1D4ED8] via-blue-400 to-[#1D4ED8]"
+                    } transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 rounded-t-3xl`}
+                  ></div>
 
                   {plan.bestValue && (
                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
@@ -341,21 +335,32 @@ export default function LinkedInGrowthPage() {
                     ) : null}
                   </div>
 
-                  <p className={`text-4xl font-bold mb-4 ${
-                    isPurchased ? 'text-green-600' : plan.bestValue ? 'text-orange-600' : 'text-[#1D4ED8]'
-                  }`}>
+                  <p
+                    className={`text-4xl font-bold mb-4 ${
+                      isPurchased
+                        ? "text-green-600"
+                        : plan.bestValue
+                          ? "text-orange-600"
+                          : "text-[#1D4ED8]"
+                    }`}
+                  >
                     {plan.price}
                   </p>
-                  <p className="text-lg text-[#2C2E3A] mb-8 font-light">{plan.description}</p>
-                  
+                  <p className="text-lg text-[#2C2E3A] mb-8 font-light">
+                    {plan.description}
+                  </p>
+
                   <ul className="space-y-4 text-base text-[#2C2E3A] flex-grow">
                     {plan.includes.map((item) => {
-                      const isIncluded = item.startsWith('✓');
-                      const isExcluded = item.startsWith('✗');
+                      const isIncluded = item.startsWith("✓");
+                      const isExcluded = item.startsWith("✗");
                       const text = item.substring(2);
-                      
+
                       return (
-                        <li key={item} className={`flex items-start gap-3 ${isExcluded ? 'opacity-60' : ''}`}>
+                        <li
+                          key={item}
+                          className={`flex items-start gap-3 ${isExcluded ? "opacity-60" : ""}`}
+                        >
                           {isIncluded ? (
                             <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
                               <Check className="h-4 w-4 text-green-600" />
@@ -365,7 +370,13 @@ export default function LinkedInGrowthPage() {
                               <span className="text-red-600 text-sm">✗</span>
                             </div>
                           ) : null}
-                          <span className={isExcluded ? 'line-through' : 'leading-relaxed'}>{text}</span>
+                          <span
+                            className={
+                              isExcluded ? "line-through" : "leading-relaxed"
+                            }
+                          >
+                            {text}
+                          </span>
                         </li>
                       );
                     })}
@@ -381,46 +392,56 @@ export default function LinkedInGrowthPage() {
                 {/* Show Access Course if no plan is selected OR selected plan is purchased */}
                 {(!selectedPlan || selectedPlan === purchasedPlan) && (
                   <button
-                    onClick={() => router.push(`/courses/linkedin-growth/access?plan=${purchasedPlan}`)}
+                    onClick={() =>
+                      router.push(
+                        `/courses/linkedin-growth/access?plan=${purchasedPlan}`,
+                      )
+                    }
                     className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 px-8 py-4 text-lg font-bold text-white shadow-xl shadow-green-500/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl"
                   >
                     Access Course
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 )}
-                
+
                 {/* Show upgrade button for higher plans */}
                 {selectedPlan && selectedPlan !== purchasedPlan && (
                   <button
                     onClick={handleContinue}
                     className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] px-8 py-4 text-lg font-bold text-white shadow-xl shadow-[#1D4ED8]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl"
                   >
-                    Upgrade to {plans.find(p => p.id === selectedPlan)?.name}
+                    Upgrade to {plans.find((p) => p.id === selectedPlan)?.name}
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 )}
-                
+
                 {/* Show upgrade option when purchased plan is selected AND it's not the highest plan */}
-                {selectedPlan === purchasedPlan && (purchasedPlan === "basic" || purchasedPlan === "plus") && (
-                  <button
-                    onClick={() => router.push(`/upgrade?from=${purchasedPlan}`)}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-[#1D4ED8] bg-white px-8 py-4 text-lg font-bold text-[#1D4ED8] transition-all duration-500 hover:bg-[#1D4ED8] hover:text-white hover:scale-105"
-                  >
-                    Upgrade Plan
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                )}
-                
+                {selectedPlan === purchasedPlan &&
+                  (purchasedPlan === "basic" || purchasedPlan === "plus") && (
+                    <button
+                      onClick={() =>
+                        router.push(`/upgrade?from=${purchasedPlan}`)
+                      }
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-[#1D4ED8] bg-white px-8 py-4 text-lg font-bold text-[#1D4ED8] transition-all duration-500 hover:bg-[#1D4ED8] hover:text-white hover:scale-105"
+                    >
+                      Upgrade Plan
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  )}
+
                 {/* General upgrade option when no specific plan selected */}
-                {!selectedPlan && (purchasedPlan === "basic" || purchasedPlan === "plus") && (
-                  <button
-                    onClick={() => router.push(`/upgrade?from=${purchasedPlan}`)}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-[#1D4ED8] bg-white px-8 py-4 text-lg font-bold text-[#1D4ED8] transition-all duration-500 hover:bg-[#1D4ED8] hover:text-white hover:scale-105"
-                  >
-                    Upgrade Plan
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                )}
+                {!selectedPlan &&
+                  (purchasedPlan === "basic" || purchasedPlan === "plus") && (
+                    <button
+                      onClick={() =>
+                        router.push(`/upgrade?from=${purchasedPlan}`)
+                      }
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-[#1D4ED8] bg-white px-8 py-4 text-lg font-bold text-[#1D4ED8] transition-all duration-500 hover:bg-[#1D4ED8] hover:text-white hover:scale-105"
+                    >
+                      Upgrade Plan
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  )}
               </div>
             ) : !user ? (
               <div className="flex gap-4 flex-wrap">
@@ -452,12 +473,11 @@ export default function LinkedInGrowthPage() {
             )}
             <div className="flex-1">
               <p className="text-base text-[#2C2E3A] leading-relaxed">
-                {purchasedPlan 
+                {purchasedPlan
                   ? "You have lifetime access to this course. You can upgrade anytime by paying the difference."
                   : !user
-                  ? "Create an account or login to purchase this course and get lifetime access."
-                  : "After successful payment, you'll be redirected to your course area to watch the video lectures and download notes (if included in your plan)."
-                }
+                    ? "Create an account or login to purchase this course and get lifetime access."
+                    : "After successful payment, you'll be redirected to your course area to watch the video lectures and download notes (if included in your plan)."}
               </p>
             </div>
           </div>
@@ -466,4 +486,3 @@ export default function LinkedInGrowthPage() {
     </main>
   );
 }
-

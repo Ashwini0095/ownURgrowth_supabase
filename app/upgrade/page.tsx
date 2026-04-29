@@ -156,6 +156,7 @@ function UpgradeContent() {
             if (verifyResponse.ok) {
               // Clear the cache so the new plan reflects immediately
               localStorage.removeItem(`purchase_${user?.uid}`);
+              localStorage.removeItem(`purchase_time_${user?.uid}`);
               router.push(
                 `/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`,
               );
