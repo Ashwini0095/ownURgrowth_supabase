@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 asrocourse-firebase-adminsdk-fbsvc-1dd121589a.json
+
+# Agent / Migration Clutter
+.agents/
+skills-lock.json
+project_context.md
+migration.md
