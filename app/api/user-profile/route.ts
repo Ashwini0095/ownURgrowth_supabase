@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '../../../lib/firebase';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { getSupabaseAdmin } from '@/lib/supabaseClient';
 
 export const runtime = 'nodejs';
 
@@ -12,21 +11,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing uid' }, { status: 400 });
     }
 
-    const ref = doc(db, 'users', uid);
-    const existing = await getDoc(ref);
+    const supabase = getSupabaseAdmin();
 
-    const base = {
-      uid,
-      email: email ?? null,
-      displayName: displayName ?? null,
-      photoURL: photoURL ?? null,
-      lastLogin: serverTimestamp(),
-    };
+    // Check if user exists
+    const { data: existing } = await supabase
+      .from('users')
+      .select('id')
+      .eq('auth_id', uid)
+      .single();
 
-    if (existing.exists()) {
-      await setDoc(ref, base, { merge: true });
+    if (existing) {
+      // Update existing user
+      const { error } = await supabase
+        .from('users')
+        .update({
+          email: email ?? null,
+          display_name: displayName ?? null,
+          photo_url: photoURL ?? null,
+          last_login: new Date().toISOString(),
+        })
+        .eq('auth_id', uid);
+
+      if (error) console.error('Error updating user profile:', error);
     } else {
-      await setDoc(ref, { ...base, createdAt: serverTimestamp() });
+      // Insert new user
+      const { error } = await supabase.from('users').insert({
+        auth_id: uid,
+        email: email ?? null,
+        display_name: displayName ?? null,
+        photo_url: photoURL ?? null,
+        last_login: new Date().toISOString(),
+      });
+
+      if (error) console.error('Error inserting user profile:', error);
     }
 
     return NextResponse.json({ success: true });

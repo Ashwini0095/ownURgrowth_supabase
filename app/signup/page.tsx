@@ -4,9 +4,8 @@ import { useState, Suspense } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { signUpWithEmail } from "../../lib/auth-utils";
 import { Sparkles, ShieldCheck, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
-import { auth } from "../../lib/firebase";
 import { trackSignUp } from "../../lib/analytics";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 
@@ -39,18 +38,17 @@ function SignupContent() {
         return;
       }
 
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const { user, error: signUpError } = await signUpWithEmail(email, password, name);
 
-      await updateProfile(userCredential.user, {
-        displayName: name
-      });
-
-      const { sendEmailVerification } = await import("firebase/auth");
-      await sendEmailVerification(userCredential.user);
+      if (signUpError) {
+        setError(signUpError);
+        setLoading(false);
+        return;
+      }
 
       trackSignUp();
 
-      setMessage("Account created successfully! Please check your email (including spam folder) for a verification link from noreply@asrocourse.firebaseapp.com. Click the link to verify your account.");
+      setMessage("Account created successfully! Please check your email (including spam folder) for a verification link. Click the link to verify your account.");
       setTimeout(() => router.push(redirectUrl), 3000);
 
     } catch (err: any) {

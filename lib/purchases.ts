@@ -1,17 +1,24 @@
-import { db } from './firebase';
-import { doc, setDoc, getDocs, collection, query, where } from 'firebase/firestore';
+import { supabase } from './supabaseClient';
 
 export async function recordPurchase(userId: string, courseId: string, paymentId: string) {
-  await setDoc(doc(db, 'purchases', `${userId}_${courseId}`), {
-    userId,
-    courseId,
-    paymentId,
-    purchasedAt: new Date().toISOString(),
+  const { error } = await supabase.from('purchases').insert({
+    user_id: userId,
+    course_id: courseId,
+    payment_id: paymentId,
+    purchased_at: new Date().toISOString(),
   });
+  if (error) console.error('Error recording purchase:', error);
 }
 
 export async function getUserPurchases(userId: string): Promise<string[]> {
-  const q = query(collection(db, 'purchases'), where('userId', '==', userId));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => d.data().courseId);
+  const { data, error } = await supabase
+    .from('purchases')
+    .select('course_id')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error fetching purchases:', error);
+    return [];
+  }
+  return (data || []).map((d) => d.course_id);
 }

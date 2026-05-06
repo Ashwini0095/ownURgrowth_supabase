@@ -5,8 +5,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
 import Link from "next/link";
-const { collection, query, where, getDocs, orderBy, limit } =
-  await import("firebase/firestore");
 
 const plans = [
   {
@@ -66,12 +64,12 @@ export default function LinkedInGrowthPage() {
         return;
       }
 
-      const cacheKey = `purchase_${user.uid}`;
-      const timeKey = `purchase_time_${user.uid}`;
+      const cacheKey = `purchase_${user.id}`;
+      const timeKey = `purchase_time_${user.id}`;
       const cached = localStorage.getItem(cacheKey);
       const cachedTime = localStorage.getItem(timeKey);
 
-      // If cache is less than 5 mins old, don't even call Firebase
+      // If cache is less than 5 mins old, don't even call API
       const isFresh =
         cachedTime && Date.now() - parseInt(cachedTime) < 5 * 60 * 1000;
       if (cached && isFresh) {
@@ -87,38 +85,18 @@ export default function LinkedInGrowthPage() {
       }
 
       try {
-        const { collection, query, where, getDocs, limit, orderBy } =
-          await import("firebase/firestore");
-        const { db } = await import("../../../lib/firebase");
+        const response = await fetch("/api/check-purchase", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id, userEmail: user.email }),
+        });
 
-        // OPTIMIZED: Added limit(1) and orderBy to only pay for 1 document read
-        const q = query(
-          collection(db, "payments"),
-          where("userId", "==", user.uid),
-          where("status", "==", "completed"),
-          orderBy("amount", "desc"), // Gets the highest plan first
-          limit(1),
-        );
-
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          const data = querySnapshot.docs[0].data();
-
-          const nameToId: Record<string, string> = {
-            "Master Program": "pro",
-            "Pro Program": "plus",
-            "Basic Crash Course": "basic",
-          };
-
-          // Now this will work without errors because the object
-          // is explicitly told it can be indexed by any string.
-          const bestPlanId = nameToId[data.planName] || nameToId[data.plan];
-
-          if (bestPlanId) {
-            localStorage.setItem(cacheKey, bestPlanId);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.plan) {
+            localStorage.setItem(cacheKey, data.plan);
             localStorage.setItem(timeKey, Date.now().toString());
-            setPurchasedPlan(bestPlanId);
+            setPurchasedPlan(data.plan);
           }
         }
       } catch (error) {
@@ -179,17 +157,17 @@ export default function LinkedInGrowthPage() {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 userEmail: user?.email,
-                userName: user?.displayName || user?.email,
+                userName: user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email,
                 courseName: "Grow on LinkedIn",
                 plan: selectedPlanData.name,
                 amount: amount,
-                userId: user?.uid,
+                userId: user?.id,
               }),
             });
 
             if (verifyResponse.ok) {
-              localStorage.removeItem(`purchase_${user?.uid}`);
-              localStorage.removeItem(`purchase_time_${user?.uid}`);
+              localStorage.removeItem(`purchase_${user?.id}`);
+              localStorage.removeItem(`purchase_time_${user?.id}`);
               router.push(
                 `/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`,
               );
@@ -202,7 +180,7 @@ export default function LinkedInGrowthPage() {
           }
         },
         prefill: {
-          name: user?.displayName || "",
+          name: user?.user_metadata?.full_name || user?.user_metadata?.name || "",
           email: user?.email || "",
           contact: "",
         },
