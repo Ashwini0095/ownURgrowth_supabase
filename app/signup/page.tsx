@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signUpWithEmail } from "../../lib/auth-utils";
+import { signUpWithEmail, resendVerificationEmail } from "../../lib/auth-utils";
 import { Sparkles, ShieldCheck, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
 import { trackSignUp } from "../../lib/analytics";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
@@ -16,6 +16,22 @@ function SignupContent() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
+
+  const handleResend = async () => {
+    if (!signedUpEmail) return;
+    setResending(true);
+    setResendMessage(null);
+    const { error } = await resendVerificationEmail(signedUpEmail);
+    if (error) {
+      setResendMessage(error);
+    } else {
+      setResendMessage("Verification email resent! Please check your inbox.");
+    }
+    setResending(false);
+  };
 
   const redirectUrl = searchParams.get('redirect') || '/';
   const loginHref = `/login${redirectUrl !== '/' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`;
@@ -38,7 +54,7 @@ function SignupContent() {
         return;
       }
 
-      const { user, error: signUpError } = await signUpWithEmail(email, password, name);
+      const { user, session, error: signUpError } = await signUpWithEmail(email, password, name);
 
       if (signUpError) {
         setError(signUpError);
@@ -48,8 +64,15 @@ function SignupContent() {
 
       trackSignUp();
 
-      setMessage("Account created successfully! Please check your email (including spam folder) for a verification link. Click the link to verify your account.");
-      setTimeout(() => router.push(redirectUrl), 3000);
+      if (session) {
+        // Email confirmations are disabled, the user is signed in immediately
+        router.push(redirectUrl);
+      } else {
+        // Email confirmations are enabled, the user needs to check their email
+        setMessage("Account created successfully! Please check your email (including spam folder) for a verification link.");
+        setSignedUpEmail(email);
+        // We do NOT redirect here, we wait for them to click the link in their email!
+      }
 
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
@@ -239,8 +262,27 @@ function SignupContent() {
                   </div>
                 )}
                 {message && !error && (
-                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs text-emerald-700">
-                    {message}
+                  <div className="space-y-3">
+                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs text-emerald-700">
+                      {message}
+                    </div>
+                    {signedUpEmail && (
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={handleResend}
+                          disabled={resending}
+                          className="text-xs font-semibold text-[#1D4ED8] hover:text-[#0F172A] disabled:opacity-50 transition-colors"
+                        >
+                          {resending ? "Resending email..." : "Didn't receive it? Resend Email"}
+                        </button>
+                        {resendMessage && (
+                          <p className={`mt-2 text-[11px] ${resendMessage.includes('resent') ? 'text-emerald-600' : 'text-red-600'}`}>
+                            {resendMessage}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </form>
