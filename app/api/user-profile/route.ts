@@ -5,6 +5,7 @@ export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
+    const authHeader = request.headers.get('Authorization');
     const { uid, email, displayName, photoURL } = await request.json();
 
     if (!uid) {
@@ -12,6 +13,22 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabaseAdmin();
+
+    // Verify user identity if token is provided
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      
+      if (authError || !user || user.id !== uid) {
+        console.error('Auth verification failed:', authError?.message);
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    } else {
+      // In a real production app, we would strictly require this. 
+      // For now, we log a warning but allow it for migration compatibility 
+      // if the client hasn't been updated yet.
+      console.warn('Request to user-profile missing Authorization header');
+    }
 
     // Check if user exists
     const { data: existing } = await supabase

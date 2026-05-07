@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { ChevronRight, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { useAuth } from "../../lib/AuthContext";
-import { getUserPurchases, recordPurchase } from "../../lib/purchases";
 import { useEffect, useState } from "react";
 
 declare global {
@@ -47,83 +46,41 @@ const courses: CourseCard[] = [
 ];
 
 export default function CoursesPage() {
-  const { user, signOut } = useAuth();
+  const { user, session, loading: authLoading } = useAuth();
   const [purchasedCourses, setPurchasedCourses] = useState<string[]>([]);
 
   useEffect(() => {
-    if (user) {
-      console.log('Fetching purchases for user:', user.uid);
-      getUserPurchases(user.uid)
-        .then((courses) => {
-          console.log('Purchased courses:', courses);
-          setPurchasedCourses(courses);
-        })
-        .catch((err) => console.error('Error fetching purchases:', err));
-    }
-  }, [user]);
-
-  const handlePurchase = async (courseId: string, courseName: string, price: number) => {
-    try {
-      // Check if Razorpay is loaded
-      if (!window.Razorpay) {
-        alert('Payment system is loading. Please try again in a moment.');
-        return;
-      }
-
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          courseId,
-          courseName,
-          price,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create payment order');
-      }
-
-      const { orderId, amount, currency } = await response.json();
-
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount,
-        currency,
-        name: 'ownURgrowth',
-        description: courseName,
-        order_id: orderId,
-        handler: async function (response: any) {
-          // Record purchase in Firestore
-          if (user) {
-            await recordPurchase(user.uid, courseId, response.razorpay_payment_id);
-          }
-          window.location.href = `/success?payment_id=${response.razorpay_payment_id}`;
-        },
-        prefill: {
-          name: '',
-          email: '',
-          contact: '',
-        },
-        theme: {
-          color: '#3b82f6',
-        },
-        modal: {
-          ondismiss: function() {
-            console.log('Payment cancelled');
+    const fetchPurchases = async () => {
+      if (!user || !session) return;
+      
+      try {
+        const response = await fetch('/api/check-purchase', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({ userId: user.id, userEmail: user.email }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          // If any plan is returned, user has purchased the linkedin-growth course
+          if (data.plan) {
+            setPurchasedCourses(['linkedin-growth']);
           }
         }
-      };
+      } catch (err) {
+        console.error('Error fetching purchases:', err);
+      }
+    };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
+    if (user && session) {
+      fetchPurchases();
     }
-  };
+  }, [user, session]);
+
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white">
       {/* Header */}

@@ -67,26 +67,24 @@ const planLabels: Record<string, string> = {
 //   }
 // };
 
-const checkUserPurchase = async (user: any) => {
+const checkUserPurchase = async (user: any, session: any) => {
+  if (!session) return null;
   try {
     const res = await fetch("/api/check-purchase", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.access_token}`
       },
       body: JSON.stringify({
-        userId: user.uid,
+        userId: user.id,
         userEmail: user.email,
       }),
     });
 
-    console.log("STATUS:", res.status);
+    if (!res.ok) return null;
 
-    const text = await res.text();
-    console.log("RAW RESPONSE:", text);
-
-    const data = text ? JSON.parse(text) : null;
-
+    const data = await res.json();
     return data?.plan || null;
   } catch (err) {
     console.error(err);
@@ -99,7 +97,7 @@ const checkUserPurchase = async (user: any) => {
 function AccessPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, session, loading } = useAuth();
   const [userPlan, setUserPlan] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(true);
 
@@ -335,15 +333,6 @@ function AccessPageContent() {
                       allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
                       allowFullScreen
                     ></iframe>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3">
-                    <p className="text-sm text-green-700 font-medium flex items-center gap-2">
-                      🔒 Protected Stream - Optimized by Bunny.net
-                    </p>
-                    <p className="text-xs text-green-600">
-                      User: {user?.email}
-                    </p>
                   </div>
                 </div>
               </div>

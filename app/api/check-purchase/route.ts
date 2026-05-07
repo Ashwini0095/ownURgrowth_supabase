@@ -11,8 +11,13 @@ const PLAN_NAME_TO_ID: Record<string, Plan> = {
 
 const PLAN_PRIORITY: Record<Plan, number> = { basic: 1, plus: 2, pro: 3 };
 
+// ── Simple in-memory cache to reduce DB hits ───────────────────────────
+const cache = new Map<string, { plan: Plan | null; expiresAt: number }>();
+const CACHE_TTL_MS = 30_000; // 30 seconds
+
 export async function POST(req: Request) {
   try {
+    const authHeader = req.headers.get('Authorization');
     const body = await req.json();
     const { userId, userEmail } = body;
 
@@ -21,6 +26,27 @@ export async function POST(req: Request) {
     }
 
     const supabase = getSupabaseAdmin();
+
+    // Verify user identity if token is provided
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      
+      // Strict check: token must be valid and userId must match token owner
+      if (authError || !user || (userId && user.id !== userId)) {
+        console.error('Check-purchase auth failed:', authError?.message);
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    } else {
+      console.warn('Request to check-purchase missing Authorization header');
+    }
+
+    // Check cache first
+    const cacheKey = userId || userEmail;
+    const cached = cache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return NextResponse.json({ plan: cached.plan });
+    }
 
     // Try by userId first
     let { data: payments, error } = await supabase
@@ -44,6 +70,7 @@ export async function POST(req: Request) {
     }
 
     if (!payments || payments.length === 0) {
+      cache.set(cacheKey, { plan: null, expiresAt: Date.now() + CACHE_TTL_MS });
       return NextResponse.json({ plan: null });
     }
 
@@ -67,6 +94,9 @@ export async function POST(req: Request) {
         highestPlan = plan;
       }
     }
+
+    // Store in cache
+    cache.set(cacheKey, { plan: highestPlan, expiresAt: Date.now() + CACHE_TTL_MS });
 
     return NextResponse.json({ plan: highestPlan });
   } catch (error) {

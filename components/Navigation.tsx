@@ -46,6 +46,9 @@ export default function Navigation() {
                 <span className="text-sm text-[#2C2E3A] font-medium">
                   Welcome, {firstName}
                 </span>
+                <Link href="/my-courses" className="text-sm text-[#2C2E3A] hover:text-[#1D4ED8] transition-colors font-medium">
+                  My Courses
+                </Link>
                 <Link href="/profile" className="text-sm text-[#2C2E3A] hover:text-[#1D4ED8] transition-colors font-medium">
                   Profile
                 </Link>
@@ -99,6 +102,9 @@ export default function Navigation() {
                 <span className="block text-sm text-[#2C2E3A] font-medium py-1">
                   Welcome, {firstName}
                 </span>
+                <Link href="/my-courses" onClick={() => setOpen(false)} className="block text-base text-[#2C2E3A] hover:text-[#1D4ED8] font-medium py-2">
+                  My Courses
+                </Link>
                 <Link href="/profile" onClick={() => setOpen(false)} className="block text-base text-[#2C2E3A] hover:text-[#1D4ED8] font-medium py-2">
                   Profile
                 </Link>

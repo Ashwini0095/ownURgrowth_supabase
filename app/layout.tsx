@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "ownURgrowth - Personal Development & Professional Growth Courses",
   description: "Transform your career and life with ownURgrowth's practical courses. Learn skills for professional development, personal growth, and success.",
@@ -23,7 +28,6 @@ export const metadata: Metadata = {
     icon: [{ url: "/vercel.png", type: "image/png" }],
   },
   keywords: "personal development, professional growth, online courses, career development, skill building, ownURgrowth",
-  viewport: "width=device-width, initial-scale=1",
   authors: [{ name: "ownURgrowth" }],
   creator: "ownURgrowth",
   publisher: "ownURgrowth",

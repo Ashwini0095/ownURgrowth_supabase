@@ -26,7 +26,7 @@ function UpgradeContent() {
   const [selectedUpgrade, setSelectedUpgrade] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading } = useAuth();
+  const { user, session, loading } = useAuth();
   const currentPlan = searchParams.get('from') || 'basic';
 
   // Redirect to login if not authenticated
@@ -55,28 +55,13 @@ function UpgradeContent() {
 
   const availableUpgrades = upgradePaths[currentPlan as keyof typeof upgradePaths] || [];
 
-  console.log('Current plan:', currentPlan);
-  console.log('Available upgrades:', availableUpgrades);
-
   const handleUpgrade = async () => {
-    if (!selectedUpgrade) {
-      console.log("Selected upgrade is null");
-      return;
-    }
+    if (!selectedUpgrade) return;
 
     const upgradeOption = availableUpgrades.find(
       (upgrade) => upgrade.to === selectedUpgrade,
     );
-    if (!upgradeOption) {
-      console.log("upgradeOption is null");
-
-      return;
-    }
-
-    console.log("Upgrade option:", upgradeOption);
-    console.log("Current plan:", currentPlan);
-    console.log("Selected upgrade:", selectedUpgrade);
-    console.log("Upgrade price:", upgradeOption.price);
+    if (!upgradeOption) return;
 
     // Map the internal 'to' ID to the Database Plan Name
     const dbPlanName =
@@ -87,42 +72,27 @@ function UpgradeContent() {
           : "Basic Crash Course";
 
     try {
-      console.log("Making API request...");
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
         },
         body: JSON.stringify({
           courseId: "linkedin-growth-upgrade",
           courseName: `Upgrade to ${upgradeOption.name}`,
           price: upgradeOption.price,
+          fromPlan: currentPlan,
+          toPlan: selectedUpgrade,
         }),
       });
 
-      console.log("Response received:", response);
-      console.log("Response status:", response.status);
-      console.log("Response ok:", response.ok);
-
-      const responseText = await response.text();
-      console.log("Response text:", responseText);
-
-      let responseData;
-      try {
-        responseData = JSON.parse(responseText);
-      } catch (e) {
-        console.error("Failed to parse JSON:", e);
-        throw new Error("Invalid response from server");
-      }
-
       if (!response.ok) {
-        console.error("API Error:", responseData);
-        throw new Error(responseData.error || "Payment failed");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Payment failed");
       }
 
-      const { orderId, amount, currency, key } = responseData;
-
-      console.log("Razorpay response:", { orderId, amount, currency, key });
+      const { orderId, amount, currency, key } = await response.json();
 
       const options = {
         key: key,
@@ -138,25 +108,26 @@ function UpgradeContent() {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${session?.access_token}`
               },
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 userEmail: user?.email,
-                userName: user?.displayName || user?.email,
+                userName: user?.user_metadata?.first_name || user?.email,
                 courseName: "Grow on LinkedIn",
                 plan: dbPlanName,
                 amount: amount,
-                userId: user?.uid,
+                userId: user?.id,
                 isUpgrade: true,
               }),
             });
 
             if (verifyResponse.ok) {
               // Clear the cache so the new plan reflects immediately
-              localStorage.removeItem(`purchase_${user?.uid}`);
-              localStorage.removeItem(`purchase_time_${user?.uid}`);
+              localStorage.removeItem(`purchase_${user?.id}`);
+              localStorage.removeItem(`purchase_time_${user?.id}`);
               router.push(
                 `/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`,
               );
@@ -169,7 +140,7 @@ function UpgradeContent() {
           }
         },
         prefill: {
-          name: user?.displayName || "",
+          name: user?.user_metadata?.first_name || "",
           email: user?.email || "",
           contact: "",
         },
@@ -184,7 +155,7 @@ function UpgradeContent() {
       console.error("Upgrade payment error:", error);
       alert("Upgrade failed. Please try again.");
     }
-  };;
+  };
 
   if (availableUpgrades.length === 0) {
     return (
