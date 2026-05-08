@@ -129,11 +129,6 @@ function AccessPageContent() {
     }
   };
 
-  const handleBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    openReview(true);
-  };
-
   const handleReviewClick = () => {
     openReview(false);
   };
@@ -168,7 +163,7 @@ function AccessPageContent() {
         return;
       }
 
-      const purchasedPlan = await checkUserPurchase(user);
+      const purchasedPlan = await checkUserPurchase(user, session);
 
       if (!purchasedPlan) {
         router.push("/courses/linkedin-growth");
@@ -180,7 +175,7 @@ function AccessPageContent() {
     };
 
     verifyAccess();
-  }, [user, loading, router]);
+  }, [user, session, loading, router]);
 
   // Listen for Bunny Stream's "ended" event via player.js-style postMessage.
   // When the video finishes, wait 3s and surface the review popup (unless already submitted).
@@ -274,14 +269,6 @@ function AccessPageContent() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <button
-                type="button"
-                onClick={handleBackClick}
-                className="inline-flex items-center gap-2 text-[#2C2E3A] hover:text-[#1D4ED8] transition-colors font-medium"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Change plan
-              </button>
               {canReview && (
                 <button
                   type="button"
@@ -342,6 +329,7 @@ function AccessPageContent() {
               <div className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl overflow-hidden">
                 <CourseNotesFixed
                   userPlan={userPlan as "basic" | "plus" | "pro"}
+                  userId={user?.id}
                 />
               </div>
 
