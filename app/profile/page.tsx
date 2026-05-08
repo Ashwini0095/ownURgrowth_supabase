@@ -38,7 +38,7 @@ export default function ProfilePage() {
       
       // Load payment history
       setLoadingPayments(true);
-      getUserPaymentHistory(user.id)
+      getUserPaymentHistory(user.id, user.email)
         .then(setPaymentHistory)
         .catch(console.error)
         .finally(() => setLoadingPayments(false));

@@ -4,41 +4,110 @@ import { Check, ChevronRight, Play, Star, Users, Award, ShieldCheck, ArrowRight 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
+import {
+  readPurchaseSnapshot,
+  writePurchaseSnapshot,
+} from "../../../lib/purchaseCache";
 import Link from "next/link";
 import ReviewsCarousel from "../../../components/ReviewsCarousel";
 
+const plans = [
+  {
+    id: "basic",
+    name: "Basic Crash Course",
+    price: "₹499/-",
+    description: "Essential LinkedIn growth fundamentals.",
+    includes: [
+      "✓ Pre-recorded video courses",
+      "✓ Exclusive Community Access",
+      "✗ Downloadable PDF Notes Course with ready to use AI Prompts",
+      "✗ Lifetime Updates at No Extra Cost",
+      "✗ Live group QNA Sessions"
+    ],
+  },
+  {
+    id: "plus",
+    name: "Pro Program",
+    price: "₹799/-",
+    description: "Advanced LinkedIn growth strategies.",
+    includes: [
+      "✓ Pre-recorded video courses",
+      "✓ Exclusive Community Access",
+      "✓ Downloadable PDF Notes Course with ready to use AI Prompts",
+      "✗ Lifetime Updates at No Extra Cost",
+      "✗ Live group QNA Sessions",
+    ],
+  },
+  {
+    id: "pro",
+    name: "Master Program",
+    price: "₹999/-",
+    description: "Complete LinkedIn mastery with all features.",
+    bestValue: true,
+    includes: [
+      "✓ Pre-recorded video courses",
+      "✓ Exclusive Community Access",
+      "✓ Downloadable PDF Notes Course with ready to use AI Prompts",
+      "✓ Lifetime Updates at No Extra Cost",
+      "✓ Live group QNA Sessions"
+    ],
+  },
+];
+
 export default function LinkedInGrowthPage() {
   const [purchasedPlan, setPurchasedPlan] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { user, session, loading: authLoading } = useAuth();
 
+  // Hydrate from cache as soon as we know the user — avoids the "few seconds"
+  // of default CTAs while /api/check-purchase is in flight.
   useEffect(() => {
-    const checkPurchaseHistory = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
+    if (!user) {
+      setPurchasedPlan(null);
+      return;
+    }
+    const snap = readPurchaseSnapshot();
+    if (snap && snap.userId === user.id) {
+      setPurchasedPlan(snap.plan);
+    } else {
+      setPurchasedPlan(null);
+    }
+  }, [user]);
+
+  // Background revalidation against the server.
+  useEffect(() => {
+    if (authLoading || !user || !session) return;
+
+    let cancelled = false;
+    (async () => {
       try {
         const response = await fetch("/api/check-purchase", {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${session?.access_token}`
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({ userId: user.id, userEmail: user.email }),
         });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.plan) setPurchasedPlan(data.plan);
-        }
+
+        if (cancelled) return;
+
+        const data = response.ok ? await response.json() : null;
+        const plan: string | null = data?.plan ?? null;
+        setPurchasedPlan(plan);
+        writePurchaseSnapshot({
+          userId: user.id,
+          courses: plan ? ["linkedin-growth"] : [],
+          plan,
+        });
       } catch (error) {
         console.error("Error:", error);
-      } finally {
-        setLoading(false);
       }
+    })();
+
+    return () => {
+      cancelled = true;
     };
-    if (!authLoading) checkPurchaseHistory();
   }, [user, authLoading, session]);
 
   return (
@@ -71,13 +140,13 @@ export default function LinkedInGrowthPage() {
                   <ChevronRight className="w-6 h-6" />
                 </Link>
               ) : (
-                <Link 
-                  href="/checkout/linkedin-growth"
+                <a 
+                  href="#pricing"
                   className="px-10 py-5 rounded-2xl bg-blue-600 text-white font-bold text-xl shadow-xl shadow-blue-600/20 hover:scale-[1.03] transition-all flex items-center justify-center gap-3"
                 >
-                  Enroll Now
+                  View Plans
                   <ArrowRight className="w-6 h-6" />
-                </Link>
+                </a>
               )}
               <a href="#curriculum" className="px-10 py-5 rounded-2xl bg-white border-2 border-gray-100 text-gray-900 font-bold text-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-3">
                 <Play className="w-5 h-5 fill-current" />
@@ -129,8 +198,74 @@ export default function LinkedInGrowthPage() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 lg:py-32 bg-gray-50/50">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-black mb-6 tracking-tight">Simple, Transparent Pricing</h2>
+            <p className="text-xl text-gray-600">Choose the plan that fits your growth goals.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {plans.map((plan) => (
+              <div 
+                key={plan.id}
+                className={`relative flex flex-col p-8 rounded-3xl border-2 transition-all duration-500 hover:scale-[1.02] bg-white ${
+                  plan.bestValue ? "border-blue-600 shadow-2xl shadow-blue-500/10" : "border-gray-100"
+                }`}
+              >
+                {plan.bestValue && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-lg">
+                    Best Value
+                  </div>
+                )}
+                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-4xl font-black text-blue-600">{plan.price}</span>
+                </div>
+                <p className="text-gray-600 mb-8 font-medium">{plan.description}</p>
+                
+                <ul className="space-y-4 mb-10 flex-grow">
+                  {plan.includes.map((item, idx) => {
+                    const isIncluded = item.startsWith("✓");
+                    const text = item.substring(2);
+                    return (
+                      <li key={idx} className={`flex items-start gap-3 ${!isIncluded ? "opacity-40" : ""}`}>
+                        <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${isIncluded ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                          {isIncluded ? <Check className="w-3 h-3" /> : <span className="text-[10px]">✗</span>}
+                        </div>
+                        <span className={`text-sm ${!isIncluded ? "line-through" : "font-medium"}`}>{text}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                {purchasedPlan === plan.id ? (
+                  <Link 
+                    href={`/courses/linkedin-growth/access?plan=${plan.id}`}
+                    className="w-full py-4 rounded-xl bg-green-500 text-white font-bold text-center hover:bg-green-600 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Check className="w-5 h-5" />
+                    Enrolled
+                  </Link>
+                ) : (
+                  <Link 
+                    href={`/checkout/linkedin-growth?plan=${plan.id}`}
+                    className={`w-full py-4 rounded-xl font-bold text-center transition-all ${
+                      plan.bestValue ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20" : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+                    }`}
+                  >
+                    Select Plan
+                  </Link>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Reviews Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-20">
             <h2 className="text-4xl lg:text-5xl font-black mb-6 tracking-tight">Student Success Stories</h2>

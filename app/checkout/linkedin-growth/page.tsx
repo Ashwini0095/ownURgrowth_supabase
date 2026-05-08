@@ -1,62 +1,70 @@
 'use client';
 
-import { Check, ChevronRight, ArrowLeft } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Check, ChevronRight, ArrowLeft, ShieldCheck, Zap, Star, Lock } from "lucide-react";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
+import { writePurchaseSnapshot } from "../../../lib/purchaseCache";
 import Link from "next/link";
 
 const plans = [
   {
     id: "basic",
-    name: "Basic Crash Course",
-    price: "₹499/-",
-    description: "Essential LinkedIn growth fundamentals.",
+    name: "Basic",
+    fullName: "Basic Crash Course",
+    price: "₹499",
+    tagline: "Essential foundations",
     includes: [
       "✓ Pre-recorded video courses",
       "✓ Exclusive Community Access",
-      "✗ Downloadable PDF Notes Course with ready to use AI Prompts",
-      "✗ Lifetime Updates at No Extra Cost",
-      "✗ Live group QNA Sessions"
+      "✗ Downloadable PDF Notes",
+      "✗ Lifetime Updates",
+      "✗ Live QNA Sessions"
     ],
   },
   {
     id: "plus",
-    name: "Pro Program",
-    price: "₹799/-",
-    description: "Advanced LinkedIn growth strategies.",
+    name: "Pro",
+    fullName: "Pro Program",
+    price: "₹799",
+    tagline: "Advanced strategies",
     includes: [
       "✓ Pre-recorded video courses",
       "✓ Exclusive Community Access",
-      "✓ Downloadable PDF Notes Course with ready to use AI Prompts",
-      "✗ Lifetime Updates at No Extra Cost",
-      "✗ Live group QNA Sessions",
+      "✓ Downloadable PDF Notes",
+      "✗ Lifetime Updates",
+      "✗ Live QNA Sessions",
     ],
   },
   {
     id: "pro",
-    name: "Master Program",
-    price: "₹999/-",
-    description: "Complete LinkedIn mastery with all features.",
+    name: "Master",
+    fullName: "Master Program",
+    price: "₹999",
+    tagline: "Complete mastery",
     bestValue: true,
     includes: [
       "✓ Pre-recorded video courses",
       "✓ Exclusive Community Access",
-      "✓ Downloadable PDF Notes Course with ready to use AI Prompts",
-      "✓ Lifetime Updates at No Extra Cost",
-      "✓ Live group QNA Sessions"
+      "✓ Downloadable PDF Notes",
+      "✓ Lifetime Updates",
+      "✓ Live QNA Sessions"
     ],
   },
 ];
 
-export default function CheckoutPage() {
-  const [selectedPlan, setSelectedPlan] = useState<string>("pro"); // Default to Master
+function CheckoutPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialPlan = searchParams.get('plan');
+  
+  const [selectedPlan, setSelectedPlan] = useState<string>(
+    plans.some(p => p.id === initialPlan) ? (initialPlan as string) : "pro"
+  );
   const [purchasedPlan, setPurchasedPlan] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const { user, session, loading: authLoading } = useAuth();
 
-  // Check user's purchase history
   useEffect(() => {
     const checkPurchaseHistory = async () => {
       if (!user) {
@@ -78,7 +86,6 @@ export default function CheckoutPage() {
           const data = await response.json();
           if (data.plan) {
             setPurchasedPlan(data.plan);
-            // If already purchased, redirect to course access
             router.push(`/courses/linkedin-growth/access?plan=${data.plan}`);
           }
         }
@@ -93,9 +100,8 @@ export default function CheckoutPage() {
 
   const handlePayment = async () => {
     if (!selectedPlan) return;
-
     if (!user || !session) {
-      router.push("/login?redirect=/checkout/linkedin-growth");
+      router.push(`/login?redirect=/checkout/linkedin-growth?plan=${selectedPlan}`);
       return;
     }
 
@@ -111,7 +117,7 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           courseId: "linkedin-growth",
-          courseName: selectedPlanData.name,
+          courseName: selectedPlanData.fullName,
           price: parseInt(selectedPlanData.price.replace("₹", "")),
         }),
       });
@@ -123,7 +129,7 @@ export default function CheckoutPage() {
         amount,
         currency,
         name: "ownURgrowth",
-        description: selectedPlanData.name,
+        description: selectedPlanData.fullName,
         order_id: orderId,
         handler: async function (response: any) {
           try {
@@ -140,16 +146,21 @@ export default function CheckoutPage() {
                 userEmail: user?.email,
                 userName: user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email,
                 courseName: "Grow on LinkedIn",
-                plan: selectedPlanData.name,
+                plan: selectedPlanData.fullName,
                 amount: amount,
                 userId: user?.id,
               }),
             });
 
             if (verifyResponse.ok) {
-              router.push(
-                `/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`,
-              );
+              if (user?.id) {
+                writePurchaseSnapshot({
+                  userId: user.id,
+                  courses: ['linkedin-growth'],
+                  plan: selectedPlan,
+                });
+              }
+              router.push(`/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`);
             } else {
               alert("Payment verification failed. Please contact support.");
             }
@@ -176,135 +187,224 @@ export default function CheckoutPage() {
 
   if (authLoading || (user && loading)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-gray-500 font-medium animate-pulse">Preparing your checkout...</p>
+        </div>
       </div>
     );
   }
 
+  const currentPlan = plans.find(p => p.id === selectedPlan)!;
+
   return (
-    <main className="min-h-screen bg-gray-50/50">
-      <div className="max-w-7xl mx-auto px-4 py-12 lg:px-8">
-        <div className="mb-12">
-          <Link 
-            href="/courses/linkedin-growth" 
-            className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Course Details
+    <main className="min-h-screen bg-[#F8FAFC]">
+      {/* Top Header */}
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/courses/linkedin-growth" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
+            <ArrowLeft className="w-4 h-4" />
+            Back to course
           </Link>
-          <div className="mt-8">
-            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Complete your enrollment</h1>
-            <p className="mt-2 text-lg text-gray-600">Select a plan to get lifetime access to Grow on LinkedIn.</p>
+          <div className="flex items-center gap-2 font-bold text-lg">
+            <span className="text-gray-900">own</span><span className="text-blue-600">UR</span><span className="text-gray-900">growth</span>
           </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
-          {/* Plan Selection */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="grid sm:grid-cols-3 gap-6">
-              {plans.map((plan) => {
-                const isSelected = selectedPlan === plan.id;
-                return (
-                  <button
-                    key={plan.id}
-                    onClick={() => setSelectedPlan(plan.id)}
-                    className={`relative flex flex-col p-6 rounded-2xl border-2 text-left transition-all duration-300 ${
-                      isSelected 
-                        ? "border-blue-600 bg-blue-50 ring-1 ring-blue-600 shadow-lg shadow-blue-600/10" 
-                        : "border-gray-200 bg-white hover:border-gray-300"
-                    }`}
-                  >
-                    {plan.bestValue && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                        Best Value
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-lg font-bold text-gray-900">{plan.name}</span>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? "border-blue-600" : "border-gray-300"}`}>
-                        {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />}
-                      </div>
-                    </div>
-                    <div className="text-2xl font-bold text-blue-700 mb-1">{plan.price}</div>
-                    <p className="text-xs text-gray-500 font-medium">One-time payment</p>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Plan Features */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">What's included in {plans.find(p => p.id === selectedPlan)?.name}</h3>
-              <ul className="grid sm:grid-cols-2 gap-x-12 gap-y-4">
-                {plans.find(p => p.id === selectedPlan)?.includes.map((item, idx) => {
-                  const isIncluded = item.startsWith("✓");
-                  const isExcluded = item.startsWith("✗");
-                  const text = item.substring(2);
-                  return (
-                    <li key={idx} className={`flex items-start gap-3 ${isExcluded ? "opacity-40" : ""}`}>
-                      <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${isIncluded ? "bg-green-100" : "bg-red-50"}`}>
-                        {isIncluded ? <Check className="w-3 h-3 text-green-600" /> : <span className="text-red-500 text-[10px]">✗</span>}
-                      </div>
-                      <span className={`text-sm ${isExcluded ? "line-through text-gray-500" : "text-gray-700"}`}>{text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-
-          {/* Checkout Summary */}
-          <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-xl sticky top-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-6">Order Summary</h3>
-            <div className="space-y-4 mb-8 pb-8 border-b border-gray-100">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Course</span>
-                <span className="font-semibold text-gray-900">Grow on LinkedIn</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Plan</span>
-                <span className="font-semibold text-gray-900">{plans.find(p => p.id === selectedPlan)?.name}</span>
-              </div>
-              <div className="flex justify-between items-center text-lg font-bold text-gray-900 pt-4">
-                <span>Total Amount</span>
-                <span className="text-blue-700">{plans.find(p => p.id === selectedPlan)?.price}</span>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              {!user ? (
-                <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-center">
-                  <p className="text-sm text-blue-800 mb-4 font-medium">Please login or create an account to proceed with the purchase.</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Link href={`/login?redirect=/checkout/linkedin-growth`} className="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors">Login</Link>
-                    <Link href={`/signup?redirect=/checkout/linkedin-growth`} className="bg-white text-blue-600 border border-blue-200 px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors">Sign Up</Link>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={handlePayment}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                >
-                  Pay Now
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              )}
-              
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3 text-xs text-gray-500 justify-center">
-                  <Check className="w-3 h-3 text-green-500" />
-                  Lifetime access
-                </div>
-                <div className="flex items-center gap-3 text-xs text-gray-500 justify-center">
-                  <Check className="w-3 h-3 text-green-500" />
-                  Secure payment via Razorpay
-                </div>
-              </div>
-            </div>
+          <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400 font-medium">
+            <ShieldCheck className="w-4 h-4 text-green-500" />
+            Secure 256-bit SSL Checkout
           </div>
         </div>
       </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-12 lg:py-16">
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          
+          {/* Left Column: Selection */}
+          <div className="lg:col-span-7 space-y-10">
+            <div>
+              <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Complete your enrollment</h1>
+              <p className="text-gray-500 font-medium">You're one step away from transforming your LinkedIn presence.</p>
+            </div>
+
+            {/* Plan Chips */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Step 1: Choose your path</h3>
+                <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md font-bold uppercase">Lifetime Access</span>
+              </div>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {plans.map((plan) => (
+                  <button
+                    key={plan.id}
+                    onClick={() => setSelectedPlan(plan.id)}
+                    className={`group relative flex flex-col p-5 rounded-2xl border-2 transition-all duration-300 text-left ${
+                      selectedPlan === plan.id 
+                        ? "border-blue-600 bg-white ring-4 ring-blue-50 shadow-xl" 
+                        : "border-gray-100 bg-white hover:border-gray-200"
+                    }`}
+                  >
+                    {plan.bestValue && (
+                      <div className="absolute -top-3 right-4 bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
+                        Most Popular
+                      </div>
+                    )}
+                    <span className={`text-xs font-bold uppercase tracking-tight mb-1 ${selectedPlan === plan.id ? "text-blue-600" : "text-gray-400"}`}>
+                      {plan.name}
+                    </span>
+                    <span className="text-xl font-black text-gray-900 mb-3">{plan.price}</span>
+                    <p className="text-[11px] text-gray-500 leading-tight font-medium">{plan.tagline}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Account Status */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Step 2: Account Details</h3>
+              <div className={`p-6 rounded-2xl border-2 transition-all ${user ? "border-green-100 bg-green-50/30" : "border-gray-100 bg-white"}`}>
+                {user ? (
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                      <Check className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900">Signed in as {user.email}</p>
+                      <p className="text-sm text-gray-500">Your enrollment will be linked to this account.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                        <Lock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900">Account required</p>
+                        <p className="text-sm text-gray-500">Please sign in to continue with payment.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 w-full sm:w-auto">
+                      <Link href={`/login?redirect=/checkout/linkedin-growth?plan=${selectedPlan}`} className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm text-center">Login</Link>
+                      <Link href={`/signup?redirect=/checkout/linkedin-growth?plan=${selectedPlan}`} className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-700 font-bold text-sm text-center">Sign Up</Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Features Detail */}
+            <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-6">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-blue-600 fill-current" />
+                <h3 className="font-bold text-gray-900">What's included in the {currentPlan.fullName}</h3>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {currentPlan.includes.map((item, i) => {
+                  const isInc = item.startsWith("✓");
+                  return (
+                    <div key={i} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${isInc ? "border-blue-50 bg-blue-50/20" : "border-gray-50 opacity-40 bg-gray-50/50"}`}>
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center ${isInc ? "bg-blue-100 text-blue-600" : "bg-gray-200 text-gray-400"}`}>
+                        {isInc ? <Check className="w-3 h-3" /> : <span className="text-[10px]">✗</span>}
+                      </div>
+                      <span className={`text-xs font-semibold ${isInc ? "text-gray-700" : "text-gray-400 line-through"}`}>{item.substring(2)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Sticky Summary */}
+          <div className="lg:col-span-5">
+            <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-2xl shadow-blue-500/5 sticky top-24">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-lg">
+                  <Star className="w-8 h-8 fill-current" />
+                </div>
+                <div>
+                  <h3 className="font-black text-gray-900">Grow on LinkedIn</h3>
+                  <p className="text-sm text-gray-500 font-medium">{currentPlan.fullName}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex justify-between items-center py-4 border-b border-gray-50">
+                  <span className="text-gray-500 font-medium">Subtotal</span>
+                  <span className="text-gray-900 font-bold">{currentPlan.price}</span>
+                </div>
+                <div className="flex justify-between items-center py-4 border-b border-gray-50">
+                  <span className="text-gray-500 font-medium">Tax (GST)</span>
+                  <span className="text-green-600 font-bold">Included</span>
+                </div>
+                <div className="flex justify-between items-center pt-4">
+                  <span className="text-lg font-black text-gray-900">Total</span>
+                  <span className="text-3xl font-black text-blue-600">{currentPlan.price}</span>
+                </div>
+              </div>
+
+              {user ? (
+                <button
+                  onClick={handlePayment}
+                  className="w-full py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-black text-lg shadow-xl shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                >
+                  Confirm & Pay
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              ) : (
+                <button 
+                  disabled
+                  className="w-full py-5 rounded-2xl bg-gray-100 text-gray-400 font-black text-lg flex items-center justify-center gap-3 cursor-not-allowed"
+                >
+                  <Lock className="w-5 h-5" />
+                  Sign in to Pay
+                </button>
+              )}
+
+              <div className="mt-8 pt-8 border-t border-gray-50 space-y-4">
+                <div className="flex items-center gap-3 text-xs text-gray-400 font-medium">
+                  <ShieldCheck className="w-4 h-4 text-green-500" />
+                  30-Day Money Back Guarantee
+                </div>
+                <div className="flex items-center gap-3 text-xs text-gray-400 font-medium">
+                  <Zap className="w-4 h-4 text-blue-500 fill-current" />
+                  Instant access after payment
+                </div>
+              </div>
+            </div>
+
+            {/* Social Proof Mini */}
+            <div className="mt-6 p-6 bg-blue-600 rounded-3xl text-white relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform">
+                <Users className="w-16 h-16" />
+              </div>
+              <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-2">Join the elite</p>
+              <h4 className="text-xl font-black mb-1">5,000+ Students</h4>
+              <p className="text-sm text-blue-100 font-medium opacity-80">already growing their authority on LinkedIn with this exact system.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </main>
+  );
+}
+
+// Support Icons (needed for social proof)
+function Users(props: any) {
+  return (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <CheckoutPageContent />
+    </Suspense>
   );
 }

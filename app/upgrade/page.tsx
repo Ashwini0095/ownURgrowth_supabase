@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../lib/AuthContext";
+import { writePurchaseSnapshot } from "../../lib/purchaseCache";
 
 const plans = [
   { id: "basic", name: "Core Course", price: 499 },
@@ -125,9 +126,13 @@ function UpgradeContent() {
             });
 
             if (verifyResponse.ok) {
-              // Clear the cache so the new plan reflects immediately
-              localStorage.removeItem(`purchase_${user?.id}`);
-              localStorage.removeItem(`purchase_time_${user?.id}`);
+              if (user?.id) {
+                writePurchaseSnapshot({
+                  userId: user.id,
+                  courses: ['linkedin-growth'],
+                  plan: selectedUpgrade,
+                });
+              }
               router.push(
                 `/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`,
               );

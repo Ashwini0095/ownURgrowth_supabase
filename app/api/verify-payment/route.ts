@@ -111,22 +111,22 @@ export async function POST(request: NextRequest) {
       console.error('Database error during verification:', error);
     }
 
-    // ── 5. Trigger Receipt Email (Asynchronous) ─────────────────────────
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/send-receipt`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: userEmail,
-          name: userName,
-          plan: plan,
-          amount: verifiedAmountRupees,
-          orderId: razorpay_order_id
-        }),
-      });
-    } catch (e) {
+    // ── 5. Trigger Receipt Email (fire-and-forget so the client isn't blocked) ──
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/send-receipt`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: userEmail,
+        name: userName,
+        courseName: courseName,
+        plan: plan,
+        amount: verifiedAmountRupees,
+        paymentId: razorpay_payment_id,
+        isUpgrade: !!isUpgrade,
+      }),
+    }).catch((e) => {
       console.error('Failed to trigger receipt email:', e);
-    }
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

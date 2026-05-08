@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import { trackLogin, setAnalyticsUser } from './analytics';
 import { createUserSession, updateSessionActivity, removeUserSession, checkSessionValidity } from './sessionManager';
+import { clearPurchaseSnapshot } from './purchaseCache';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -142,7 +143,9 @@ const handleUserLogin = async (u: User, token?: string) => {
 
   const signOut = async () => {
     await removeUserSession();
+    clearPurchaseSnapshot();
     await supabase.auth.signOut();
+    window.location.href = '/';
   };
 
   return (
