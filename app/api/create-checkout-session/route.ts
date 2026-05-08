@@ -89,6 +89,16 @@ export async function POST(request: NextRequest) {
     }
 
     const razorpay = getRazorpay();
+    console.log('[checkout] creating order', {
+      keyIdPrefix: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID?.slice(0, 16),
+      courseId,
+      courseName,
+      fromPlan,
+      toPlan,
+      clientPrice: price,
+      serverPrice,
+      amountPaise: serverPrice * 100,
+    });
     const order = await razorpay.orders.create({
       amount: serverPrice * 100,
       currency: 'INR',
@@ -99,6 +109,7 @@ export async function POST(request: NextRequest) {
         serverPrice: serverPrice.toString(),
       },
     });
+    console.log('[checkout] order created', { orderId: order.id, amount: order.amount });
 
     return NextResponse.json({ 
       orderId: order.id,

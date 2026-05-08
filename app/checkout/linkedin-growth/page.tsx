@@ -122,6 +122,11 @@ function CheckoutPageContent() {
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Checkout failed (${response.status})`);
+      }
+
       const { orderId, amount, currency } = await response.json();
 
       const options = {

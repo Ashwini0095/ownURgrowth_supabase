@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { getUserPaymentHistory, PaymentRecord } from '../../lib/payments';
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth();
+  const { user, session, loading } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('personal');
   const [updating, setUpdating] = useState(false);
@@ -38,12 +38,12 @@ export default function ProfilePage() {
       
       // Load payment history
       setLoadingPayments(true);
-      getUserPaymentHistory(user.id, user.email)
+      getUserPaymentHistory(user.id, user.email, session?.access_token)
         .then(setPaymentHistory)
         .catch(console.error)
         .finally(() => setLoadingPayments(false));
     }
-  }, [user, loading, router]);
+  }, [user, session, loading, router]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -289,32 +289,59 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {paymentHistory.map((payment) => (
-                    <div key={payment.id} className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl p-6 hover:shadow-xl hover:shadow-[#1D4ED8]/10 transition-all duration-300 transform hover:scale-[1.02]">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="h-10 w-10 rounded-full bg-[#1D4ED8]/20 flex items-center justify-center">
-                              <CreditCard className="h-5 w-5 text-[#1D4ED8]" />
+                  {paymentHistory.map((payment) => {
+                    const paidAt = payment.date ? new Date(payment.date) : null;
+                    const formattedDateTime = paidAt && !isNaN(paidAt.getTime())
+                      ? paidAt.toLocaleString('en-IN', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true,
+                        })
+                      : 'Unknown date';
+
+                    return (
+                      <div key={payment.id} className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl p-6 hover:shadow-xl hover:shadow-[#1D4ED8]/10 transition-all duration-300 transform hover:scale-[1.02]">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="h-10 w-10 rounded-full bg-[#1D4ED8]/20 flex items-center justify-center shrink-0">
+                                <CreditCard className="h-5 w-5 text-[#1D4ED8]" />
+                              </div>
+                              <div className="min-w-0">
+                                <h3 className="text-xl font-bold text-[#141619]">{payment.course}</h3>
+                                <p className="text-[#2C2E3A] font-medium">{payment.plan}</p>
+                              </div>
                             </div>
-                            <div>
-                              <h3 className="text-xl font-bold text-[#141619]">{payment.course}</h3>
-                              <p className="text-[#2C2E3A] font-medium">{payment.plan}</p>
+                            <div className="ml-13 space-y-1 text-sm">
+                              <p className="text-[#2C2E3A]">
+                                <span className="text-[#B3B4BD] font-medium">Paid on:</span>{' '}
+                                <span className="font-medium">{formattedDateTime}</span>
+                              </p>
+                              {payment.razorpayPaymentId && (
+                                <p className="text-[#2C2E3A] flex flex-wrap items-center gap-2">
+                                  <span className="text-[#B3B4BD] font-medium">Reference:</span>
+                                  <code className="font-mono text-xs bg-[#1D4ED8]/5 text-[#1D4ED8] px-2 py-0.5 rounded border border-[#1D4ED8]/10 break-all">
+                                    {payment.razorpayPaymentId}
+                                  </code>
+                                </p>
+                              )}
                             </div>
                           </div>
-                          <p className="text-[#B3B4BD] font-medium ml-13">{new Date(payment.date).toLocaleDateString('en-GB')}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-3xl font-bold bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent mb-2">
-                            ₹{payment.amount}
-                          </p>
-                          <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-green-100 to-green-200 text-green-700 border border-green-300">
-                            ✓ Completed
-                          </span>
+                          <div className="text-right shrink-0">
+                            <p className="text-3xl font-bold bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent mb-2">
+                              ₹{payment.amount}
+                            </p>
+                            <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-green-100 to-green-200 text-green-700 border border-green-300">
+                              ✓ Completed
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
