@@ -1,11 +1,23 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { getSupabaseAdmin } from "@/lib/supabaseClient";
 
 type Plan = "basic" | "plus" | "pro";
 
+const PLAN_NAME_TO_ID: Record<string, Plan> = {
+  "Basic Crash Course": "basic",
+  "Pro Program": "plus",
+  "Master Program": "pro",
+};
+
+const PLAN_PRIORITY: Record<Plan, number> = { basic: 1, plus: 2, pro: 3 };
+
+// ── Simple in-memory cache to reduce DB hits ───────────────────────────
+const cache = new Map<string, { plan: Plan | null; expiresAt: number }>();
+const CACHE_TTL_MS = 30_000; // 30 seconds
+
 export async function POST(req: Request) {
   try {
+    const authHeader = req.headers.get('Authorization');
     const body = await req.json();
     const { userId, userEmail } = body;
 
@@ -13,46 +25,78 @@ export async function POST(req: Request) {
       return NextResponse.json({ plan: null }, { status: 400 });
     }
 
-    const paymentsRef = collection(db, "payments");
+    const supabase = getSupabaseAdmin();
 
-    let q = query(paymentsRef, where("userId", "==", userId));
-    let snapshot = await getDocs(q);
-
-    if (snapshot.empty && userEmail) {
-      q = query(paymentsRef, where("userEmail", "==", userEmail));
-      snapshot = await getDocs(q);
+    // Verify user identity if token is provided
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      
+      // Strict check: token must be valid and userId must match token owner
+      if (authError || !user || (userId && user.id !== userId)) {
+        console.error('Check-purchase auth failed:', authError?.message);
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    } else {
+      console.warn('Request to check-purchase missing Authorization header');
     }
 
-    if (snapshot.empty) {
+    // Check cache first
+    const cacheKey = userId || userEmail;
+    const cached = cache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return NextResponse.json({ plan: cached.plan });
+    }
+
+    // Try by userId first
+    let { data: payments, error } = await supabase
+      .from("payments")
+      .select("plan_name, status, upgrade_to")
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error("Error querying payments by userId:", error);
+    }
+
+    // Fallback to email if no results
+    if ((!payments || payments.length === 0) && userEmail) {
+      const result = await supabase
+        .from("payments")
+        .select("plan_name, status, upgrade_to")
+        .eq("user_email", userEmail);
+
+      payments = result.data;
+      if (result.error) console.error("Error querying payments by email:", result.error);
+    }
+
+    if (!payments || payments.length === 0) {
+      cache.set(cacheKey, { plan: null, expiresAt: Date.now() + CACHE_TTL_MS });
       return NextResponse.json({ plan: null });
     }
 
-    const nameToId: Record<string, Plan> = {
-      "Basic Crash Course": "basic",
-      "Pro Program": "plus",
-      "Master Program": "pro",
-    };
-
     let highestPlan: Plan | null = null;
-    const priority: Record<Plan, number> = { basic: 1, plus: 2, pro: 3 };
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+    for (const row of payments) {
+      if (row.status !== "completed") continue;
 
-      if (data.status !== "completed") return;
+      // Primary: planName
+      let plan: Plan | null = PLAN_NAME_TO_ID[row.plan_name] ?? null;
 
-      // Detect plan from planName first, then fall back to amount
-      let plan: Plan | null = nameToId[data.planName] || null;
-      if (!plan) {
-        if (data.amount >= 999) plan = "pro";
-        else if (data.amount >= 799) plan = "plus";
-        else if (data.amount >= 499) plan = "basic";
+      // Secondary: upgradeTo field
+      if (!plan && row.upgrade_to) {
+        const upgradeId = row.upgrade_to as string;
+        if (upgradeId in PLAN_PRIORITY) {
+          plan = upgradeId as Plan;
+        }
       }
 
-      if (plan && (!highestPlan || priority[plan] > priority[highestPlan])) {
+      if (plan && (!highestPlan || PLAN_PRIORITY[plan] > PLAN_PRIORITY[highestPlan])) {
         highestPlan = plan;
       }
-    });
+    }
+
+    // Store in cache
+    cache.set(cacheKey, { plan: highestPlan, expiresAt: Date.now() + CACHE_TTL_MS });
 
     return NextResponse.json({ plan: highestPlan });
   } catch (error) {

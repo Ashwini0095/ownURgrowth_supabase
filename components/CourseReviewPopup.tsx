@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { X, Star, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../lib/AuthContext';
 
 interface CourseReviewPopupProps {
@@ -52,14 +51,16 @@ export default function CourseReviewPopup({ open, onClose, courseId }: CourseRev
     setError(null);
 
     try {
-      await addDoc(collection(db, 'reviews'), {
-        userID: user.uid,
-        userName: user.displayName ?? '',
-        userEmail: user.email ?? '',
+      const { error: insertError } = await supabase.from('reviews').insert({
+        user_id: user.id,
+        user_name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+        user_email: user.email || '',
         stars: String(rating),
         review: comment.trim(),
-        createdAt: serverTimestamp(),
+        course_id: courseId,
       });
+
+      if (insertError) throw insertError;
 
       window.localStorage.setItem(submittedKey(courseId), 'true');
       setSubmitted(true);

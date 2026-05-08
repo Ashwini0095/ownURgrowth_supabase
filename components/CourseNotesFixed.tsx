@@ -5,25 +5,33 @@ import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'course-notes-read-sections';
 
-function useReadTracker(totalSections: number) {
+function useReadTracker(totalSections: number, userId?: string) {
   const [readSections, setReadSections] = useState<Set<number>>(new Set());
+  
+  // Use a per-user key if userId is provided, fallback to legacy key
+  const storageKey = userId ? `course-notes-read-${userId}` : STORAGE_KEY;
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setReadSections(new Set(JSON.parse(stored)));
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        setReadSections(new Set(JSON.parse(stored)));
+      } else {
+        // If it's a new user and we have no per-user data, start fresh
+        setReadSections(new Set());
+      }
     } catch {}
-  }, []);
+  }, [storageKey]);
 
   const markRead = useCallback((index: number) => {
     setReadSections(prev => {
       if (prev.has(index)) return prev;
       const next = new Set(prev);
       next.add(index);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...next]));
+      localStorage.setItem(storageKey, JSON.stringify([...next]));
       return next;
     });
-  }, []);
+  }, [storageKey]);
 
   const pct = totalSections > 0 ? Math.round((readSections.size / totalSections) * 100) : 0;
   return { readSections, markRead, pct };
@@ -31,9 +39,10 @@ function useReadTracker(totalSections: number) {
 
 interface CourseNotesProps {
   userPlan: 'basic' | 'plus' | 'pro' | null;
+  userId?: string;
 }
 
-export default function CourseNotesComplete({ userPlan }: CourseNotesProps) {
+export default function CourseNotesComplete({ userPlan, userId }: CourseNotesProps) {
   const hasAccess = userPlan === 'plus' || userPlan === 'pro';
   const [expandedSections, setExpandedSections] = useState<number[]>([0]);
 
@@ -1799,7 +1808,7 @@ export default function CourseNotesComplete({ userPlan }: CourseNotesProps) {
     },
   ];
 
-  const { readSections, markRead, pct } = useReadTracker(sections.length);
+  const { readSections, markRead, pct } = useReadTracker(sections.length, userId);
 
   if (!hasAccess) {
     return (

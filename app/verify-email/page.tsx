@@ -11,35 +11,23 @@ function VerifyEmailContent() {
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
 
   useEffect(() => {
-    const verifyEmail = async () => {
-      const token = searchParams.get('token');
-      const email = searchParams.get('email');
-
-      if (!token || !email) {
-        setStatus('error');
-        return;
-      }
-
-      try {
-        // Mark email as verified for this user
-        const userId = user?.uid;
-        if (userId) {
-          localStorage.setItem(`email_verified_${userId}`, 'true');
+    // With Supabase, clicking the email link verifies the user on the server
+    // and redirects them back to the app, usually logging them in.
+    if (user) {
+      setStatus('success');
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
+    } else {
+      // Give it a second to initialize auth state
+      const timer = setTimeout(() => {
+        if (!user) {
+          setStatus('error');
         }
-        
-        setStatus('success');
-        
-        // Redirect after 3 seconds
-        setTimeout(() => {
-          router.push('/');
-        }, 3000);
-      } catch (error) {
-        setStatus('error');
-      }
-    };
-
-    verifyEmail();
-  }, [searchParams, router, user]);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [user, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-white text-[#141619] flex items-center justify-center">

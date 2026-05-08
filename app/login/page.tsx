@@ -4,9 +4,8 @@ import { useState, Suspense } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmail } from "../../lib/auth-utils";
 import { Sparkles, ShieldCheck, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
-import { auth } from "../../lib/firebase";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 
 function LoginContent() {
@@ -28,13 +27,14 @@ function LoginContent() {
     const email = (formData.get("email") as string | null) ?? "";
     const password = (formData.get("password") as string | null) ?? "";
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
+    const { user, error: signInError } = await signInWithEmail(email, password);
+
+    setLoading(false);
+
+    if (signInError) {
+      setError(signInError);
+    } else if (user) {
       router.push(redirectUrl);
-    } catch (err: any) {
-      setError(err.message || "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 

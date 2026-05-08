@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import { updateProfile, updatePassword } from 'firebase/auth';
+import { supabase } from '../../lib/supabaseClient';
 import { User, CreditCard, History, Settings, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getUserPaymentHistory, PaymentRecord } from '../../lib/payments';
@@ -34,11 +34,11 @@ export default function ProfilePage() {
     }
     
     if (user) {
-      setDisplayName(user.displayName || '');
+      setDisplayName(user.user_metadata?.full_name || user.user_metadata?.name || '');
       
       // Load payment history
       setLoadingPayments(true);
-      getUserPaymentHistory(user.uid)
+      getUserPaymentHistory(user.id, user.email)
         .then(setPaymentHistory)
         .catch(console.error)
         .finally(() => setLoadingPayments(false));
@@ -60,12 +60,22 @@ export default function ProfilePage() {
     setMessage('');
 
     try {
-      await updateProfile(user, {
-        displayName: displayName
-      });
+      const updates: { data?: { full_name?: string }; password?: string } = {};
+
+      if (displayName !== (user.user_metadata?.full_name || user.user_metadata?.name)) {
+        updates.data = { full_name: displayName };
+      }
 
       if (newPassword) {
-        await updatePassword(user, newPassword);
+        updates.password = newPassword;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        const { error } = await supabase.auth.updateUser(updates);
+        if (error) throw error;
+      }
+
+      if (newPassword) {
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
