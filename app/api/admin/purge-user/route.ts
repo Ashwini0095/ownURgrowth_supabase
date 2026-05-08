@@ -6,7 +6,12 @@ import { getSupabaseAdmin } from '@/lib/supabaseClient';
  * deletes the auth user. After this runs, the same email signing in again is
  * indistinguishable from a brand-new user.
  *
- * Auth (either is sufficient):
+ * Disabled by default. To enable, set ENABLE_ADMIN_ENDPOINTS=true in the
+ * deployment env. This guards against accidental exposure in production —
+ * the route returns 404 (not 401) when off, so it's indistinguishable from
+ * a missing route to anyone probing.
+ *
+ * Auth (either is sufficient when enabled):
  *   - `x-admin-key: <ADMIN_API_KEY>` header — for curl/scripts.
  *   - Supabase `Authorization: Bearer <jwt>` from a user whose email is listed
  *     in the comma-separated ADMIN_EMAILS env var — for the admin UI.
@@ -14,6 +19,10 @@ import { getSupabaseAdmin } from '@/lib/supabaseClient';
  * Body: { email?: string, userId?: string } — at least one is required.
  */
 export async function POST(request: NextRequest) {
+  if (process.env.ENABLE_ADMIN_ENDPOINTS !== 'true') {
+    return new NextResponse('Not Found', { status: 404 });
+  }
+
   const supabase = getSupabaseAdmin();
 
   // ── Authorize: x-admin-key header OR admin-allowlisted Supabase JWT ──────

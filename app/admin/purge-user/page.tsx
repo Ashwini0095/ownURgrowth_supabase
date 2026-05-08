@@ -29,10 +29,13 @@ export default function PurgeUserAdminPage() {
       router.replace('/login?redirect=/admin/purge-user');
       return;
     }
-    // Probe the API with the user's token. If the server's ADMIN_EMAILS
-    // allowlist accepts this email, a body-validation 400 comes back. If not,
-    // a 401. Either way we learn whether the caller is admin without exposing
-    // the allowlist on the client.
+    // Probe the API with the user's token. We send an empty body, so the
+    // server's response tells us:
+    //   400 → endpoint enabled AND caller is on ADMIN_EMAILS (body validation
+    //         was reached). Allowed.
+    //   401 → endpoint enabled but caller isn't on the allowlist.
+    //   404 → endpoint disabled via ENABLE_ADMIN_ENDPOINTS flag.
+    // We don't expose the allowlist or flag state on the client either way.
     (async () => {
       try {
         const res = await fetch('/api/admin/purge-user', {
@@ -43,7 +46,7 @@ export default function PurgeUserAdminPage() {
           },
           body: JSON.stringify({}),
         });
-        setIsAllowed(res.status !== 401);
+        setIsAllowed(res.status === 400);
       } catch {
         setIsAllowed(false);
       } finally {
