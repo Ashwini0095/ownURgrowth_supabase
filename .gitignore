@@ -46,3 +46,6 @@ asrocourse-firebase-adminsdk-fbsvc-1dd121589a.json
 skills-lock.json
 project_context.md
 migration.md
+
+# Local Claude Code harness state (per-project settings, scheduled-task locks)
+.claude/
