@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Lock, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { FileText, Lock, ChevronDown, ChevronUp, BookOpen, Download, Loader2 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'course-notes-read-sections';
@@ -40,11 +40,14 @@ function useReadTracker(totalSections: number, userId?: string) {
 interface CourseNotesProps {
   userPlan: 'basic' | 'plus' | 'pro' | null;
   userId?: string;
+  accessToken?: string | null;
 }
 
-export default function CourseNotesComplete({ userPlan, userId }: CourseNotesProps) {
+export default function CourseNotesComplete({ userPlan, userId, accessToken }: CourseNotesProps) {
   const hasAccess = userPlan === 'plus' || userPlan === 'pro';
   const [expandedSections, setExpandedSections] = useState<number[]>([0]);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const toggleSection = (index: number) => {
     setExpandedSections(prev => 
@@ -52,6 +55,47 @@ export default function CourseNotesComplete({ userPlan, userId }: CourseNotesPro
         ? prev.filter(i => i !== index)
         : [...prev, index]
     );
+  };
+
+  const downloadNotesPdf = async () => {
+    if (!accessToken) {
+      setDownloadError('Please sign in again to download the PDF.');
+      return;
+    }
+
+    setDownloading(true);
+    setDownloadError(null);
+
+    try {
+      const response = await fetch('/api/course-notes/linkedin-growth/download', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        let message = 'Unable to download course notes right now.';
+        try {
+          const data = await response.json();
+          if (typeof data?.error === 'string') message = data.error;
+        } catch {}
+        throw new Error(message);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'linkedin-course-notes.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setDownloadError(error instanceof Error ? error.message : 'Unable to download course notes right now.');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const sections = [
@@ -1841,7 +1885,7 @@ export default function CourseNotesComplete({ userPlan, userId }: CourseNotesPro
 
   return (
     <div className="bg-gray-50 rounded-lg p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-center">
         <div className="h-12 w-12 rounded-full bg-[#1D4ED8]/20 flex items-center justify-center">
           <FileText className="h-6 w-6 text-[#1D4ED8]" />
         </div>
@@ -1849,9 +1893,24 @@ export default function CourseNotesComplete({ userPlan, userId }: CourseNotesPro
           <h2 className="text-xl font-semibold text-[#141619]">Complete Course Notes</h2>
           <p className="text-[#B3B4BD] text-sm">87-page comprehensive LinkedIn growth guide</p>
         </div>
-        <div className="flex items-center gap-2 text-sm font-medium text-[#1D4ED8]">
-          <BookOpen className="h-4 w-4" />
-          {pct}% read
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={downloadNotesPdf}
+            disabled={downloading}
+            className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#1D4ED8]/20 bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#1D4ED8]/20 transition hover:bg-[#0F172A] disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {downloading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            {downloading ? 'Preparing...' : 'Download PDF'}
+          </button>
+          <div className="flex items-center gap-2 text-sm font-medium text-[#1D4ED8]">
+            <BookOpen className="h-4 w-4" />
+            {pct}% read
+          </div>
         </div>
       </div>
 
@@ -1865,6 +1924,12 @@ export default function CourseNotesComplete({ userPlan, userId }: CourseNotesPro
         </div>
         <p className="text-xs text-[#B3B4BD] mt-1">{readSections.size} of {sections.length} sections read</p>
       </div>
+
+      {downloadError && (
+        <p className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {downloadError}
+        </p>
+      )}
 
       <div className="space-y-4">
         {sections.map((section, index) => (

@@ -67,7 +67,7 @@ const planLabels: Record<string, string> = {
 //   }
 // };
 
-const checkUserPurchase = async (user: any, session: any) => {
+const checkUserPurchase = async (user: any, session: any, bypassCache = false) => {
   if (!session) return null;
   try {
     const res = await fetch("/api/check-purchase", {
@@ -79,6 +79,7 @@ const checkUserPurchase = async (user: any, session: any) => {
       body: JSON.stringify({
         userId: user.id,
         userEmail: user.email,
+        bypassCache,
       }),
     });
 
@@ -100,6 +101,7 @@ function AccessPageContent() {
   const { user, session, loading } = useAuth();
   const [userPlan, setUserPlan] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(true);
+  const bypassPurchaseCache = Boolean(searchParams.get("payment_id"));
 
   const [reviewOpen, setReviewOpen] = useState(false);
   const [canReview, setCanReview] = useState(true);
@@ -163,7 +165,7 @@ function AccessPageContent() {
         return;
       }
 
-      const purchasedPlan = await checkUserPurchase(user, session);
+      const purchasedPlan = await checkUserPurchase(user, session, bypassPurchaseCache);
 
       if (!purchasedPlan) {
         router.push("/courses/linkedin-growth");
@@ -175,7 +177,7 @@ function AccessPageContent() {
     };
 
     verifyAccess();
-  }, [user, session, loading, router]);
+  }, [user, session, loading, router, bypassPurchaseCache]);
 
   // Listen for Bunny Stream's "ended" event via player.js-style postMessage.
   // When the video finishes, wait 3s and surface the review popup (unless already submitted).
@@ -330,6 +332,7 @@ function AccessPageContent() {
                 <CourseNotesFixed
                   userPlan={userPlan as "basic" | "plus" | "pro"}
                   userId={user?.id}
+                  accessToken={session?.access_token}
                 />
               </div>
 
@@ -390,4 +393,3 @@ export default function LinkedInGrowthAccessPage() {
     </Suspense>
   );
 }
-
