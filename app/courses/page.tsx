@@ -3,12 +3,6 @@
 import dynamic from 'next/dynamic';
 import { useAuth } from '../../lib/AuthContext';
 
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
-
 const CoursesGrid = dynamic(() => import('./CoursesGrid'), { ssr: false });
 
 export default function CoursesPage() {

@@ -5,9 +5,6 @@ const nextConfig = {
       "./protected-assets/linkedin-course-notes.pdf",
     ],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };
 
 module.exports = nextConfig;

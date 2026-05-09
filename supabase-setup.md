@@ -274,10 +274,19 @@ Copy these into `.env.local` (and into Vercel / your prod platform):
 NEXT_PUBLIC_SUPABASE_URL=https://<new-project>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<new anon key>
 SUPABASE_SERVICE_ROLE_KEY=<new service_role key>
+INTERNAL_API_SECRET=<random 32+ byte server-only secret>
+BUNNY_STREAM_TOKEN_SECURITY_KEY=<Bunny Stream embed token authentication key>
+BUNNY_STREAM_LIBRARY_ID=<Bunny Stream library id>
+BUNNY_STREAM_VIDEO_ID=<Bunny Stream video id>
+BUNNY_STREAM_ALLOWED_VIDEO_IDS=<optional comma-separated video ids>
 ```
 
 > The service-role key is a god-mode credential. It must never be committed,
 > never sent to the browser, and never logged. Vercel's env-var UI is fine.
+
+`INTERNAL_API_SECRET` protects the receipt email route so only verified server
+payment code can call it. Bunny Stream embed token authentication must be
+enabled in Bunny before production traffic uses the protected video player.
 
 ### 4.5. Smoke test the golden path
 
