@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseClient";
+import { rateLimit } from "@/lib/rateLimit";
 import {
   createLinkedInGrowthPaymentLookup,
   getLinkedInGrowthPlanForUser,
@@ -22,6 +23,12 @@ function getAllowedVideoIds(defaultVideoId: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const rl = rateLimit(`bunny-signed-url:${ip}`, 30, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const authHeader = request.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,7 +45,12 @@ export async function POST(request: NextRequest) {
       process.env.BUNNY_STREAM_VIDEO_ID || process.env.NEXT_PUBLIC_BUNNY_VIDEO_ID;
     const tokenSecurityKey = process.env.BUNNY_STREAM_TOKEN_SECURITY_KEY;
 
-    if (!libraryId || !defaultVideoId || !tokenSecurityKey) {
+    if (!libraryId || !defaultVideoId) {
+      console.error("Bunny Stream embed is not configured");
+      return NextResponse.json({ error: "Video streaming is not configured" }, { status: 500 });
+    }
+
+    if (!tokenSecurityKey) {
       console.error("Bunny Stream token auth is not configured");
       return NextResponse.json({ error: "Video streaming is not configured" }, { status: 500 });
     }
@@ -74,15 +86,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Course access required" }, { status: 403 });
     }
 
+    const embedUrl = new URL(
+      `https://iframe.mediadelivery.net/embed/${libraryId}/${requestedVideoId}`,
+    );
     const expires = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;
     const signedToken = crypto
       .createHash("sha256")
       .update(`${tokenSecurityKey}${requestedVideoId}${expires}`)
       .digest("hex");
-
-    const embedUrl = new URL(
-      `https://iframe.mediadelivery.net/embed/${libraryId}/${requestedVideoId}`,
-    );
     embedUrl.searchParams.set("token", signedToken);
     embedUrl.searchParams.set("expires", String(expires));
     embedUrl.searchParams.set("autoplay", "false");

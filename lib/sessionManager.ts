@@ -14,10 +14,10 @@ let lastActivityUpdate = 0;
 export async function createUserSession(userId: string): Promise<boolean> {
   try {
     // Generate unique session ID
-    const sessionId = `${userId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `${userId}_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
     // Get device info
-    const deviceInfo = `${navigator.userAgent.substring(0, 100)} - ${new Date().toISOString()}`;
+    const deviceInfo = `${navigator.userAgent.slice(0, 100)} - ${new Date().toISOString()}`;
 
     // Check existing sessions
     const { data: sessions, error: fetchError } = await supabase

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ChevronRight, PlayCircle, Star, Users, Award, Clock, Shield, BookOpen, RefreshCw, GraduationCap, Briefcase, Laptop, ArrowRight, Heart, Building } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { useEffect, useState } from "react";
-import { trackPageView, trackButtonClick } from "../lib/analytics";
 import ReviewsCarousel from "../components/ReviewsCarousel";
 import InteractiveCounter from "../components/InteractiveCounter";
 import FloatingCTA from "../components/FloatingCTA";
@@ -22,7 +21,6 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    trackPageView('Home');
   }, []);
 
   if (!mounted) {

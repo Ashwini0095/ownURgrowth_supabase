@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limit: 5 verification attempts per minute per IP
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-    const rl = rateLimit(ip, 5, 60_000);
+    const rl = rateLimit(`verify-payment:${ip}`, 5, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: 'Too many attempts' }, { status: 429 });
     }
@@ -68,10 +68,8 @@ export async function POST(request: NextRequest) {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      userEmail,
       userName,
       plan,
-      userId,
     } = await request.json();
 
     const supabase = getSupabaseAdmin();
@@ -85,9 +83,17 @@ export async function POST(request: NextRequest) {
     const token = authHeader.split(' ')[1];
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
-    if (authError || !user || (userId && user.id !== userId)) {
+    if (authError || !user) {
       console.error('Verification auth failed:', authError?.message);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!user.email) {
+      // The receipt + access lookup both pivot on email; refuse early so we
+      // don't burn a Razorpay API round-trip and DB writes on a record we
+      // can't fully complete.
+      console.error('Verification failed: authenticated user has no email');
+      return NextResponse.json({ error: 'User email required to record payment' }, { status: 400 });
     }
 
     // ── 2. Signature Validation ─────────────────────────────────────────
@@ -154,10 +160,14 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 4. Store payment record in Supabase (Idempotent) ─────────────────
+    // `ignoreDuplicates: true` + `.select()` lets us detect whether this was a
+    // fresh insert or a replay of the same Razorpay payment. We only send the
+    // receipt email on a fresh insert so retries don't spam the user.
+    let isFreshPayment = false;
     try {
       const paymentRecord: PaymentRecord = {
         user_id: user.id,
-        user_email: user.email || userEmail,
+        user_email: user.email,
         user_name: receiptName ?? undefined,
         course_name: storedCourseName,
         plan_name: activatedPlanName,
@@ -172,45 +182,50 @@ export async function POST(request: NextRequest) {
         paymentRecord.is_upgrade = true;
       }
 
-      const { error } = await supabase
+      const { data: insertedRows, error } = await supabase
         .from('payments')
-        .upsert(paymentRecord, { 
+        .upsert(paymentRecord, {
           onConflict: 'razorpay_payment_id',
-          ignoreDuplicates: false 
-        });
+          ignoreDuplicates: true,
+        })
+        .select('razorpay_payment_id');
 
       if (error) {
         console.error('Failed to store payment record:', error);
         return NextResponse.json({ error: 'Payment captured, but course access could not be activated. Please contact support.' }, { status: 500 });
       }
+
+      isFreshPayment = Array.isArray(insertedRows) && insertedRows.length > 0;
     } catch (error) {
       console.error('Database error during verification:', error);
       return NextResponse.json({ error: 'Payment captured, but course access could not be activated. Please contact support.' }, { status: 500 });
     }
 
-    // ── 5. Trigger Receipt Email (fire-and-forget so the client isn't blocked) ──
-    const internalSecret = process.env.INTERNAL_API_SECRET;
-    if (internalSecret) {
-      fetch(new URL('/api/send-receipt', request.url), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-internal-api-secret': internalSecret,
-        },
-        body: JSON.stringify({
-          email: user.email || userEmail,
-          name: receiptName,
-          courseName: storedCourseName,
-          plan: activatedPlanName,
-          amount: verifiedAmountRupees,
-          paymentId: razorpay_payment_id,
-          isUpgrade: isUpgradePayment,
-        }),
-      }).catch((e) => {
-        console.error('Failed to trigger receipt email:', e);
-      });
-    } else {
-      console.error('Missing INTERNAL_API_SECRET; receipt email not sent');
+    // ── 5. Trigger Receipt Email (fire-and-forget; only on fresh insert) ──
+    if (isFreshPayment) {
+      const internalSecret = process.env.INTERNAL_API_SECRET;
+      if (internalSecret) {
+        void fetch(new URL('/api/send-receipt', request.url), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-internal-api-secret': internalSecret,
+          },
+          body: JSON.stringify({
+            email: user.email,
+            name: receiptName,
+            courseName: storedCourseName,
+            plan: activatedPlanName,
+            amount: verifiedAmountRupees,
+            paymentId: razorpay_payment_id,
+            isUpgrade: isUpgradePayment,
+          }),
+        }).catch((e) => {
+          console.error('Failed to trigger receipt email:', e);
+        });
+      } else {
+        console.error('Missing INTERNAL_API_SECRET; receipt email not sent');
+      }
     }
 
     return NextResponse.json({ success: true, plan: activatedPlanId });

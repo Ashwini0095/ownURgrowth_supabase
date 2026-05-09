@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseClient";
+import { rateLimit } from "@/lib/rateLimit";
 import {
   canDownloadLinkedInGrowthNotes,
   createLinkedInGrowthPaymentLookup,
@@ -19,6 +20,12 @@ const NOTES_FILE_PATH = path.join(
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const rl = rateLimit(`course-notes-download:${ip}`, 10, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const authHeader = request.headers.get("Authorization");
 
     if (!authHeader?.startsWith("Bearer ")) {

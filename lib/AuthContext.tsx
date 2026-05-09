@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
-import { trackLogin, setAnalyticsUser } from './analytics';
 import { createUserSession, updateSessionActivity, removeUserSession, checkSessionValidity } from './sessionManager';
 import { clearPurchaseSnapshot } from './purchaseCache';
 import type { User, Session } from '@supabase/supabase-js';
@@ -18,8 +17,18 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   loading: true,
-  signOut: async () => {},
+  signOut: async () => { },
 });
+
+const dispatchAuthNotice = (message: string) => {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem('authNotice', message);
+  } catch {
+    // sessionStorage may be unavailable (private browsing, SSR-mismatch). Fall through.
+  }
+  window.dispatchEvent(new CustomEvent('auth-notice', { detail: message }));
+};
 
 const handleUserLogin = async (u: User, token?: string) => {
   // Check session validity and create new session
@@ -27,14 +36,11 @@ const handleUserLogin = async (u: User, token?: string) => {
   if (!isValidSession) {
     const sessionCreated = await createUserSession(u.id);
     if (!sessionCreated) {
-      alert('Maximum device limit reached. Please log out from another device.');
+      dispatchAuthNotice('Maximum device limit reached. Please log out from another device.');
       await supabase.auth.signOut();
       return;
     }
   }
-
-  trackLogin();
-  setAnalyticsUser(u.id, u.email || '', u.user_metadata?.full_name || u.user_metadata?.name || '');
 
   // Upsert user profile
   try {
@@ -62,36 +68,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Track which (userId, access_token) pair we've already processed so the
+    // initial session and subsequent INITIAL_SESSION/TOKEN_REFRESHED events
+    // don't each trigger duplicate handleUserLogin runs (which would race in
+    // createUserSession and write the user profile twice on every page load).
+    let lastHandledKey: string | null = null;
+
+    const runLogin = (s: Session | null) => {
+      if (!s?.user) {
+        lastHandledKey = null;
+        return;
+      }
+      const key = `${s.user.id}:${s.access_token}`;
+      if (key === lastHandledKey) return;
+      lastHandledKey = key;
+      void handleUserLogin(s.user, s.access_token);
+    };
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
       setUser(s?.user ?? null);
       setLoading(false);
-
-      if (s?.user) {
-        void handleUserLogin(s.user, s.access_token);
-      }
+      runLogin(s);
     });
 
-  // Listen for auth changes
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(
-    async (_event, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      setLoading(false);
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, s) => {
+        setSession(s);
+        setUser(s?.user ?? null);
+        setLoading(false);
 
-      if (s?.user) {
-        await handleUserLogin(s.user, s.access_token);
-      } else {
-        await removeUserSession();
+        if (s?.user) {
+          runLogin(s);
+        } else {
+          lastHandledKey = null;
+          await removeUserSession();
+        }
       }
-    }
-  );
+    );
 
-  return () => {
-    subscription.unsubscribe();
-  };
-}, []);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   // Auto-logout after 20 minutes of inactivity
   useEffect(() => {
@@ -102,8 +123,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const resetTimeout = () => {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        supabase.auth.signOut();
-        alert('You have been logged out due to inactivity.');
+        dispatchAuthNotice('You have been logged out due to inactivity.');
+        void supabase.auth.signOut();
       }, 20 * 60 * 1000); // 20 minutes
     };
 
@@ -142,10 +163,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const signOut = async () => {
-    await removeUserSession();
     clearPurchaseSnapshot();
-    await supabase.auth.signOut();
-    window.location.href = '/';
+    setUser(null);
+    setSession(null);
+
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (error) {
+      console.error('Supabase local signOut failed:', error);
+    }
+
+    void removeUserSession();
+    void supabase.auth.signOut().then(({ error }) => {
+      if (error) console.error('Supabase signOut failed:', error.message);
+    });
+
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
   };
 
   return (

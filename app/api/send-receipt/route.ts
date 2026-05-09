@@ -30,7 +30,7 @@ type ReceiptBody = {
   isUpgrade?: boolean;
 };
 
-function renderEmail(body: ReceiptBody) {
+function renderEmail(body: ReceiptBody, baseUrl: string) {
   const courseName = body.courseName || 'Grow on LinkedIn';
   const planId = PLAN_NAME_TO_ID[body.plan || ''] || body.plan || '';
 
@@ -41,7 +41,6 @@ function renderEmail(body: ReceiptBody) {
   const safePaymentId = escapeHtml(body.paymentId || '—');
   const safeAmount = escapeHtml(String(body.amount ?? '0'));
   const safePlanId = encodeURIComponent(planId);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
   const accessUrl = `${baseUrl}/courses/linkedin-growth/access?plan=${safePlanId}`;
 
   const isUpgrade = !!body.isUpgrade;
@@ -261,7 +260,10 @@ export async function POST(request: NextRequest) {
 
     const transporter = getEmailTransporter();
     const fromEmail = getEmailUser();
-    const { subject, html, text } = renderEmail(body);
+    const baseUrl = (
+      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin
+    ).replace(/\/+$/, '');
+    const { subject, html, text } = renderEmail(body, baseUrl);
 
     await transporter.sendMail({
       from: `"${BRAND_NAME}" <${fromEmail}>`,

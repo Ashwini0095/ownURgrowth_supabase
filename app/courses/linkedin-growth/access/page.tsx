@@ -20,53 +20,6 @@ const planLabels: Record<string, string> = {
   pro: "Course + Notes + Live Q&A (₹999)",
 };
 
-// Mock function to check if user has purchased the course
-// const checkUserPurchase = async (userId: string, plan: string) => {
-//   // Temporarily return 'pro' to avoid Firebase calls during quota exceeded
-//   console.log('Using mock data due to Firebase quota exceeded');
-//   return 'pro'; // This gives users access to course content
-// };
-
-// add this function to backend with api
-// const checkUserPurchase = async (user: any) => {
-//   try {
-//     const { collection, query, where, getDocs } =
-//       await import("firebase/firestore");
-//     const { db } = await import("../../../../lib/firebase");
-
-//     const paymentsRef = collection(db, "payments");
-
-//     let q = query(paymentsRef, where("userId", "==", user.uid));
-//     let snapshot = await getDocs(q);
-
-//     if (snapshot.empty && user.email) {
-//       q = query(paymentsRef, where("userEmail", "==", user.email));
-//       snapshot = await getDocs(q);
-//     }
-
-//     if (snapshot.empty) return null;
-
-//     // Find the highest plan
-//     let highestPlan: "basic" | "plus" | "pro" | null = null;
-
-//     snapshot.forEach((doc) => {
-//       const data = doc.data();
-
-//       if (data.status !== "completed") return;
-
-//       if (data.amount >= 999) highestPlan = "pro";
-//       else if (data.amount >= 799 && highestPlan !== "pro")
-//         highestPlan = "plus";
-//       else if (!highestPlan) highestPlan = "basic";
-//     });
-
-//     return highestPlan;
-//   } catch (err) {
-//     console.error(err);
-//     return null;
-//   }
-// };
-
 const checkUserPurchase = async (user: any, session: any, bypassCache = false) => {
   if (!session) return null;
   try {

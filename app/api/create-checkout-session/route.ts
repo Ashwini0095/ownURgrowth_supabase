@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limit: 10 checkout requests per minute per IP
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-    const rl = rateLimit(ip, 10, 60_000);
+    const rl = rateLimit(`create-checkout-session:${ip}`, 10, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
@@ -139,16 +139,15 @@ export async function POST(request: NextRequest) {
     }
 
     const razorpay = getRazorpay();
-    console.log('[checkout] creating order', {
-      keyIdPrefix: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID?.slice(0, 16),
-      courseId,
-      courseName: serverCourseName,
-      fromPlan: verifiedFromPlan ?? fromPlan,
-      toPlan: verifiedToPlan ?? toPlan,
-      clientPrice: price,
-      serverPrice,
-      amountPaise: serverPrice * 100,
-    });
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[checkout] creating order', {
+        courseId,
+        courseName: serverCourseName,
+        fromPlan: verifiedFromPlan ?? fromPlan,
+        toPlan: verifiedToPlan ?? toPlan,
+        serverPrice,
+      });
+    }
     const order = await razorpay.orders.create({
       amount: serverPrice * 100,
       currency: 'INR',
@@ -161,7 +160,6 @@ export async function POST(request: NextRequest) {
         ...(verifiedToPlan ? { toPlan: verifiedToPlan } : {}),
       },
     });
-    console.log('[checkout] order created', { orderId: order.id, amount: order.amount });
 
     return NextResponse.json({ 
       orderId: order.id,

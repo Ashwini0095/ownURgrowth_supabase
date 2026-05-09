@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signUpWithEmail, resendVerificationEmail } from "../../lib/auth-utils";
 import { Sparkles, ShieldCheck, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
-import { trackSignUp } from "../../lib/analytics";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { getSafeRedirect } from "../../lib/redirects";
 
@@ -62,8 +61,6 @@ function SignupContent() {
         setLoading(false);
         return;
       }
-
-      trackSignUp();
 
       if (session) {
         // Email confirmations are disabled, the user is signed in immediately

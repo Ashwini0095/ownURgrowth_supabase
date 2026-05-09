@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AuthProvider } from "../lib/AuthContext";
 import Navigation from "../components/Navigation";
 import LoginNudgePopup from "../components/LoginNudgePopup";
+import AuthNotice from "../components/AuthNotice";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -67,7 +70,10 @@ export default function RootLayout({
             {children}
           </div>
           <LoginNudgePopup />
+          <AuthNotice />
         </AuthProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
