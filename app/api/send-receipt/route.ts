@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { getUserDisplayName } from '@/lib/userDisplayName';
 
 const SMTP_PORT = Number(process.env.EMAIL_PORT ?? 465);
 
@@ -45,7 +46,8 @@ function renderEmail(body: ReceiptBody) {
   const courseName = body.courseName || 'Grow on LinkedIn';
   const planId = PLAN_NAME_TO_ID[body.plan || ''] || body.plan || '';
 
-  const safeName = escapeHtml(body.name || 'there');
+  const displayName = getUserDisplayName(null, body.name);
+  const safeName = escapeHtml(displayName || 'there');
   const safeCourseName = escapeHtml(courseName);
   const safePlan = escapeHtml(body.plan || '—');
   const safePaymentId = escapeHtml(body.paymentId || '—');
@@ -235,8 +237,8 @@ function renderEmail(body: ReceiptBody) {
       : `Welcome to ${courseName}!`,
     '',
     isUpgrade
-      ? `Hey ${body.name || 'there'}, your ${courseName} plan has been upgraded to ${body.plan ?? ''}. The new content is unlocked.`
-      : `Hey ${body.name || 'there'}, thanks for joining ${courseName}. You now have lifetime access.`,
+      ? `Hey ${displayName || 'there'}, your ${courseName} plan has been upgraded to ${body.plan ?? ''}. The new content is unlocked.`
+      : `Hey ${displayName || 'there'}, thanks for joining ${courseName}. You now have lifetime access.`,
     '',
     `${detailsTitle}:`,
     `  Course:      ${courseName}`,

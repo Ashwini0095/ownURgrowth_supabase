@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import Razorpay from 'razorpay';
 import { getSupabaseAdmin } from '@/lib/supabaseClient';
 import { rateLimit } from '@/lib/rateLimit';
+import { getUserDisplayName, normalizeDisplayName } from '@/lib/userDisplayName';
 
 const PLAN_NAME_TO_ID: Record<string, string> = {
   "Basic Crash Course": "basic",
@@ -141,13 +142,23 @@ export async function POST(request: NextRequest) {
 
     const isUpgradePayment = notes.courseId === "linkedin-growth-upgrade";
     const storedCourseName = "Grow on LinkedIn";
+    let receiptName = getUserDisplayName(user.user_metadata, userName);
+    if (!receiptName) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('display_name')
+        .eq('auth_id', user.id)
+        .maybeSingle();
+
+      receiptName = normalizeDisplayName(profile?.display_name);
+    }
 
     // ── 4. Store payment record in Supabase (Idempotent) ─────────────────
     try {
       const paymentRecord: PaymentRecord = {
         user_id: user.id,
         user_email: user.email || userEmail,
-        user_name: userName,
+        user_name: receiptName ?? undefined,
         course_name: storedCourseName,
         plan_name: activatedPlanName,
         amount: verifiedAmountRupees,
@@ -183,7 +194,7 @@ export async function POST(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: user.email || userEmail,
-        name: userName,
+        name: receiptName,
         courseName: storedCourseName,
         plan: activatedPlanName,
         amount: verifiedAmountRupees,

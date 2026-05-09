@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
 import { writePurchaseSnapshot } from "../../../lib/purchaseCache";
+import { getUserDisplayName } from "../../../lib/userDisplayName";
 import Link from "next/link";
 
 const plans = [
@@ -149,7 +150,7 @@ function CheckoutPageContent() {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 userEmail: user?.email,
-                userName: user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email,
+                userName: getUserDisplayName(user?.user_metadata),
                 courseName: "Grow on LinkedIn",
                 plan: selectedPlanData.fullName,
                 amount: amount,
@@ -177,7 +178,7 @@ function CheckoutPageContent() {
           }
         },
         prefill: {
-          name: user?.user_metadata?.full_name || user?.user_metadata?.name || "",
+          name: getUserDisplayName(user?.user_metadata) || "",
           email: user?.email || "",
         },
         theme: {

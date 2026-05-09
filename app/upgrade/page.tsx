@@ -5,6 +5,7 @@ import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../lib/AuthContext";
 import { writePurchaseSnapshot } from "../../lib/purchaseCache";
+import { getUserDisplayName } from "../../lib/userDisplayName";
 
 type PlanId = "basic" | "plus" | "pro";
 
@@ -161,7 +162,7 @@ function UpgradeContent() {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 userEmail: user?.email,
-                userName: user?.user_metadata?.first_name || user?.email,
+                userName: getUserDisplayName(user?.user_metadata),
                 courseName: "Grow on LinkedIn",
                 plan: dbPlanName,
                 amount: amount,
@@ -190,7 +191,7 @@ function UpgradeContent() {
           }
         },
         prefill: {
-          name: user?.user_metadata?.first_name || "",
+          name: getUserDisplayName(user?.user_metadata) || "",
           email: user?.email || "",
           contact: "",
         },
