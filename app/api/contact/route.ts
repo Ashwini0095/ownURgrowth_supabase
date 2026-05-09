@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.titan.email',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+import { getEmailTransporter, getEmailUser } from '@/lib/emailTransport';
+import { rateLimit } from '@/lib/rateLimit';
 
 // Basic HTML escaping to prevent XSS in email templates
 function escapeHtml(str: string): string {
@@ -21,8 +12,18 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
+function cleanEmailHeader(str: string): string {
+  return String(str).replace(/[\r\n]+/g, ' ').trim().slice(0, 200);
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rl = rateLimit(`contact:${ip}`, 3, 60_000);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
     const { name, email, subject, message } = await request.json();
 
     // Validate required fields
@@ -33,26 +34,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if email configuration exists
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.error('Email configuration missing');
-      return NextResponse.json(
-        { error: 'Email service not configured' },
-        { status: 500 }
-      );
+    if (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
     }
+
+    const transporter = getEmailTransporter();
+    const fromEmail = getEmailUser();
 
     // Escape user-supplied values for safe HTML rendering
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
     const safeSubject = escapeHtml(subject);
     const safeMessage = escapeHtml(message);
+    const headerSubject = cleanEmailHeader(subject);
 
     // Send email to support
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER, // Send to your support email
-      subject: `Contact Form: ${safeSubject}`,
+      from: fromEmail,
+      to: fromEmail, // Send to your support email
+      subject: `Contact Form: ${headerSubject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #3B82F6;">New Contact Form Submission</h2>
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     // Send confirmation email to user
     const confirmationOptions = {
-      from: process.env.EMAIL_USER,
+      from: fromEmail,
       to: email,
       subject: 'We received your message - ownURgrowth',
       html: `

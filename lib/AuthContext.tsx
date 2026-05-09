@@ -21,43 +21,6 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      setLoading(false);
-
-      if (s?.user) {
-      handleUserLogin(s.user, s.access_token);
-    }
-  });
-
-  // Listen for auth changes
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(
-    async (_event, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      setLoading(false);
-
-      if (s?.user) {
-        handleUserLogin(s.user, s.access_token);
-      } else {
-        await removeUserSession();
-      }
-    }
-  );
-
-  return () => {
-    subscription.unsubscribe();
-  };
-}, []);
-
 const handleUserLogin = async (u: User, token?: string) => {
   // Check session validity and create new session
   const isValidSession = await checkSessionValidity(u.id);
@@ -88,10 +51,47 @@ const handleUserLogin = async (u: User, token?: string) => {
         photoURL: u.user_metadata?.avatar_url || null,
       }),
     });
-    } catch (err) {
-      console.error('Failed to upsert user profile:', err);
+  } catch (err) {
+    console.error('Failed to upsert user profile:', err);
+  }
+};
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+      setLoading(false);
+
+      if (s?.user) {
+        void handleUserLogin(s.user, s.access_token);
+      }
+    });
+
+  // Listen for auth changes
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    async (_event, s) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+      setLoading(false);
+
+      if (s?.user) {
+        await handleUserLogin(s.user, s.access_token);
+      } else {
+        await removeUserSession();
+      }
     }
+  );
+
+  return () => {
+    subscription.unsubscribe();
   };
+}, []);
 
   // Auto-logout after 20 minutes of inactivity
   useEffect(() => {

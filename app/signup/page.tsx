@@ -8,6 +8,7 @@ import { signUpWithEmail, resendVerificationEmail } from "../../lib/auth-utils";
 import { Sparkles, ShieldCheck, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
 import { trackSignUp } from "../../lib/analytics";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
+import { getSafeRedirect } from "../../lib/redirects";
 
 function SignupContent() {
   const router = useRouter();
@@ -33,7 +34,7 @@ function SignupContent() {
     setResending(false);
   };
 
-  const redirectUrl = searchParams.get('redirect') || '/';
+  const redirectUrl = getSafeRedirect(searchParams.get('redirect'));
   const loginHref = `/login${redirectUrl !== '/' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

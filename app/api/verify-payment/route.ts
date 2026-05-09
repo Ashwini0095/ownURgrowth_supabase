@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     });
 
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
-    if (payment.status !== 'captured' && payment.status !== 'authorized') {
+    if (payment.status !== 'captured') {
       return NextResponse.json({ error: 'Payment not successful' }, { status: 400 });
     }
 
@@ -189,21 +189,29 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 5. Trigger Receipt Email (fire-and-forget so the client isn't blocked) ──
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/send-receipt`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: user.email || userEmail,
-        name: receiptName,
-        courseName: storedCourseName,
-        plan: activatedPlanName,
-        amount: verifiedAmountRupees,
-        paymentId: razorpay_payment_id,
-        isUpgrade: isUpgradePayment,
-      }),
-    }).catch((e) => {
-      console.error('Failed to trigger receipt email:', e);
-    });
+    const internalSecret = process.env.INTERNAL_API_SECRET;
+    if (internalSecret) {
+      fetch(new URL('/api/send-receipt', request.url), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-api-secret': internalSecret,
+        },
+        body: JSON.stringify({
+          email: user.email || userEmail,
+          name: receiptName,
+          courseName: storedCourseName,
+          plan: activatedPlanName,
+          amount: verifiedAmountRupees,
+          paymentId: razorpay_payment_id,
+          isUpgrade: isUpgradePayment,
+        }),
+      }).catch((e) => {
+        console.error('Failed to trigger receipt email:', e);
+      });
+    } else {
+      console.error('Missing INTERNAL_API_SECRET; receipt email not sent');
+    }
 
     return NextResponse.json({ success: true, plan: activatedPlanId });
   } catch (error) {

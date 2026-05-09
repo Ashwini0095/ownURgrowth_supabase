@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization');
-    const { uid, email, displayName, photoURL } = await request.json();
+    const { uid, displayName, photoURL } = await request.json();
 
     if (!uid) {
       return NextResponse.json({ error: 'Missing uid' }, { status: 400 });
@@ -14,53 +14,34 @@ export async function POST(request: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // Verify user identity if token is provided
-    if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-      
-      if (authError || !user || user.id !== uid) {
-        console.error('Auth verification failed:', authError?.message);
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-    } else {
-      // In a real production app, we would strictly require this. 
-      // For now, we log a warning but allow it for migration compatibility 
-      // if the client hasn't been updated yet.
-      console.warn('Request to user-profile missing Authorization header');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user exists
-    const { data: existing } = await supabase
+    const token = authHeader.split(' ')[1];
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user || user.id !== uid) {
+      console.error('Auth verification failed:', authError?.message);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { error } = await supabase
       .from('users')
-      .select('id')
-      .eq('auth_id', uid)
-      .single();
-
-    if (existing) {
-      // Update existing user
-      const { error } = await supabase
-        .from('users')
-        .update({
-          email: email ?? null,
-          display_name: displayName ?? null,
-          photo_url: photoURL ?? null,
+      .upsert(
+        {
+          auth_id: uid,
+          email: user.email ?? null,
+          display_name: typeof displayName === 'string' ? displayName : null,
+          photo_url: typeof photoURL === 'string' ? photoURL : null,
           last_login: new Date().toISOString(),
-        })
-        .eq('auth_id', uid);
+        },
+        { onConflict: 'auth_id' },
+      );
 
-      if (error) console.error('Error updating user profile:', error);
-    } else {
-      // Insert new user
-      const { error } = await supabase.from('users').insert({
-        auth_id: uid,
-        email: email ?? null,
-        display_name: displayName ?? null,
-        photo_url: photoURL ?? null,
-        last_login: new Date().toISOString(),
-      });
-
-      if (error) console.error('Error inserting user profile:', error);
+    if (error) {
+      console.error('Error upserting user profile:', error);
+      return NextResponse.json({ error: 'Failed to save user profile' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

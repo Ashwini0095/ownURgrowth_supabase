@@ -2,14 +2,21 @@
 
 import { signInWithGoogle } from '../lib/auth-utils';
 import { useRouter } from 'next/navigation';
+import { getSafeRedirect } from '../lib/redirects';
 
 interface GoogleSignInButtonProps {
   redirectUrl?: string;
   onError?: (error: string) => void;
+  onSuccess?: () => void;
 }
 
-export default function GoogleSignInButton({ redirectUrl = '/', onError }: GoogleSignInButtonProps) {
+export default function GoogleSignInButton({
+  redirectUrl = '/',
+  onError,
+  onSuccess,
+}: GoogleSignInButtonProps) {
   const router = useRouter();
+  const safeRedirectUrl = getSafeRedirect(redirectUrl);
 
   const handleGoogleSignIn = async () => {
     const { user, error } = await signInWithGoogle();
@@ -17,7 +24,8 @@ export default function GoogleSignInButton({ redirectUrl = '/', onError }: Googl
     if (error) {
       onError?.(error);
     } else if (user) {
-      router.push(redirectUrl);
+      onSuccess?.();
+      router.push(safeRedirectUrl);
     }
   };
 

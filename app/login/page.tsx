@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmail } from "../../lib/auth-utils";
 import { Sparkles, ShieldCheck, Rocket, ArrowRight, CheckCircle2 } from "lucide-react";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
+import { getSafeRedirect } from "../../lib/redirects";
 
 function LoginContent() {
   const router = useRouter();
@@ -15,7 +16,7 @@ function LoginContent() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const redirectUrl = searchParams.get('redirect') || '/';
+  const redirectUrl = getSafeRedirect(searchParams.get('redirect'));
   const signupHref = `/signup${redirectUrl !== '/' ? `?redirect=${encodeURIComponent(redirectUrl)}` : ''}`;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

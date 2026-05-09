@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import { getUserDisplayName } from '@/lib/userDisplayName';
-
-const SMTP_PORT = Number(process.env.EMAIL_PORT ?? 465);
-
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST ?? 'smtp.titan.email',
-  port: SMTP_PORT,
-  secure: SMTP_PORT === 465, // SSL on 465; STARTTLS otherwise (e.g. 587)
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+import { getEmailTransporter, getEmailUser } from '@/lib/emailTransport';
 
 const PLAN_NAME_TO_ID: Record<string, string> = {
   'Basic Crash Course': 'basic',
@@ -257,6 +245,13 @@ function renderEmail(body: ReceiptBody) {
 
 export async function POST(request: NextRequest) {
   try {
+    const internalSecret = process.env.INTERNAL_API_SECRET;
+    const providedSecret = request.headers.get('x-internal-api-secret');
+
+    if (!internalSecret || providedSecret !== internalSecret) {
+      return new NextResponse('Not Found', { status: 404 });
+    }
+
     const body = (await request.json()) as ReceiptBody;
     const { email } = body;
 
@@ -264,10 +259,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing email' }, { status: 400 });
     }
 
+    const transporter = getEmailTransporter();
+    const fromEmail = getEmailUser();
     const { subject, html, text } = renderEmail(body);
 
     await transporter.sendMail({
-      from: `"${BRAND_NAME}" <${process.env.EMAIL_USER}>`,
+      from: `"${BRAND_NAME}" <${fromEmail}>`,
       to: email,
       subject,
       html,
