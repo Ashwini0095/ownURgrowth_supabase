@@ -1,102 +1,59 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseClient";
-
-type Plan = "basic" | "plus" | "pro";
-
-const PLAN_NAME_TO_ID: Record<string, Plan> = {
-  "Basic Crash Course": "basic",
-  "Pro Program": "plus",
-  "Master Program": "pro",
-};
-
-const PLAN_PRIORITY: Record<Plan, number> = { basic: 1, plus: 2, pro: 3 };
+import {
+  createLinkedInGrowthPaymentLookup,
+  getLinkedInGrowthPlanForUser,
+  type LinkedInGrowthPlan,
+} from "@/lib/linkedinGrowthAccess";
 
 // ── Simple in-memory cache to reduce DB hits ───────────────────────────
-const cache = new Map<string, { plan: Plan | null; expiresAt: number }>();
+const cache = new Map<string, { plan: LinkedInGrowthPlan | null; expiresAt: number }>();
 const CACHE_TTL_MS = 30_000; // 30 seconds
 
 export async function POST(req: Request) {
   try {
     const authHeader = req.headers.get('Authorization');
     const body = await req.json();
-    const { userId, userEmail } = body;
-
-    if (!userId && !userEmail) {
-      return NextResponse.json({ plan: null }, { status: 400 });
-    }
+    const { userId, userEmail, bypassCache } = body;
 
     const supabase = getSupabaseAdmin();
 
-    // Verify user identity if token is provided
-    if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-      
-      // Strict check: token must be valid and userId must match token owner
-      if (authError || !user || (userId && user.id !== userId)) {
-        console.error('Check-purchase auth failed:', authError?.message);
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-    } else {
-      console.warn('Request to check-purchase missing Authorization header');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const token = authHeader.split(' ')[1];
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    // Strict check: token must be valid and userId must match token owner
+    if (authError || !user || (userId && user.id !== userId)) {
+      console.error('Check-purchase auth failed:', authError?.message);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const lookupUserId = user.id;
+    const lookupUserEmail = user.email || userEmail;
+
     // Check cache first
-    const cacheKey = userId || userEmail;
+    const cacheKey = lookupUserId;
     const cached = cache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) {
+    if (!bypassCache && cached && cached.expiresAt > Date.now()) {
       return NextResponse.json({ plan: cached.plan });
     }
 
-    // Try by userId first
-    let { data: payments, error } = await supabase
-      .from("payments")
-      .select("plan_name, status, upgrade_to")
-      .eq("user_id", userId);
+    const highestPlan = await getLinkedInGrowthPlanForUser(
+      createLinkedInGrowthPaymentLookup(supabase),
+      lookupUserId,
+      lookupUserEmail,
+    );
 
-    if (error) {
-      console.error("Error querying payments by userId:", error);
+    // Cache purchased plans only. A cached null right before payment can bounce
+    // just-paid users away from the access page until the TTL expires.
+    if (highestPlan) {
+      cache.set(cacheKey, { plan: highestPlan, expiresAt: Date.now() + CACHE_TTL_MS });
+    } else {
+      cache.delete(cacheKey);
     }
-
-    // Fallback to email if no results
-    if ((!payments || payments.length === 0) && userEmail) {
-      const result = await supabase
-        .from("payments")
-        .select("plan_name, status, upgrade_to")
-        .eq("user_email", userEmail);
-
-      payments = result.data;
-      if (result.error) console.error("Error querying payments by email:", result.error);
-    }
-
-    if (!payments || payments.length === 0) {
-      cache.set(cacheKey, { plan: null, expiresAt: Date.now() + CACHE_TTL_MS });
-      return NextResponse.json({ plan: null });
-    }
-
-    let highestPlan: Plan | null = null;
-
-    for (const row of payments) {
-      if (row.status !== "completed") continue;
-
-      // Primary: planName
-      let plan: Plan | null = PLAN_NAME_TO_ID[row.plan_name] ?? null;
-
-      // Secondary: upgradeTo field
-      if (!plan && row.upgrade_to) {
-        const upgradeId = row.upgrade_to as string;
-        if (upgradeId in PLAN_PRIORITY) {
-          plan = upgradeId as Plan;
-        }
-      }
-
-      if (plan && (!highestPlan || PLAN_PRIORITY[plan] > PLAN_PRIORITY[highestPlan])) {
-        highestPlan = plan;
-      }
-    }
-
-    // Store in cache
-    cache.set(cacheKey, { plan: highestPlan, expiresAt: Date.now() + CACHE_TTL_MS });
 
     return NextResponse.json({ plan: highestPlan });
   } catch (error) {
