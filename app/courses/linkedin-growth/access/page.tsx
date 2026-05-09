@@ -1,12 +1,12 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronRight, Star } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../../lib/AuthContext";
 import { useEffect, useRef, useState, Suspense } from "react";
-import NotesViewerWrapper from "./NotesViewerWrapper";
 import CourseNotesFixed from "../../../../components/CourseNotesFixed";
+import SecureVideoPlayer from "../../../../components/SecureVideoPlayer";
 import PromptVaultClean from "../../../../components/PromptVaultClean";
 import CourseReviewPopup, { hasSubmittedCourseReview } from "../../../../components/CourseReviewPopup";
 
@@ -308,21 +308,11 @@ function AccessPageContent() {
                   </p>
                 </div>
                 <div className="p-6">
-                  <div className="relative w-full overflow-hidden rounded-2xl bg-black shadow-xl aspect-video">
-                    <iframe
-                        src={`https://iframe.mediadelivery.net/embed/${process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID}/${process.env.NEXT_PUBLIC_BUNNY_VIDEO_ID}?autoplay=false&preload=true&responsive=true`}
-                      loading="lazy"
-                      style={{
-                        border: 0,
-                        position: "absolute",
-                        top: 0,
-                        height: "100%",
-                        width: "100%",
-                      }}
-                      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
+                  <SecureVideoPlayer
+                    userId={user.id}
+                    userEmail={user.email}
+                    accessToken={session?.access_token}
+                  />
                 </div>
               </div>
             </div>
