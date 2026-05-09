@@ -73,8 +73,8 @@ function renderEmail(body: ReceiptBody) {
     : `Hey ${safeName} — thanks for joining <strong>${safeCourseName}</strong>. You now have lifetime access to every module, update, and bonus that comes with your plan.`;
   const ctaLabel = isUpgrade ? 'Continue Learning →' : 'Start Learning →';
   const detailsTitle = isUpgrade ? 'Upgrade summary' : 'Order summary';
-  const accentColor = isUpgrade ? '#0EA5E9' : '#1D4ED8';
-  const accentColorDark = isUpgrade ? '#0369A1' : '#0F172A';
+  const accentColor = '#1D4ED8';
+  const accentColorDark = '#0F172A';
 
   // Email-safe HTML: tables for layout, inline styles, web-safe fonts.
   // Targets Outlook, Gmail, Apple Mail, Yahoo, Titan webmail.

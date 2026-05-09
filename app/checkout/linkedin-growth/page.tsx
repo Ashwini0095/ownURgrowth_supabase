@@ -158,14 +158,17 @@ function CheckoutPageContent() {
             });
 
             if (verifyResponse.ok) {
+              const verifyData = await verifyResponse.json().catch(() => ({}));
+              const activatedPlan = typeof verifyData?.plan === "string" ? verifyData.plan : selectedPlan;
+
               if (user?.id) {
                 writePurchaseSnapshot({
                   userId: user.id,
                   courses: ['linkedin-growth'],
-                  plan: selectedPlan,
+                  plan: activatedPlan,
                 });
               }
-              router.push(`/courses/linkedin-growth/access?plan=${selectedPlan}&payment_id=${response.razorpay_payment_id}`);
+              router.replace(`/courses/linkedin-growth/access?plan=${activatedPlan}&payment_id=${response.razorpay_payment_id}`);
             } else {
               alert("Payment verification failed. Please contact support.");
             }

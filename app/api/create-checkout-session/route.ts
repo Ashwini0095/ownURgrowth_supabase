@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { rateLimit } from '@/lib/rateLimit';
 import { getSupabaseAdmin } from '@/lib/supabaseClient';
+import {
+  createLinkedInGrowthPaymentLookup,
+  getLinkedInGrowthPlanForUser,
+  type LinkedInGrowthPlan,
+} from '@/lib/linkedinGrowthAccess';
 
 let _razorpay: Razorpay | null = null;
 
@@ -23,14 +28,39 @@ const PRICING: Record<string, number> = {
   "linkedin-growth:Basic Crash Course": 499,
   "linkedin-growth:Pro Program": 799,
   "linkedin-growth:Master Program": 999,
-  "linkedin-growth-upgrade:Upgrade to Course + Notes": 300,
-  "linkedin-growth-upgrade:Upgrade to Course + Notes + Live Q&A": 500,
 };
 
 const UPGRADE_PRICING: Record<string, number> = {
   "basic-to-plus": 300,
   "basic-to-pro": 500,
   "plus-to-pro": 200,
+};
+
+const PLAN_PRIORITY: Record<LinkedInGrowthPlan, number> = {
+  basic: 1,
+  plus: 2,
+  pro: 3,
+};
+
+const UPGRADE_COURSE_NAME_TO_PLAN: Record<string, LinkedInGrowthPlan> = {
+  "Upgrade to Course + Notes": "plus",
+  "Upgrade to Course + Notes + Live Q&A": "pro",
+};
+
+const UPGRADE_PLAN_TO_COURSE_NAME: Record<LinkedInGrowthPlan, string | null> = {
+  basic: null,
+  plus: "Upgrade to Course + Notes",
+  pro: "Upgrade to Course + Notes + Live Q&A",
+};
+
+const isPlanId = (value: unknown): value is LinkedInGrowthPlan => {
+  return value === "basic" || value === "plus" || value === "pro";
+};
+
+const getUpgradeTargetPlan = (toPlan: unknown, courseName: unknown): LinkedInGrowthPlan | null => {
+  if (isPlanId(toPlan) && toPlan !== "basic") return toPlan;
+  if (typeof courseName === "string") return UPGRADE_COURSE_NAME_TO_PLAN[courseName] ?? null;
+  return null;
 };
 
 export async function POST(request: NextRequest) {
@@ -45,42 +75,62 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('Authorization');
     const { courseId, courseName, price, fromPlan, toPlan } = await request.json();
 
-    // Verification: user must be logged in to create a checkout session
-    if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      const supabase = getSupabaseAdmin();
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-      
-      if (authError || !user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-    } else {
-      console.warn('Checkout session created without auth token');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const supabase = getSupabaseAdmin();
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     let serverPrice: number | null = null;
+    let serverCourseName = courseName;
+    let verifiedFromPlan: LinkedInGrowthPlan | null = null;
+    let verifiedToPlan: LinkedInGrowthPlan | null = null;
 
-    // 1) Upgrade lookup by fromPlan + toPlan
-    if (fromPlan && toPlan) {
-      const upgradeKey = `${fromPlan}-to-${toPlan}`;
+    if (courseId === 'linkedin-growth-upgrade' || fromPlan || toPlan) {
+      const currentPlan = await getLinkedInGrowthPlanForUser(
+        createLinkedInGrowthPaymentLookup(supabase),
+        user.id,
+        user.email,
+      );
+      const targetPlan = getUpgradeTargetPlan(toPlan, courseName);
+
+      if (!currentPlan) {
+        return NextResponse.json({ error: 'Purchase the course before upgrading' }, { status: 403 });
+      }
+
+      if (!targetPlan || PLAN_PRIORITY[targetPlan] <= PLAN_PRIORITY[currentPlan]) {
+        return NextResponse.json({ error: 'Invalid upgrade target' }, { status: 400 });
+      }
+
+      const upgradeKey = `${currentPlan}-to-${targetPlan}`;
       if (UPGRADE_PRICING[upgradeKey] !== undefined) {
+        const upgradeCourseName = UPGRADE_PLAN_TO_COURSE_NAME[targetPlan];
+        if (!upgradeCourseName) {
+          return NextResponse.json({ error: 'Invalid upgrade target' }, { status: 400 });
+        }
+
         serverPrice = UPGRADE_PRICING[upgradeKey];
+        verifiedFromPlan = currentPlan;
+        verifiedToPlan = targetPlan;
+        serverCourseName = upgradeCourseName;
       }
     }
 
-    // 2) Exact lookup by courseId + courseName
+    if (courseId === 'linkedin-growth-upgrade' && serverPrice === null) {
+      return NextResponse.json({ error: 'Invalid upgrade path' }, { status: 400 });
+    }
+
+    // Exact lookup by courseId + courseName for first-time purchases.
     if (serverPrice === null) {
       const lookupKey = `${courseId}:${courseName}`;
       if (PRICING[lookupKey] !== undefined) {
         serverPrice = PRICING[lookupKey];
-      }
-    }
-
-    // 3) Fallback for upgrade page legacy mode
-    if (serverPrice === null && courseId === 'linkedin-growth-upgrade' && price) {
-      const validUpgradePrices = [200, 300, 500];
-      if (validUpgradePrices.includes(price)) {
-        serverPrice = price;
       }
     }
 
@@ -92,9 +142,9 @@ export async function POST(request: NextRequest) {
     console.log('[checkout] creating order', {
       keyIdPrefix: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID?.slice(0, 16),
       courseId,
-      courseName,
-      fromPlan,
-      toPlan,
+      courseName: serverCourseName,
+      fromPlan: verifiedFromPlan ?? fromPlan,
+      toPlan: verifiedToPlan ?? toPlan,
       clientPrice: price,
       serverPrice,
       amountPaise: serverPrice * 100,
@@ -105,8 +155,10 @@ export async function POST(request: NextRequest) {
       receipt: `order_${Date.now()}`.substring(0, 40),
       notes: {
         courseId,
-        courseName,
+        courseName: serverCourseName,
         serverPrice: serverPrice.toString(),
+        ...(verifiedFromPlan ? { fromPlan: verifiedFromPlan } : {}),
+        ...(verifiedToPlan ? { toPlan: verifiedToPlan } : {}),
       },
     });
     console.log('[checkout] order created', { orderId: order.id, amount: order.amount });

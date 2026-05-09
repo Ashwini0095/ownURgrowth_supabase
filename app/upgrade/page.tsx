@@ -6,13 +6,39 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../lib/AuthContext";
 import { writePurchaseSnapshot } from "../../lib/purchaseCache";
 
-const plans = [
-  { id: "basic", name: "Core Course", price: 499 },
-  { id: "plus", name: "Course + Notes", price: 799 },
-  { id: "pro", name: "Course + Notes + Live Q&A", price: 999 },
-];
+type PlanId = "basic" | "plus" | "pro";
 
-const upgradePaths = {
+type RazorpayPaymentResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayCheckoutOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayPaymentResponse) => Promise<void>;
+  prefill: {
+    name: string;
+    email: string;
+    contact: string;
+  };
+  theme: {
+    color: string;
+  };
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayCheckoutOptions) => { open: () => void };
+  }
+}
+
+const upgradePaths: Record<PlanId, { to: Exclude<PlanId, "basic">; name: string; price: number }[]> = {
   basic: [
     { to: "plus", name: "Course + Notes", price: 300 },
     { to: "pro", name: "Course + Notes + Live Q&A", price: 500 },
@@ -23,19 +49,40 @@ const upgradePaths = {
   pro: [],
 };
 
+const isPlanId = (value: string | null): value is PlanId => {
+  return value === "basic" || value === "plus" || value === "pro";
+};
+
 function UpgradeContent() {
-  const [selectedUpgrade, setSelectedUpgrade] = useState<string | null>(null);
+  const [selectedUpgrade, setSelectedUpgrade] = useState<Exclude<PlanId, "basic"> | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, session, loading } = useAuth();
-  const currentPlan = searchParams.get('from') || 'basic';
+  const fromPlanParam = searchParams.get('from');
+  const toPlanParam = searchParams.get('to');
+  const currentPlan: PlanId = isPlanId(fromPlanParam) ? fromPlanParam : 'basic';
+  const requestedUpgrade = isPlanId(toPlanParam) && toPlanParam !== "basic" ? toPlanParam : null;
+  const availableUpgrades = upgradePaths[currentPlan];
 
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !user) {
-      router.push(`/login?redirect=/upgrade?from=${currentPlan}`);
+      const redirect = requestedUpgrade
+        ? `/upgrade?from=${currentPlan}&to=${requestedUpgrade}`
+        : `/upgrade?from=${currentPlan}`;
+      router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
     }
-  }, [user, loading, router, currentPlan]);
+  }, [user, loading, router, currentPlan, requestedUpgrade]);
+
+  useEffect(() => {
+    if (!requestedUpgrade) return;
+
+    const canSelectRequestedUpgrade = upgradePaths[currentPlan].some(
+      (upgrade) => upgrade.to === requestedUpgrade,
+    );
+
+    setSelectedUpgrade(canSelectRequestedUpgrade ? requestedUpgrade : null);
+  }, [currentPlan, requestedUpgrade]);
 
   if (loading) {
     return (
@@ -53,8 +100,6 @@ function UpgradeContent() {
   if (!user) {
     return null; // Will redirect
   }
-
-  const availableUpgrades = upgradePaths[currentPlan as keyof typeof upgradePaths] || [];
 
   const handleUpgrade = async () => {
     if (!selectedUpgrade) return;
@@ -95,14 +140,14 @@ function UpgradeContent() {
 
       const { orderId, amount, currency, key } = await response.json();
 
-      const options = {
+      const options: RazorpayCheckoutOptions = {
         key: key,
         amount,
         currency,
         name: "ownURgrowth",
         description: `Upgrade to ${upgradeOption.name}`,
         order_id: orderId,
-        handler: async function (response: any) {
+        handler: async function (response) {
           try {
             // Verify payment and send receipt
             const verifyResponse = await fetch("/api/verify-payment", {
@@ -154,7 +199,11 @@ function UpgradeContent() {
         },
       };
 
-      const razorpay = new (window as any).Razorpay(options);
+      if (!window.Razorpay) {
+        throw new Error("Payment checkout is still loading. Please try again.");
+      }
+
+      const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
       console.error("Upgrade payment error:", error);
