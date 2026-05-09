@@ -5,9 +5,12 @@ import Link from 'next/link';
 import { ChevronRight, PlayCircle } from 'lucide-react';
 import { useAuth } from '../../lib/AuthContext';
 import {
+  isFreshPurchaseSnapshot,
   readPurchaseSnapshot,
   writePurchaseSnapshot,
 } from '../../lib/purchaseCache';
+
+const RECENT_PURCHASE_WINDOW_MS = 2 * 60 * 1000;
 
 const planNames: Record<string, string> = {
   basic: 'Basic Crash Course',
@@ -60,6 +63,9 @@ export default function MyCoursesContent() {
 
         const data = response.ok ? await response.json() : null;
         const plan: string | null = data?.plan ?? null;
+        const cached = readPurchaseSnapshot();
+        if (!plan && isFreshPurchaseSnapshot(cached, user.id, RECENT_PURCHASE_WINDOW_MS)) return;
+
         setPurchasedPlan(plan);
         writePurchaseSnapshot({
           userId: user.id,

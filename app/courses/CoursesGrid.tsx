@@ -5,9 +5,12 @@ import { ChevronRight, CheckCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../lib/AuthContext';
 import {
+  isFreshPurchaseSnapshot,
   readPurchaseSnapshot,
   writePurchaseSnapshot,
 } from '../../lib/purchaseCache';
+
+const RECENT_PURCHASE_WINDOW_MS = 2 * 60 * 1000;
 
 type CourseCard = {
   title: string;
@@ -85,6 +88,9 @@ export default function CoursesGrid() {
 
         const data = response.ok ? await response.json() : null;
         const plan: string | null = data?.plan ?? null;
+        const cached = readPurchaseSnapshot();
+        if (!plan && isFreshPurchaseSnapshot(cached, user.id, RECENT_PURCHASE_WINDOW_MS)) return;
+
         const nextCourses = plan ? ['linkedin-growth'] : [];
         setPurchasedCourses(nextCourses);
         writePurchaseSnapshot({ userId: user.id, courses: nextCourses, plan });

@@ -2,16 +2,39 @@
 
 import { Check, ChevronRight, Play, Star, Users, Award, ShieldCheck, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
 import {
+  isFreshPurchaseSnapshot,
   readPurchaseSnapshot,
   writePurchaseSnapshot,
 } from "../../../lib/purchaseCache";
 import Link from "next/link";
 import ReviewsCarousel from "../../../components/ReviewsCarousel";
 
-const plans = [
+const RECENT_PURCHASE_WINDOW_MS = 2 * 60 * 1000;
+
+type PlanId = "basic" | "plus" | "pro";
+
+type CoursePlan = {
+  id: PlanId;
+  name: string;
+  price: string;
+  description: string;
+  bestValue?: boolean;
+  includes: string[];
+};
+
+const PLAN_PRIORITY: Record<PlanId, number> = {
+  basic: 1,
+  plus: 2,
+  pro: 3,
+};
+
+const isPlanId = (value: string | null | undefined): value is PlanId => {
+  return value === "basic" || value === "plus" || value === "pro";
+};
+
+const plans: CoursePlan[] = [
   {
     id: "basic",
     name: "Basic Crash Course",
@@ -54,24 +77,42 @@ const plans = [
   },
 ];
 
+const getPricingAction = (planId: PlanId, purchasedPlan: PlanId | null) => {
+  if (!purchasedPlan) {
+    return {
+      href: `/checkout/linkedin-growth?plan=${planId}`,
+      label: "Select Plan",
+      kind: "checkout" as const,
+    };
+  }
+
+  if (PLAN_PRIORITY[planId] > PLAN_PRIORITY[purchasedPlan]) {
+    return {
+      href: `/upgrade?from=${purchasedPlan}&to=${planId}`,
+      label: "Upgrade Plan",
+      kind: "upgrade" as const,
+    };
+  }
+
+  return {
+    href: `/courses/linkedin-growth/access?plan=${purchasedPlan}`,
+    label: planId === purchasedPlan ? "Enrolled" : "Access Course",
+    kind: planId === purchasedPlan ? "enrolled" as const : "included" as const,
+  };
+};
+
 export default function LinkedInGrowthPage() {
-  const [purchasedPlan, setPurchasedPlan] = useState<string | null>(null);
-  const router = useRouter();
+  const [purchasedPlan, setPurchasedPlan] = useState<PlanId | null>(null);
   const { user, session, loading: authLoading } = useAuth();
 
   // Hydrate from cache as soon as we know the user — avoids the "few seconds"
   // of default CTAs while /api/check-purchase is in flight.
   useEffect(() => {
-    if (!user) {
-      setPurchasedPlan(null);
-      return;
-    }
-    const snap = readPurchaseSnapshot();
-    if (snap && snap.userId === user.id) {
-      setPurchasedPlan(snap.plan);
-    } else {
-      setPurchasedPlan(null);
-    }
+    const snap = user ? readPurchaseSnapshot() : null;
+    const nextPlan = snap && snap.userId === user?.id && isPlanId(snap.plan) ? snap.plan : null;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage hydrates the CTA after auth resolves.
+    setPurchasedPlan(nextPlan);
   }, [user]);
 
   // Background revalidation against the server.
@@ -93,7 +134,12 @@ export default function LinkedInGrowthPage() {
         if (cancelled) return;
 
         const data = response.ok ? await response.json() : null;
-        const plan: string | null = data?.plan ?? null;
+        const plan: PlanId | null = isPlanId(data?.plan) ? data.plan : null;
+        const cached = readPurchaseSnapshot();
+        const hasFreshLocalPurchase = isFreshPurchaseSnapshot(cached, user.id, RECENT_PURCHASE_WINDOW_MS);
+
+        if (!plan && hasFreshLocalPurchase) return;
+
         setPurchasedPlan(plan);
         writePurchaseSnapshot({
           userId: user.id,
@@ -173,7 +219,7 @@ export default function LinkedInGrowthPage() {
       <section id="curriculum" className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl lg:text-5xl font-black mb-6 tracking-tight">What's Inside the Program</h2>
+            <h2 className="text-4xl lg:text-5xl font-black mb-6 tracking-tight">What&apos;s Inside the Program</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">A step-by-step roadmap to go from zero to a recognized personal brand.</p>
           </div>
 
@@ -207,59 +253,60 @@ export default function LinkedInGrowthPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {plans.map((plan) => (
-              <div 
-                key={plan.id}
-                className={`relative flex flex-col p-8 rounded-3xl border-2 transition-all duration-500 hover:scale-[1.02] bg-white ${
-                  plan.bestValue ? "border-blue-600 shadow-2xl shadow-blue-500/10" : "border-gray-100"
-                }`}
-              >
-                {plan.bestValue && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-lg">
-                    Best Value
-                  </div>
-                )}
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-black text-blue-600">{plan.price}</span>
-                </div>
-                <p className="text-gray-600 mb-8 font-medium">{plan.description}</p>
-                
-                <ul className="space-y-4 mb-10 flex-grow">
-                  {plan.includes.map((item, idx) => {
-                    const isIncluded = item.startsWith("✓");
-                    const text = item.substring(2);
-                    return (
-                      <li key={idx} className={`flex items-start gap-3 ${!isIncluded ? "opacity-40" : ""}`}>
-                        <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${isIncluded ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
-                          {isIncluded ? <Check className="w-3 h-3" /> : <span className="text-[10px]">✗</span>}
-                        </div>
-                        <span className={`text-sm ${!isIncluded ? "line-through" : "font-medium"}`}>{text}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
+            {plans.map((plan) => {
+              const action = getPricingAction(plan.id, purchasedPlan);
+              const isUnlocked = action.kind === "enrolled" || action.kind === "included";
+              const buttonClassName = isUnlocked
+                ? "bg-green-500 text-white hover:bg-green-600"
+                : action.kind === "upgrade"
+                  ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
+                  : plan.bestValue
+                    ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20"
+                    : "bg-gray-100 text-gray-900 hover:bg-gray-200";
 
-                {purchasedPlan === plan.id ? (
+              return (
+                <div
+                  key={plan.id}
+                  className={`relative flex flex-col p-8 rounded-3xl border-2 transition-all duration-500 hover:scale-[1.02] bg-white ${
+                    plan.bestValue ? "border-blue-600 shadow-2xl shadow-blue-500/10" : "border-gray-100"
+                  }`}
+                >
+                  {plan.bestValue && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-lg">
+                      Best Value
+                    </div>
+                  )}
+                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                  <div className="flex items-baseline gap-1 mb-4">
+                    <span className="text-4xl font-black text-blue-600">{plan.price}</span>
+                  </div>
+                  <p className="text-gray-600 mb-8 font-medium">{plan.description}</p>
+
+                  <ul className="space-y-4 mb-10 flex-grow">
+                    {plan.includes.map((item, idx) => {
+                      const isIncluded = item.startsWith("✓");
+                      const text = item.substring(2);
+                      return (
+                        <li key={idx} className={`flex items-start gap-3 ${!isIncluded ? "opacity-40" : ""}`}>
+                          <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${isIncluded ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                            {isIncluded ? <Check className="w-3 h-3" /> : <span className="text-[10px]">✗</span>}
+                          </div>
+                          <span className={`text-sm ${!isIncluded ? "line-through" : "font-medium"}`}>{text}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+
                   <Link 
-                    href={`/courses/linkedin-growth/access?plan=${plan.id}`}
-                    className="w-full py-4 rounded-xl bg-green-500 text-white font-bold text-center hover:bg-green-600 transition-all flex items-center justify-center gap-2"
+                    href={action.href}
+                    className={`w-full py-4 rounded-xl font-bold text-center transition-all flex items-center justify-center gap-2 ${buttonClassName}`}
                   >
-                    <Check className="w-5 h-5" />
-                    Enrolled
+                    {isUnlocked && <Check className="w-5 h-5" />}
+                    {action.label}
                   </Link>
-                ) : (
-                  <Link 
-                    href={`/checkout/linkedin-growth?plan=${plan.id}`}
-                    className={`w-full py-4 rounded-xl font-bold text-center transition-all ${
-                      plan.bestValue ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20" : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                    }`}
-                  >
-                    Select Plan
-                  </Link>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

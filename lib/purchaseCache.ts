@@ -11,9 +11,24 @@ export type PurchaseSnapshot = {
   courses: string[];
   /** LinkedIn growth plan tier: "basic" | "plus" | "pro" | null. */
   plan: string | null;
+  /** Client-side write time, used to avoid immediately overwriting just-paid state. */
+  updatedAt?: number;
 };
 
 const KEY = 'purchasedCoursesSnapshot';
+
+export const isFreshPurchaseSnapshot = (
+  snap: PurchaseSnapshot | null,
+  userId: string,
+  maxAgeMs: number,
+): boolean => {
+  return Boolean(
+    snap?.plan &&
+      snap.userId === userId &&
+      typeof snap.updatedAt === 'number' &&
+      Date.now() - snap.updatedAt < maxAgeMs,
+  );
+};
 
 export const readPurchaseSnapshot = (): PurchaseSnapshot | null => {
   if (typeof window === 'undefined') return null;
@@ -28,7 +43,7 @@ export const readPurchaseSnapshot = (): PurchaseSnapshot | null => {
 export const writePurchaseSnapshot = (snap: PurchaseSnapshot): void => {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(snap));
+    window.localStorage.setItem(KEY, JSON.stringify({ ...snap, updatedAt: Date.now() }));
   } catch {}
 };
 
