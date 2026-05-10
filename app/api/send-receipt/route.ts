@@ -14,7 +14,9 @@ const PRODUCTION_BASE_URL = 'https://ownurgrowth.com';
 
 function resolveBaseUrl(): string {
   // Prefer an explicit site URL. NEXT_PUBLIC_BASE_URL is kept for back-compat
-  // but is only honoured in production if it is not pointing at localhost.
+  // but in production we skip values that would expose internal hosts
+  // (localhost or *.vercel.app deployment URLs) so customer-facing CTAs
+  // always resolve to the canonical domain.
   const candidates = [
     process.env.NEXT_PUBLIC_SITE_URL,
     process.env.NEXT_PUBLIC_BASE_URL,
@@ -23,7 +25,10 @@ function resolveBaseUrl(): string {
     if (!value) continue;
     const trimmed = value.trim();
     if (!trimmed) continue;
-    if (process.env.NODE_ENV === 'production' && /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(trimmed)) {
+    if (
+      process.env.NODE_ENV === 'production' &&
+      /^https?:\/\/(localhost|127\.0\.0\.1|[^/]*\.vercel\.(app|sh))/i.test(trimmed)
+    ) {
       continue;
     }
     return trimmed.replace(/\/+$/, '');
