@@ -31,6 +31,7 @@ declare global {
             options: Record<string, unknown>,
           ) => void;
           cancel: () => void;
+          disableAutoSelect: () => void;
         };
       };
     };
@@ -65,7 +66,11 @@ export default function GoogleSignInButton({
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rawNonceRef = useRef<string | null>(null);
-  const [scriptLoaded, setScriptLoaded] = useState(false);
+  // GIS may already be on `window` from a prior mount (next/script keeps the
+  // tag across SPA navigations and skips re-firing onLoad), so seed from there.
+  const [scriptLoaded, setScriptLoaded] = useState<boolean>(
+    typeof window !== 'undefined' && !!window.google?.accounts?.id,
+  );
   const [initError, setInitError] = useState<string | null>(null);
   const safeRedirectUrl = getSafeRedirect(redirectUrl);
 
@@ -157,9 +162,13 @@ export default function GoogleSignInButton({
   return (
     <>
       <Script
+        id="google-gsi-client"
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
         onLoad={() => setScriptLoaded(true)}
+        // Fires on every mount when the script is already cached — onLoad
+        // alone won't re-fire after SPA navigation (e.g. logout → /login).
+        onReady={() => setScriptLoaded(true)}
         onError={() => setInitError('Could not load Google sign-in.')}
       />
       <div

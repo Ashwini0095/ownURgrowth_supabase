@@ -158,6 +158,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     setSession(null);
 
+    // Stop GIS from auto-selecting the same Google account on the next page.
+    if (typeof window !== 'undefined') {
+      try {
+        (window as any).google?.accounts?.id?.disableAutoSelect?.();
+      } catch {
+        /* noop — GIS may not be loaded */
+      }
+    }
+
     try {
       await supabase.auth.signOut({ scope: 'local' });
     } catch (error) {
