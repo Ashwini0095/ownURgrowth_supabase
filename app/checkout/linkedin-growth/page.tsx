@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../lib/AuthContext";
 import { writePurchaseSnapshot } from "../../../lib/purchaseCache";
 import { getUserDisplayName } from "../../../lib/userDisplayName";
+import { dispatchNotice } from "../../../lib/notice";
 import Link from "next/link";
 
 const plans = [
@@ -171,7 +172,7 @@ function CheckoutPageContent() {
               }
               router.replace(`/courses/linkedin-growth/access?plan=${activatedPlan}&payment_id=${response.razorpay_payment_id}`);
             } else {
-              alert("Payment verification failed. Please contact support.");
+              dispatchNotice("Payment verification failed. Please contact support with your payment ID.");
             }
           } catch (error) {
             console.error("Payment verification error:", error);
@@ -190,7 +191,7 @@ function CheckoutPageContent() {
       razorpay.open();
     } catch (error) {
       console.error("Payment error:", error);
-      alert("Payment failed. Please try again.");
+      dispatchNotice("Payment failed. Please try again.");
     }
   };
 

@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../lib/AuthContext";
 import { writePurchaseSnapshot } from "../../lib/purchaseCache";
 import { getUserDisplayName } from "../../lib/userDisplayName";
+import { dispatchNotice } from "../../lib/notice";
 
 type PlanId = "basic" | "plus" | "pro";
 
@@ -183,7 +184,7 @@ function UpgradeContent() {
                 `/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`,
               );
             } else {
-              alert("Payment verification failed. Please contact support.");
+              dispatchNotice("Payment verification failed. Please contact support with your payment ID.");
             }
           } catch (error) {
             console.error("Payment verification error:", error);
@@ -208,7 +209,7 @@ function UpgradeContent() {
       razorpay.open();
     } catch (error) {
       console.error("Upgrade payment error:", error);
-      alert("Upgrade failed. Please try again.");
+      dispatchNotice("Upgrade failed. Please try again.");
     }
   };
 
