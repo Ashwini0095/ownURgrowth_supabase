@@ -15,6 +15,27 @@ export const signInWithGoogle = async () => {
   }
 };
 
+// Exchange a Google ID-token credential (from Google Identity Services) for a
+// Supabase session. The raw nonce is the unhashed value passed to GIS as the
+// SHA-256 hash; Supabase recomputes the hash and verifies it against the JWT's
+// `nonce` claim, preventing token replay.
+export const signInWithGoogleIdToken = async (
+  credential: string,
+  rawNonce: string,
+) => {
+  try {
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: credential,
+      nonce: rawNonce,
+    });
+    if (error) return { user: null, error: error.message };
+    return { user: data.user, error: null };
+  } catch (error: any) {
+    return { user: null, error: error.message ?? 'Google sign-in failed' };
+  }
+};
+
 export const signUpWithEmail = async (email: string, password: string, name?: string) => {
   try {
     const { data, error } = await supabase.auth.signUp({
