@@ -10,6 +10,26 @@ const PLAN_NAME_TO_ID: Record<string, string> = {
 
 const BRAND_NAME = 'ownURgrowth';
 const SUPPORT_EMAIL = process.env.EMAIL_USER || 'support@ownurgrowth.com';
+const PRODUCTION_BASE_URL = 'https://ownurgrowth.com';
+
+function resolveBaseUrl(): string {
+  // Prefer an explicit site URL. NEXT_PUBLIC_BASE_URL is kept for back-compat
+  // but is only honoured in production if it is not pointing at localhost.
+  const candidates = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.NEXT_PUBLIC_BASE_URL,
+  ];
+  for (const value of candidates) {
+    if (!value) continue;
+    const trimmed = value.trim();
+    if (!trimmed) continue;
+    if (process.env.NODE_ENV === 'production' && /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(trimmed)) {
+      continue;
+    }
+    return trimmed.replace(/\/+$/, '');
+  }
+  return PRODUCTION_BASE_URL;
+}
 
 function escapeHtml(str: string): string {
   return String(str)
@@ -260,9 +280,7 @@ export async function POST(request: NextRequest) {
 
     const transporter = getEmailTransporter();
     const fromEmail = getEmailUser();
-    const baseUrl = (
-      process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin
-    ).replace(/\/+$/, '');
+    const baseUrl = resolveBaseUrl();
     const { subject, html, text } = renderEmail(body, baseUrl);
 
     await transporter.sendMail({
