@@ -70,7 +70,7 @@ export async function createUserSession(userId: string): Promise<boolean> {
   }
 }
 
-export async function updateSessionActivity(userId: string): Promise<void> {
+export async function updateSessionActivity(): Promise<void> {
   // Throttle: only write once every 5 minutes
   const now = Date.now();
   if (now - lastActivityUpdate < SESSION_ACTIVITY_THROTTLE_MS) return;

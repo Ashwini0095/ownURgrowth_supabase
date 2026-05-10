@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import { createUserSession, updateSessionActivity, removeUserSession, checkSessionValidity } from './sessionManager';
 import { clearPurchaseSnapshot } from './purchaseCache';
+import { dispatchNotice } from './notice';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -20,23 +21,13 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => { },
 });
 
-const dispatchAuthNotice = (message: string) => {
-  if (typeof window === 'undefined') return;
-  try {
-    sessionStorage.setItem('authNotice', message);
-  } catch {
-    // sessionStorage may be unavailable (private browsing, SSR-mismatch). Fall through.
-  }
-  window.dispatchEvent(new CustomEvent('auth-notice', { detail: message }));
-};
-
 const handleUserLogin = async (u: User, token?: string) => {
   // Check session validity and create new session
   const isValidSession = await checkSessionValidity(u.id);
   if (!isValidSession) {
     const sessionCreated = await createUserSession(u.id);
     if (!sessionCreated) {
-      dispatchAuthNotice('Maximum device limit reached. Please log out from another device.');
+      dispatchNotice('Maximum device limit reached. Please log out from another device.');
       await supabase.auth.signOut();
       return;
     }
@@ -123,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const resetTimeout = () => {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
-        dispatchAuthNotice('You have been logged out due to inactivity.');
+        dispatchNotice('You have been logged out due to inactivity.');
         void supabase.auth.signOut();
       }, 20 * 60 * 1000); // 20 minutes
     };
@@ -153,10 +144,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return;
 
     // Fire once immediately
-    updateSessionActivity(user.id);
+    updateSessionActivity();
 
     const interval = setInterval(() => {
-      updateSessionActivity(user.id);
+      updateSessionActivity();
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval);
