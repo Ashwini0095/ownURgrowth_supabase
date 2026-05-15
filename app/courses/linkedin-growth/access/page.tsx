@@ -193,14 +193,11 @@ function AccessPageContent() {
         <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tl from-indigo-400/8 to-blue-500/5 rounded-full blur-2xl"></div>
 
         {/* Floating shapes */}
-        <div className="absolute top-32 left-1/4 w-16 h-16 border border-blue-200/40 rounded-2xl rotate-12 animate-pulse"></div>
-        <div
-          className="absolute bottom-32 right-1/4 w-12 h-12 bg-blue-300/20 rounded-full animate-bounce"
-          style={{ animationDuration: "3s" }}
-        ></div>
+        <div className="absolute top-32 left-1/4 w-16 h-16 border border-blue-200/40 rounded-2xl rotate-12"></div>
+        <div className="absolute bottom-32 right-1/4 w-12 h-12 bg-blue-300/20 rounded-full"></div>
       </div>
 
-      <section className="bg-gradient-to-br from-white/95 to-blue-50/30 backdrop-blur-md border-b-2 border-[#1D4ED8]/20 shadow-xl relative z-10">
+      <section className="bg-gradient-to-br from-white/95 to-blue-50/30 border-b-2 border-[#1D4ED8]/20 shadow-xl relative z-10">
         <div className="mx-auto max-w-6xl px-4 pb-16 pt-20 lg:px-6 lg:pt-24">
           <div className="mb-8 flex items-center justify-between gap-4">
             <div>
