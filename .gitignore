@@ -46,6 +46,11 @@ asrocourse-firebase-adminsdk-fbsvc-1dd121589a.json
 skills-lock.json
 project_context.md
 migration.md
+product_overview.md
+
+# TestSprite artifacts and local test-fixture scripts (not for production)
+testsprite_tests/
+scripts/
 
 # Local Claude Code harness state (per-project settings, scheduled-task locks)
 .claude/
