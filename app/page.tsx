@@ -458,22 +458,20 @@ export default function Home() {
       <footer className="bg-[#141619]">
         <div className="mx-auto max-w-6xl px-4 py-8 lg:px-6">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-2xl font-bold">
-              <span className="text-white">own</span>
-              <span className="bg-gradient-to-r from-[#1D4ED8] to-[#0F172A] bg-clip-text text-transparent">UR</span>
-              <span className="text-white">growth</span>
+            <div className="text-2xl font-bold text-white">
+              ownURgrowth
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-gray-300">
               <Link href="/courses" className="hover:text-white transition-colors">
                 Courses
               </Link>
-              <Link href="/about" className="hover:text-[#141619]">
+              <Link href="/about" className="hover:text-white transition-colors">
                 About
               </Link>
-              <Link href="/contact" className="hover:text-[#141619]">
+              <Link href="/contact" className="hover:text-white transition-colors">
                 Contact
               </Link>
-              <Link href="/privacy" className="hover:text-[#141619]">
+              <Link href="/privacy" className="hover:text-white transition-colors">
                 Privacy
               </Link>
             </div>
