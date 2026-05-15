@@ -73,11 +73,15 @@ export async function POST(request: NextRequest) {
     }
 
     const authHeader = request.headers.get('Authorization');
-    const { courseId, courseName, price, fromPlan, toPlan } = await request.json();
-
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const body = await request.json().catch(() => null);
+    if (body === null) {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
+    const { courseId, courseName, fromPlan, toPlan } = body;
 
     const token = authHeader.split(' ')[1];
     const supabase = getSupabaseAdmin();

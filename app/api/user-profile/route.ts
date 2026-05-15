@@ -12,24 +12,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
+    // Auth runs BEFORE body parse / field validation so unauthenticated callers
+    // can't probe the expected payload schema via 400 responses.
     const authHeader = request.headers.get('Authorization');
-    const { uid, displayName, photoURL } = await request.json();
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const supabase = getSupabaseAdmin();
+    const token = authHeader.split(' ')[1];
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      console.error('Auth verification failed:', authError?.message);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json().catch(() => null);
+    if (body === null) {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
+    const { uid, displayName, photoURL } = body;
 
     if (!uid) {
       return NextResponse.json({ error: 'Missing uid' }, { status: 400 });
     }
 
-    const supabase = getSupabaseAdmin();
-
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user || user.id !== uid) {
-      console.error('Auth verification failed:', authError?.message);
+    if (user.id !== uid) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

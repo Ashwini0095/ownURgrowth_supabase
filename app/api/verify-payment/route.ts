@@ -63,23 +63,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Too many attempts' }, { status: 429 });
     }
 
+    // ── 1. Cryptographic Auth Verification ──────────────────────────
+    // Ensure the person claiming the purchase is the one who is logged in.
+    // The header-shape check runs BEFORE body parsing so unauthenticated callers
+    // sending malformed JSON get 401 (not 500), and can't probe payload schema.
     const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const reqBody = await request.json().catch(() => null);
+    if (reqBody === null) {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
       userName,
       plan,
-    } = await request.json();
+    } = reqBody;
 
     const supabase = getSupabaseAdmin();
-
-    // ── 1. Cryptographic Auth Verification ──────────────────────────
-    // Ensure the person claiming the purchase is the one who is logged in
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const token = authHeader.split(' ')[1];
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
