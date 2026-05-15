@@ -59,10 +59,6 @@ const toPlan = (planName: string | null, upgradeTo: string | null): LinkedInGrow
   return null;
 };
 
-export function canDownloadLinkedInGrowthNotes(plan: LinkedInGrowthPlan | null) {
-  return plan === "plus" || plan === "pro";
-}
-
 export function createLinkedInGrowthPaymentLookup(supabase: SupabaseAdminClient): PaymentLookup {
   return async (column, value) => {
     const payments = supabase.from("payments") as PaymentTableQuery;

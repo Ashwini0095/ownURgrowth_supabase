@@ -288,7 +288,7 @@ export default function LinkedInGrowthPage() {
                       const text = item.substring(2);
                       return (
                         <li key={idx} className={`flex items-start gap-3 ${!isIncluded ? "opacity-40" : ""}`}>
-                          <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${isIncluded ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                          <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${isIncluded ? "bg-green-100 text-[#15903e]" : "bg-gray-100 text-gray-400"}`}>
                             {isIncluded ? <Check className="w-3 h-3" /> : <span className="text-[10px]">✗</span>}
                           </div>
                           <span className={`text-sm ${!isIncluded ? "line-through" : "font-medium"}`}>{text}</span>

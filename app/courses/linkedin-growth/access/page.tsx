@@ -275,12 +275,11 @@ function AccessPageContent() {
                 <CourseNotesFixed
                   userPlan={userPlan as "basic" | "plus" | "pro"}
                   userId={user?.id}
-                  accessToken={session?.access_token}
                 />
               </div>
 
               <div className="bg-gradient-to-br from-white/95 to-blue-50/30 border-2 border-[#1D4ED8]/20 rounded-3xl overflow-hidden">
-                <PromptVaultClean hasAccess={true} />
+                <PromptVaultClean hasAccess={showNotes} />
               </div>
 
               {showLiveQA && (

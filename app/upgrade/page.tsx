@@ -180,9 +180,7 @@ function UpgradeContent() {
                   plan: selectedUpgrade,
                 });
               }
-              router.push(
-                `/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`,
-              );
+              window.location.href = `/courses/linkedin-growth/access?plan=${selectedUpgrade}&upgraded=true&payment_id=${response.razorpay_payment_id}`;
             } else {
               dispatchNotice("Payment verification failed. Please contact support with your payment ID.");
             }

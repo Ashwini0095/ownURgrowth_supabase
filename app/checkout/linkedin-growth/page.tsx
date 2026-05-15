@@ -170,7 +170,8 @@ function CheckoutPageContent() {
                   plan: activatedPlan,
                 });
               }
-              router.replace(`/courses/linkedin-growth/access?plan=${activatedPlan}&payment_id=${response.razorpay_payment_id}`);
+
+              window.location.href = `/courses/linkedin-growth/access?plan=${activatedPlan}&payment_id=${response.razorpay_payment_id}`;
             } else {
               dispatchNotice("Payment verification failed. Please contact support with your payment ID.");
             }
@@ -221,7 +222,7 @@ function CheckoutPageContent() {
             <span className="text-gray-900">own</span><span className="text-blue-600">UR</span><span className="text-gray-900">growth</span>
           </div>
           <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400 font-medium">
-            <ShieldCheck className="w-4 h-4 text-green-500" />
+            <ShieldCheck className="w-4 h-4 text-green-700" />
             Secure 256-bit SSL Checkout
           </div>
         </div>
@@ -272,10 +273,10 @@ function CheckoutPageContent() {
             {/* Account Status */}
             <div className="space-y-4">
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Step 2: Account Details</h3>
-              <div className={`p-6 rounded-2xl border-2 transition-all ${user ? "border-green-100 bg-green-50/30" : "border-gray-100 bg-white"}`}>
+              <div className={`p-6 rounded-2xl border-2 transition-all ${user ? "border-green-200 bg-green-50/30" : "border-gray-100 bg-white"}`}>
                 {user ? (
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    <div className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center text-green-800">
                       <Check className="w-6 h-6" />
                     </div>
                     <div>
@@ -345,7 +346,7 @@ function CheckoutPageContent() {
                 </div>
                 <div className="flex justify-between items-center py-4 border-b border-gray-50">
                   <span className="text-gray-500 font-medium">Tax (GST)</span>
-                  <span className="text-green-600 font-bold">Included</span>
+                  <span className="text-green-800 font-bold">Included</span>
                 </div>
                 <div className="flex justify-between items-center pt-4">
                   <span className="text-lg font-black text-gray-900">Total</span>
@@ -373,7 +374,7 @@ function CheckoutPageContent() {
 
               <div className="mt-8 pt-8 border-t border-gray-50 space-y-4">
                 <div className="flex items-center gap-3 text-xs text-gray-400 font-medium">
-                  <ShieldCheck className="w-4 h-4 text-green-500" />
+                  <ShieldCheck className="w-4 h-4 text-green-700" />
                   30-Day Money Back Guarantee
                 </div>
                 <div className="flex items-center gap-3 text-xs text-gray-400 font-medium">

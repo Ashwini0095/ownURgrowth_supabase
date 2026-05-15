@@ -32,11 +32,6 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
-  outputFileTracingIncludes: {
-    "/api/course-notes/linkedin-growth/download": [
-      "./protected-assets/linkedin-course-notes.pdf",
-    ],
-  },
   poweredByHeader: false,
   async headers() {
     return [
